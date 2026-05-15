@@ -1,3 +1,46 @@
+# Специфичные файлы Visual Studio (включая .vs)
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Папки сборки и бинарные файлы (выходные данные компилятора)
+Debug/
+Release/
+x64/
+x86/
+ARM/
+ARM64/
+[Bb]in/
+[Oo]bj/
+
+# Файлы сборки MSBuild / C++
+*.obj
+*.ilk
+*.pdb
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.rsp
+*.pgc
+*.pgd
+*.meta
+*.pch
+
+# Базы данных кода и файлы IntelliSense
+*.ncb
+*.opensln
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Временные файлы и отчеты логов
+*.log
+*.tlog
+*.lastbuildstate
+
 # Prerequisites
 *.d
 
