@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{d7bfff81-55ce-47ce-b672-08b5e885f72d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{2222bada-dfce-4d3b-aacb-dd706f8e0929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Core">
+      <UniqueIdentifier>{1b12d236-0b4c-4b1a-a2a4-e75e7759e358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core">
+      <UniqueIdentifier>{5d9cdc05-10e3-4cba-b965-caf27fbadc9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Window">
+      <UniqueIdentifier>{706f7c0d-2592-4f83-bd72-fcffb9191ca5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Window">
+      <UniqueIdentifier>{50d32c96-ef90-4946-ac04-a9342ea1fdbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Input">
+      <UniqueIdentifier>{eaa52082-7bd5-4a2f-b3de-b5ec9ee0c062}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Input">
+      <UniqueIdentifier>{20b37996-9179-4665-b0d9-3ae4ea8d8193}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Renderer">
+      <UniqueIdentifier>{8af97885-6b27-4393-8ffd-b8a86c359e43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Renderer">
+      <UniqueIdentifier>{3c9289b3-66d5-4670-bb03-d5322a66f551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\glad">
+      <UniqueIdentifier>{21b14a92-6813-4bc8-a66a-880587bb5288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\glad">
+      <UniqueIdentifier>{8456f7c8-1c1b-4feb-82f8-7e05ffa3c9c5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Engine.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Log.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Application.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\EntryPoint.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Timer.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Window\Window.h">
+      <Filter>Include\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Input\Input.h">
+      <Filter>Include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Renderer\Renderer.h">
+      <Filter>Include\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\glad\gl.h">
+      <Filter>Include\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\glad\khrplatform.h">
+      <Filter>Include\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Renderer\GraphicsContext.h">
+      <Filter>Include\Renderer</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Log.cpp">
+      <Filter>Source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window\Window.cpp">
+      <Filter>Source\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\Input.cpp">
+      <Filter>Source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\Renderer.cpp">
+      <Filter>Source\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\glad\gl.c">
+      <Filter>Source\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\GraphicsContext.cpp">
+      <Filter>Source\Renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
