@@ -21,23 +21,17 @@ namespace NK {
 
     void Engine::Initialize() {
         NK_CORE_INFO("Initializing subsystems...");
-        // Создаём окно с параметрами из конфига
         m_Window = std::make_unique<Window>(WindowProperties{
-            m_Config.Title,
-            m_Config.Width,
-            m_Config.Height
+            m_Config.Title, m_Config.Width, m_Config.Height
             });
-
-        // Инициализируем рендерер, передавая нативное окно
-        Renderer::Init(m_Window->GetNativeWindow());
-
+        // Инициализируем рендерер (после того, как контекст уже создан внутри Window)
+        Renderer::Init();
         NK_CORE_INFO("Engine initialized.");
     }
 
     void Engine::Run(Application* app) {
         m_App = app;
         Initialize();
-
         m_App->OnStart();
         m_Running = true;
 
@@ -45,15 +39,23 @@ namespace NK {
         while (m_Running) {
             float dt = timer.Tick();
 
-            m_Window->OnUpdate();
-            if (m_Window->ShouldClose()) {
+            m_Window->OnUpdate();                   // обработка сообщений
+            if (m_Window->ShouldClose())
+            {
+                NK_CORE_INFO("Window should close, breaking loop");
                 m_Running = false;
             }
 
-            // Очищаем экран текущим цветом
-            Renderer::Clear();
+            // Активируем контекст OpenGL (обычно уже активен, но для надёжности)
+            if (auto* ctx = m_Window->GetGraphicsContext())
+                ctx->MakeCurrent();
+            Renderer::BeginFrame();                 // очистка
 
-            m_App->OnUpdate(dt);
+            m_App->OnUpdate(dt);                    // игровая логика
+
+            Renderer::EndFrame();
+            if (auto* ctx = m_Window->GetGraphicsContext())
+                ctx->SwapBuffers();                 // показываем кадр
         }
 
         m_App->OnShutdown();

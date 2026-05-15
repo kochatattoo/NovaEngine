@@ -7,16 +7,12 @@ namespace NK {
     public:
         virtual ~GraphicsContext() = default;
 
-        // Инициализация с привязкой к окну (HWND)
-        virtual void Init(void* nativeWindow) = 0;
-        // Сделать контекст текущим в потоке
-        virtual void MakeCurrent() = 0;
-        // Показать нарисованный кадр (SwapBuffers)
-        virtual void SwapBuffers() = 0;
-        // Освободить ресурсы
-        virtual void Shutdown() = 0;
+        virtual void Init(void* nativeWindow) = 0;   // инициализация, привязка к окну
+        virtual void MakeCurrent() = 0;              // сделать контекст активным
+        virtual void SwapBuffers() = 0;              // показать нарисованный кадр
+        virtual void Shutdown() = 0;                 // освободить ресурсы
 
-        // Фабрика для создания платформенного контекста (пока Windows)
+        // Фабрика – создаёт платформенно-зависимый контекст (сейчас Windows)
         static GraphicsContext* Create(void* nativeWindow);
     };
 

@@ -1,14 +1,26 @@
 #include "Renderer/Renderer.h"
-#include <Windows.h>
-#include <cstdio>   // для printf в debug
+#include <glad/gl.h>
 
 namespace NK {
 
     float Renderer::s_ClearColor[4] = { 0.1f, 0.1f, 0.15f, 1.0f };
-    void* Renderer::s_WindowHandle = nullptr;
 
-    void Renderer::Init(void* nativeWindow) {
-        s_WindowHandle = nativeWindow;
+    void Renderer::Init() {
+        // Включаем стандартные состояния
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+    }
+
+    void Renderer::BeginFrame() {
+        glClearColor(s_ClearColor[0], s_ClearColor[1], s_ClearColor[2], s_ClearColor[3]);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void Renderer::EndFrame() {
+        // в будущем сюда можно вставить сброс состояний
     }
 
     void Renderer::SetClearColor(float r, float g, float b, float a) {
@@ -18,29 +30,8 @@ namespace NK {
         s_ClearColor[3] = a;
     }
 
-    void Renderer::Clear() {
-        if (!s_WindowHandle) return;
-
-        HWND hwnd = static_cast<HWND>(s_WindowHandle);
-        HDC hdc = GetDC(hwnd);
-
-        // Преобразуем float [0..1] в BYTE [0..255]
-        BYTE r = static_cast<BYTE>(s_ClearColor[0] * 255.0f);
-        BYTE g = static_cast<BYTE>(s_ClearColor[1] * 255.0f);
-        BYTE b = static_cast<BYTE>(s_ClearColor[2] * 255.0f);
-
-        // Получаем размеры клиентской области окна
-        RECT rect;
-        GetClientRect(hwnd, &rect);
-        int width = rect.right - rect.left;
-        int height = rect.bottom - rect.top;
-
-        // Создаём кисть нужного цвета и заливаем прямоугольник
-        HBRUSH brush = CreateSolidBrush(RGB(r, g, b));
-        FillRect(hdc, &rect, brush);
-        DeleteObject(brush);
-
-        ReleaseDC(hwnd, hdc);
+    void Renderer::Shutdown() {
+        // освобождение ресурсов, если будут
     }
 
 } // namespace NK

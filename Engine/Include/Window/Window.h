@@ -1,13 +1,11 @@
 #pragma once
-
-// ¬ключаем Windows API, чтобы были доступны HWND, UINT, LRESULT и т.д.
-// NOMINMAX убирает макросы min/max, которые могут конфликтовать с std::min/max
 #define NOMINMAX
 #include <Windows.h>
-
 #include <string>
-#include <functional>
+#include <memory>
+#include <queue>
 #include "Core/Log.h"
+#include "Renderer/GraphicsContext.h"
 
 namespace NK {
 
@@ -31,6 +29,7 @@ namespace NK {
         void* GetNativeWindow() const { return m_Hwnd; }
         uint32_t GetWidth() const { return m_Data.Width; }
         uint32_t GetHeight() const { return m_Data.Height; }
+        GraphicsContext* GetGraphicsContext() { return m_GraphicsContext.get(); }
 
     private:
         void Init();    // –егистраци€ класса окна и создание
@@ -48,6 +47,8 @@ namespace NK {
         HWND m_Hwnd = nullptr;
         WindowData m_Data;
         bool m_ShouldClose = false;
+        std::unique_ptr<GraphicsContext> m_GraphicsContext;
+
     };
 
 } // namespace NK

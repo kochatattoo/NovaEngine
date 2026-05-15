@@ -44,11 +44,20 @@ namespace NK {
 
         // Показываем окно
         ShowWindow(m_Hwnd, SW_SHOW);
+
+        // Создаём и инициализируем графический контекст
+        m_GraphicsContext.reset(GraphicsContext::Create(m_Hwnd));
+        m_GraphicsContext->Init(m_Hwnd);
+
         NK_CORE_INFO("Window created: {0}x{1}", m_Data.Width, m_Data.Height);
     }
 
     void Window::Shutdown() {
         if (m_Hwnd) {
+
+            if (m_GraphicsContext)
+                m_GraphicsContext->Shutdown();
+
             DestroyWindow(m_Hwnd);
             m_Hwnd = nullptr;
         }
