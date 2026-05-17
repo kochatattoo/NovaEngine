@@ -2,6 +2,9 @@
 
 namespace NK {
 
+    // Предварительное объявление, чтобы компилятор знал, что Event — это класс
+    class Event;
+
     // Абстрактный класс, который должна реализовать игра
     // Аналог MonoBehaviour в Unity, только глобальный
     class Application {
@@ -15,6 +18,7 @@ namespace NK {
         virtual void OnUpdate(float deltaTime) {}
         // Вызывается перед завершением
         virtual void OnShutdown() {}
+        virtual void OnEvent(Event& event) {}
     };
 
     // Функция, которую обязан определить клиент (игра)

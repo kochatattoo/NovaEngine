@@ -46,6 +46,16 @@ namespace NK {
                 m_Running = false;
             }
 
+            // Извлекаем все накопившиеся события и отправляем в приложение
+            {
+                auto event = m_Window->PollEvent();
+                while (event) {
+                    NK_TRACE("Event: {0}", event->GetName()); // отладочный вывод (можно убрать)
+                    m_App->OnEvent(*event);
+                    event = m_Window->PollEvent();
+                }
+            }
+
             // Активируем контекст OpenGL (обычно уже активен, но для надёжности)
             if (auto* ctx = m_Window->GetGraphicsContext())
                 ctx->MakeCurrent();

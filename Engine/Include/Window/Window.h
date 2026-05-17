@@ -1,6 +1,7 @@
 #pragma once
 #define NOMINMAX
 #include <Windows.h>
+#include "Event/Event.h"
 #include <string>
 #include <memory>
 #include <queue>
@@ -30,6 +31,7 @@ namespace NK {
         uint32_t GetWidth() const { return m_Data.Width; }
         uint32_t GetHeight() const { return m_Data.Height; }
         GraphicsContext* GetGraphicsContext() { return m_GraphicsContext.get(); }
+        std::unique_ptr<Event> PollEvent();
 
     private:
         void Init();    // Регистрация класса окна и создание
@@ -48,7 +50,7 @@ namespace NK {
         WindowData m_Data;
         bool m_ShouldClose = false;
         std::unique_ptr<GraphicsContext> m_GraphicsContext;
-
+        std::queue<std::unique_ptr<Event>> m_EventQueue;
     };
 
 } // namespace NK

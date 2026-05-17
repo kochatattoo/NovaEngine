@@ -63,6 +63,14 @@ namespace NK {
         }
     }
 
+    std::unique_ptr<Event> Window::PollEvent() {
+        if (m_EventQueue.empty())
+            return nullptr;
+        auto event = std::move(m_EventQueue.front());
+        m_EventQueue.pop();
+        return event;
+    }
+
     void Window::OnUpdate() {
         MSG msg;
         // Обрабатываем все накопившиеся сообщения
@@ -73,7 +81,8 @@ namespace NK {
     }
 
     // Статическая функция обратного вызова
-    LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+    {
         Window* window = nullptr;
         // При создании окна (WM_NCCREATE) извлекаем переданный this
         if (msg == WM_NCCREATE) {
@@ -89,22 +98,48 @@ namespace NK {
 
         // Если указатель есть, обрабатываем
         if (window) {
-            switch (msg) {
-            case WM_CLOSE:
-                window->m_ShouldClose = true;
-                NK_CORE_INFO("Window close requested");
-                return 0; // Сообщение обработано
-            case WM_SIZE: {
-                uint32_t width = LOWORD(lParam);
-                uint32_t height = HIWORD(lParam);
-                window->m_Data.Width = width;
-                window->m_Data.Height = height;
-                NK_CORE_TRACE("Window resized to {0}x{1}", width, height);
-                return 0;
-            }
+            switch (msg) 
+            {
+                case WM_CLOSE:
+                  window->m_ShouldClose = true;
+                    NK_CORE_INFO("Window close requested");
+                    return 0; // Сообщение обработано
+
+                case WM_SIZE: {
+                    uint32_t width = LOWORD(lParam);
+                    uint32_t height = HIWORD(lParam);
+                    window->m_Data.Width = width;
+                    window->m_Data.Height = height;
+                    NK_CORE_TRACE("Window resized to {0}x{1}", width, height);
+                    return 0;
+                }
+
+                case WM_KEYDOWN: {
+                    int keyCode = static_cast<int>(wParam);
+                    // 30-й бит lParam показывает, что клавиша была уже нажата ранее (repeat)
+                    bool repeat = (lParam & 0x40000000) != 0;
+                    window->m_EventQueue.push(std::make_unique<KeyPressedEvent>(keyCode, repeat));
+                    return 0;   // Сообщение обработано
+                }
+                case WM_KEYUP: {
+                    int keyCode = static_cast<int>(wParam);
+                    window->m_EventQueue.push(std::make_unique<KeyReleasedEvent>(keyCode));
+                    return 0;
+                }
+                case WM_MOUSEMOVE: {
+                    float x = static_cast<float>(LOWORD(lParam));
+                    float y = static_cast<float>(HIWORD(lParam));
+                    window->m_EventQueue.push(std::make_unique<MouseMovedEvent>(x, y));
+                    return 0;
+                }
+                case WM_MOUSEWHEEL: {
+                    // Старшее слово wParam содержит дельту (обычно кратно 120)
+                    float delta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / (float)WHEEL_DELTA;
+                    window->m_EventQueue.push(std::make_unique<MouseScrolledEvent>(0.0f, delta));
+                    return 0;
+                }
             }
         }
-
         // Для всех остальных сообщений вызываем стандартную обработку
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }

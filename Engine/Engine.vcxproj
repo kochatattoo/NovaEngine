@@ -145,6 +145,7 @@
     <ClInclude Include="Include\Core\EntryPoint.h" />
     <ClInclude Include="Include\Core\Log.h" />
     <ClInclude Include="Include\Core\Timer.h" />
+    <ClInclude Include="Include\Event\Event.h" />
     <ClInclude Include="Include\glad\gl.h" />
     <ClInclude Include="Include\glad\khrplatform.h" />
     <ClInclude Include="Include\Input\Input.h" />
