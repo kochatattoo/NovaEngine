@@ -114,7 +114,7 @@ namespace NK {
 				return;
 			}
 
-			// Функции шейдеров
+			// --- Шейдеры ---
 			glad_glCreateShader = (PFNGLCREATESHADERPROC)GetAnyGLFuncAddress("glCreateShader");
 			glad_glShaderSource = (PFNGLSHADERSOURCEPROC)GetAnyGLFuncAddress("glShaderSource");
 			glad_glCompileShader = (PFNGLCOMPILESHADERPROC)GetAnyGLFuncAddress("glCompileShader");
@@ -122,25 +122,64 @@ namespace NK {
 			glad_glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)GetAnyGLFuncAddress("glGetShaderInfoLog");
 			glad_glCreateProgram = (PFNGLCREATEPROGRAMPROC)GetAnyGLFuncAddress("glCreateProgram");
 			glad_glAttachShader = (PFNGLATTACHSHADERPROC)GetAnyGLFuncAddress("glAttachShader");
+            glad_glGetProgramiv = (PFNGLGETPROGRAMIVPROC)GetAnyGLFuncAddress("glGetProgramiv");
 			glad_glLinkProgram = (PFNGLLINKPROGRAMPROC)GetAnyGLFuncAddress("glLinkProgram");
+            glad_glValidateProgram = (PFNGLVALIDATEPROGRAMPROC)GetAnyGLFuncAddress("glValidateProgram");
 			glad_glGetProgramiv = (PFNGLGETPROGRAMIVPROC)GetAnyGLFuncAddress("glGetProgramiv");
 			glad_glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)GetAnyGLFuncAddress("glGetProgramInfoLog");
 			glad_glDeleteShader = (PFNGLDELETESHADERPROC)GetAnyGLFuncAddress("glDeleteShader");
 			glad_glUseProgram = (PFNGLUSEPROGRAMPROC)GetAnyGLFuncAddress("glUseProgram");
+			glad_glUniform4f = (PFNGLUNIFORM4FPROC)GetAnyGLFuncAddress("glUniform4f");
+			glad_glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)GetAnyGLFuncAddress("glGetUniformLocation");
+            glad_glDeleteProgram = (PFNGLDELETEPROGRAMPROC)GetAnyGLFuncAddress("glDeleteProgram");
 
-			// Функции VAO и VBO
+			// --- VAO/VBO/IBO ---
 			glad_glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)GetAnyGLFuncAddress("glGenVertexArrays");
 			glad_glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)GetAnyGLFuncAddress("glBindVertexArray");
+            glad_glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSPROC)GetAnyGLFuncAddress("glDeleteVertexArrays");
 			glad_glGenBuffers = (PFNGLGENBUFFERSPROC)GetAnyGLFuncAddress("glGenBuffers");
 			glad_glBindBuffer = (PFNGLBINDBUFFERPROC)GetAnyGLFuncAddress("glBindBuffer");
+            glad_glDeleteBuffers = (PFNGLDELETEBUFFERSPROC)GetAnyGLFuncAddress("glDeleteBuffers");
 			glad_glBufferData = (PFNGLBUFFERDATAPROC)GetAnyGLFuncAddress("glBufferData");
 			glad_glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)GetAnyGLFuncAddress("glVertexAttribPointer");
 			glad_glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)GetAnyGLFuncAddress("glEnableVertexAttribArray");
 			glad_glDrawArrays = (PFNGLDRAWARRAYSPROC)GetAnyGLFuncAddress("glDrawArrays");
+			glad_glDrawElements = (PFNGLDRAWELEMENTSPROC)GetAnyGLFuncAddress("glDrawElements");
 
 			// Для uniform-переменных (передача цвета)
 			glad_glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)GetAnyGLFuncAddress("glGetUniformLocation");
 			glad_glUniform4f = (PFNGLUNIFORM4FPROC)GetAnyGLFuncAddress("glUniform4f");
+
+			// Проверка ВСЕХ загруженных функций (добавь к уже существующим проверкам)
+			if (!glad_glCreateShader) { NK_CORE_ERROR("glCreateShader not loaded"); return; }
+			if (!glad_glShaderSource) { NK_CORE_ERROR("glShaderSource not loaded"); return; }
+			if (!glad_glCompileShader) { NK_CORE_ERROR("glCompileShader not loaded"); return; }
+			if (!glad_glGetShaderiv) { NK_CORE_ERROR("glGetShaderiv not loaded"); return; }
+			if (!glad_glGetShaderInfoLog) { NK_CORE_ERROR("glGetShaderInfoLog not loaded"); return; }
+			if (!glad_glCreateProgram) { NK_CORE_ERROR("glCreateProgram not loaded"); return; }
+			if (!glad_glAttachShader) { NK_CORE_ERROR("glAttachShader not loaded"); return; }
+			if (!glad_glLinkProgram) { NK_CORE_ERROR("glLinkProgram not loaded"); return; }
+            if (!glad_glValidateProgram) { NK_CORE_ERROR("glValidateProgram not loaded"); return; }
+			if (!glad_glGetProgramiv) { NK_CORE_ERROR("glGetProgramiv not loaded"); return; }
+			if (!glad_glGetProgramInfoLog) { NK_CORE_ERROR("glGetProgramInfoLog not loaded"); return; }
+			if (!glad_glDeleteShader) { NK_CORE_ERROR("glDeleteShader not loaded"); return; }
+			if (!glad_glUseProgram) { NK_CORE_ERROR("glUseProgram not loaded"); return; }
+			if (!glad_glUniform4f) { NK_CORE_ERROR("glUniform4f not loaded"); return; }
+			if (!glad_glGetUniformLocation) { NK_CORE_ERROR("glGetUniformLocation not loaded"); return; }
+			if (!glad_glGenVertexArrays) { NK_CORE_ERROR("glGenVertexArrays not loaded"); return; }
+			if (!glad_glBindVertexArray) { NK_CORE_ERROR("glBindVertexArray not loaded"); return; }
+			if (!glad_glGenBuffers) { NK_CORE_ERROR("glGenBuffers not loaded"); return; }
+			if (!glad_glBindBuffer) { NK_CORE_ERROR("glBindBuffer not loaded"); return; }
+			if (!glad_glBufferData) { NK_CORE_ERROR("glBufferData not loaded"); return; }
+			if (!glad_glVertexAttribPointer) { NK_CORE_ERROR("glVertexAttribPointer not loaded"); return; }
+			if (!glad_glEnableVertexAttribArray) { NK_CORE_ERROR("glEnableVertexAttribArray not loaded"); return; }
+			if (!glad_glDrawElements) { NK_CORE_ERROR("glDrawElements not loaded"); return; }
+			// glDrawArrays используем редко, но тоже можно проверить
+			if (!glad_glDrawArrays) { NK_CORE_ERROR("glDrawArrays not loaded"); return; }
+			if (!glad_glDeleteVertexArrays) { NK_CORE_ERROR("glDeleteVertexArrays not loaded"); return; }
+			if (!glad_glDeleteBuffers) { NK_CORE_ERROR("glDeleteBuffers not loaded"); return; }
+            if (!glad_glGetProgramiv) { NK_CORE_ERROR("glGetProgramiv not loaded"); return; }
+            if (!glad_glDeleteProgram) { NK_CORE_ERROR("glDeleteProgram not loaded"); return; }
 
 			// Проверка, что все шейдерные функции загружены
 			if (!glad_glCreateShader || !glad_glShaderSource || !glad_glCompileShader ||
