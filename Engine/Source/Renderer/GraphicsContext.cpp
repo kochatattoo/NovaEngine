@@ -17,7 +17,7 @@ namespace NK {
 
     // --------------------------------------------------------------------------
     // Универсальная функция получения адреса OpenGL-функции.
-    // Сначала пробует wglGetProcAddress (для "новых" функций), 
+    // Сначала пробует wglGetProcAddress (для "новых" функций),
     // при неудаче добирает из opengl32.dll (базовые функции 1.1).
     // --------------------------------------------------------------------------
     static void* GetAnyGLFuncAddress(const char* name) {
@@ -104,15 +104,52 @@ namespace NK {
             glad_glClear = (PFNGLCLEARPROC)GetAnyGLFuncAddress("glClear");
             glad_glViewport = (PFNGLVIEWPORTPROC)GetAnyGLFuncAddress("glViewport");
 
-            // Дополнительно: для возможной диагностики
-            glad_glGetString = (PFNGLGETSTRINGPROC)GetAnyGLFuncAddress("glGetString");
-            glad_glGetError = (PFNGLGETERRORPROC)GetAnyGLFuncAddress("glGetError");
+			// Дополнительно: для возможной диагностики
+			glad_glGetString = (PFNGLGETSTRINGPROC)GetAnyGLFuncAddress("glGetString");
+			glad_glGetError = (PFNGLGETERRORPROC)GetAnyGLFuncAddress("glGetError");
 
-            // Проверяем, что критически важные функции загружены
-            if (!glad_glEnable || !glad_glClear || !glad_glClearColor || !glad_glViewport) {
-                NK_CORE_ERROR("Failed to load essential OpenGL functions");
-                return;
-            }
+			// Проверяем, что критически важные функции загружены
+			if (!glad_glEnable || !glad_glClear || !glad_glClearColor || !glad_glViewport) {
+				NK_CORE_ERROR("Failed to load essential OpenGL functions");
+				return;
+			}
+
+			// Функции шейдеров
+			glad_glCreateShader = (PFNGLCREATESHADERPROC)GetAnyGLFuncAddress("glCreateShader");
+			glad_glShaderSource = (PFNGLSHADERSOURCEPROC)GetAnyGLFuncAddress("glShaderSource");
+			glad_glCompileShader = (PFNGLCOMPILESHADERPROC)GetAnyGLFuncAddress("glCompileShader");
+			glad_glGetShaderiv = (PFNGLGETSHADERIVPROC)GetAnyGLFuncAddress("glGetShaderiv");
+			glad_glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)GetAnyGLFuncAddress("glGetShaderInfoLog");
+			glad_glCreateProgram = (PFNGLCREATEPROGRAMPROC)GetAnyGLFuncAddress("glCreateProgram");
+			glad_glAttachShader = (PFNGLATTACHSHADERPROC)GetAnyGLFuncAddress("glAttachShader");
+			glad_glLinkProgram = (PFNGLLINKPROGRAMPROC)GetAnyGLFuncAddress("glLinkProgram");
+			glad_glGetProgramiv = (PFNGLGETPROGRAMIVPROC)GetAnyGLFuncAddress("glGetProgramiv");
+			glad_glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)GetAnyGLFuncAddress("glGetProgramInfoLog");
+			glad_glDeleteShader = (PFNGLDELETESHADERPROC)GetAnyGLFuncAddress("glDeleteShader");
+			glad_glUseProgram = (PFNGLUSEPROGRAMPROC)GetAnyGLFuncAddress("glUseProgram");
+
+			// Функции VAO и VBO
+			glad_glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)GetAnyGLFuncAddress("glGenVertexArrays");
+			glad_glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)GetAnyGLFuncAddress("glBindVertexArray");
+			glad_glGenBuffers = (PFNGLGENBUFFERSPROC)GetAnyGLFuncAddress("glGenBuffers");
+			glad_glBindBuffer = (PFNGLBINDBUFFERPROC)GetAnyGLFuncAddress("glBindBuffer");
+			glad_glBufferData = (PFNGLBUFFERDATAPROC)GetAnyGLFuncAddress("glBufferData");
+			glad_glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)GetAnyGLFuncAddress("glVertexAttribPointer");
+			glad_glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)GetAnyGLFuncAddress("glEnableVertexAttribArray");
+			glad_glDrawArrays = (PFNGLDRAWARRAYSPROC)GetAnyGLFuncAddress("glDrawArrays");
+
+			// Для uniform-переменных (передача цвета)
+			glad_glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)GetAnyGLFuncAddress("glGetUniformLocation");
+			glad_glUniform4f = (PFNGLUNIFORM4FPROC)GetAnyGLFuncAddress("glUniform4f");
+
+			// Проверка, что все шейдерные функции загружены
+			if (!glad_glCreateShader || !glad_glShaderSource || !glad_glCompileShader ||
+				!glad_glCreateProgram || !glad_glLinkProgram || !glad_glUseProgram ||
+				!glad_glGenVertexArrays || !glad_glBindVertexArray || !glad_glGenBuffers ||
+				!glad_glBufferData || !glad_glVertexAttribPointer || !glad_glDrawArrays) {
+				NK_CORE_ERROR("Failed to load essential shader/buffer functions");
+				return;
+			}
 
             // Настройка viewport
             RECT rect;
