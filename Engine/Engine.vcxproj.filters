@@ -49,6 +49,9 @@
     <Filter Include="Source\glad">
       <UniqueIdentifier>{8456f7c8-1c1b-4feb-82f8-7e05ffa3c9c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\Event">
+      <UniqueIdentifier>{740d5c8d-68d7-4771-aaf0-5bdeac373950}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -89,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="Include\Renderer\GraphicsContext.h">
       <Filter>Include\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Event\Event.h">
+      <Filter>Include\Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
