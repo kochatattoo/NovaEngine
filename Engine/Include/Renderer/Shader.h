@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <glad/gl.h>    // типы OpenGL
-// #include <glm/glm.hpp>
+ #include <glm/glm.hpp>
 #include <unordered_map>
 
 namespace NK {
@@ -17,6 +17,8 @@ namespace NK {
 
 		// Установить uniform-переменную vec4 (для цвета)
 		void SetUniform4f(const std::string& name, float r, float g, float b, float a) const;
+
+		void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
 
 	private:
 		uint32_t m_RendererID;

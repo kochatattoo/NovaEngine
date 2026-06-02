@@ -149,5 +149,8 @@
     <ClCompile Include="Source\Renderer\VertexArray.cpp">
       <Filter>Source\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Renderer\Camera.cpp">
+      <Filter>Source\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -8,15 +8,19 @@
 #include <Renderer/VertexBuffer.h>
 #include <Renderer/IndexBuffer.h>
 #include <memory>
+#include <Renderer/Camera.h>
 
 // Вершинный шейдер (позиция и цвет из вершин)
 static const char* s_VertexShaderSrc = R"(
 #version 330 core
-layout(location = 0) in vec3 a_Position;  // позиция
-layout(location = 1) in vec4 a_Color;     // цвет
-out vec4 v_Color;                         // передаём во фрагментный шейдер
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec4 a_Color;
+
+uniform mat4 u_ViewProjection;   // матрица Проекция * Вид
+
+out vec4 v_Color;
 void main() {
-    gl_Position = vec4(a_Position, 1.0);  // без матрицы, координаты в NDC
+    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
     v_Color = a_Color;
 }
 )";
@@ -26,9 +30,8 @@ static const char* s_FragmentShaderSrc = R"(
 #version 330 core
 in vec4 v_Color;
 out vec4 FragColor;
-uniform vec4 u_Color;   // дополнительный цвет для модификации
 void main() {
-    FragColor = v_Color * u_Color;
+    FragColor = v_Color;
 }
 )";
 
@@ -37,13 +40,33 @@ public:
     void OnStart() override {
 		// Вершины треугольника: позиция (x,y,z) + цвет (r,g,b,a)
 		float vertices[] = {
-			// позиция               цвет
-			-0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,  // красный
-			 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,  // зелёный
-			 0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f   // синий
+			// позиция (x,y,z)        цвет (r,g,b,a)
+		// Передняя грань (z = 0.5)
+		-0.5f, -0.5f,  0.5f,   1.0f, 0.0f, 0.0f, 1.0f, // красный
+		 0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 0.0f, 1.0f, // зелёный
+		 0.5f,  0.5f,  0.5f,   0.0f, 0.0f, 1.0f, 1.0f, // синий
+		-0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 0.0f, 1.0f, // жёлтый
+		// Задняя грань (z = -0.5)
+		-0.5f, -0.5f, -0.5f,   1.0f, 0.0f, 1.0f, 1.0f, // фиолетовый
+		 0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 1.0f, 1.0f, // циан
+		 0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f, 1.0f, // красный
+		-0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f, 1.0f, // зелёный
 		};
 		// Индексы (необязательно, но для примера)
-		uint32_t indices[] = { 0, 1, 2 };
+		uint32_t indices[] = {
+			// Передняя грань (0,1,2, 0,2,3)
+			0, 1, 2, 2, 3, 0,
+			// Задняя грань (4,5,6, 4,6,7) – обход против часовой, если смотреть снаружи
+			4, 6, 5, 4, 7, 6,
+			// Верхняя грань (3,2,6, 3,6,7)
+			3, 2, 6, 3, 6, 7,
+			// Нижняя грань (0,4,5, 0,5,1)
+			0, 4, 5, 0, 5, 1,
+			// Левая грань (0,3,7, 0,7,4)
+			0, 3, 7, 0, 7, 4,
+			// Правая грань (1,5,6, 1,6,2)
+			1, 5, 6, 1, 6, 2
+		};
 
 		// Создаём шейдер
 		m_Shader = std::make_unique<NK::Shader>(s_VertexShaderSrc, s_FragmentShaderSrc);
@@ -51,10 +74,13 @@ public:
 		// Создаём VAO и привязываем буферы
 		m_VAO = std::make_shared<NK::VertexArray>();
 		auto vb = std::make_shared<NK::VertexBuffer>(vertices, sizeof(vertices));
-		auto ib = std::make_shared<NK::IndexBuffer>(indices, 3);
+		auto ib = std::make_shared<NK::IndexBuffer>(indices, 36);
 
 		m_VAO->AddVertexBuffer(vb);
 		m_VAO->SetIndexBuffer(ib);
+
+		float aspect = (float)1280 / 720; // пока хардкод, можно брать из окна
+		m_Camera = std::make_unique<NK::Camera>(45.0f, aspect, 0.1f, 100.0f);
 
         NK_INFO("Sandbox started! Press SPACE to change color, ESC to exit.");
         NK::Renderer::SetClearColor(0.1f, 0.1f, 0.2f, 1.0f);
@@ -62,19 +88,26 @@ public:
 
     void OnUpdate(float deltaTime) override {
 
-		// Начинаем кадр (очистка)
-		NK::Renderer::BeginFrame();
+		// Обновим камеру (можно двигать через клавиши, но пока просто вращаем объект)
+	// Для вращения объекта нам нужна модельная матрица. Мы можем передать её в шейдер.
+	// У нас пока нет u_Model, поэтому добавим uniform u_Model и будем передавать полную MVP.
+	// Чтобы не усложнять, в этом примере просто будем вращать саму камеру вокруг начала координат.
 
-		// Активируем шейдер и устанавливаем uniform-цвет
+		static float angle = 0.0f;
+		angle += deltaTime * 0.5f; // вращаемся со скоростью 0.5 рад/с
+		float radius = 3.0f;
+		glm::vec3 pos = glm::vec3(glm::cos(angle) * radius, 1.0f, glm::sin(angle) * radius);
+		m_Camera->SetPosition(pos);
+		m_Camera->SetTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+		m_Camera->Update();
+
+		// Используем шейдер и передаём матрицу
 		m_Shader->Bind();
-		// По умолчанию u_Color = белый, чтобы цвета вершин не искажались
-		m_Shader->SetUniform4f("u_Color", m_ColorR, m_ColorG, m_ColorB, 1.0f);
+		m_Shader->SetUniformMat4("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
 
-		// Рисуем треугольник
 		m_VAO->Bind();
 		glDrawElements(GL_TRIANGLES, m_VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
-		// Завершаем кадр (пока пусто)
 		NK::Renderer::EndFrame();
     }
 
@@ -104,6 +137,7 @@ public:
 private:
 	std::unique_ptr<NK::Shader> m_Shader;
 	std::shared_ptr<NK::VertexArray> m_VAO;
+	std::unique_ptr<NK::Camera> m_Camera;
 	float m_ColorR = 1.0f, m_ColorG = 1.0f, m_ColorB = 1.0f;
 };
 

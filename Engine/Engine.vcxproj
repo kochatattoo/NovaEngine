@@ -173,6 +173,7 @@
     <ClCompile Include="Source\Core\Log.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
+    <ClCompile Include="Source\Renderer\Camera.cpp" />
     <ClCompile Include="Source\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Source\Renderer\IndexBuffer.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />

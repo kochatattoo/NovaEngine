@@ -149,6 +149,7 @@ namespace NK {
 			// Для uniform-переменных (передача цвета)
 			glad_glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)GetAnyGLFuncAddress("glGetUniformLocation");
 			glad_glUniform4f = (PFNGLUNIFORM4FPROC)GetAnyGLFuncAddress("glUniform4f");
+            glad_glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)GetAnyGLFuncAddress("glUniformMatrix4fv");
 
 			// Проверка ВСЕХ загруженных функций (добавь к уже существующим проверкам)
 			if (!glad_glCreateShader) { NK_CORE_ERROR("glCreateShader not loaded"); return; }
@@ -189,6 +190,8 @@ namespace NK {
 				NK_CORE_ERROR("Failed to load essential shader/buffer functions");
 				return;
 			}
+
+            if (!glad_glUniformMatrix4fv) { NK_CORE_ERROR("glUniformMatrix4fv not loaded"); return; }
 
             // Настройка viewport
             RECT rect;

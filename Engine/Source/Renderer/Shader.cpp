@@ -1,6 +1,7 @@
 #include "Renderer/Shader.h"
 #include "Core/Log.h"
 #include <glad/gl.h>
+#include<glm/gtc/type_ptr.hpp>
 
 namespace NK {
 
@@ -48,6 +49,12 @@ namespace NK {
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if (location != -1)
 			glUniform4f(location, r, g, b, a);
+	}
+
+	void Shader::SetUniformMat4(const std::string& name, const glm::mat4& matrix) {
+		int location = GetUniformLocation(name);
+		if (location != -1)
+			glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
 	int Shader::GetUniformLocation(const std::string& name) const {
