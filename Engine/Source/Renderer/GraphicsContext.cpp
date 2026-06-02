@@ -150,6 +150,7 @@ namespace NK {
 			glad_glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)GetAnyGLFuncAddress("glGetUniformLocation");
 			glad_glUniform4f = (PFNGLUNIFORM4FPROC)GetAnyGLFuncAddress("glUniform4f");
             glad_glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)GetAnyGLFuncAddress("glUniformMatrix4fv");
+            glad_glUniform1i = (PFNGLUNIFORM1IPROC)GetAnyGLFuncAddress("glUniform1i");
 
 			// Текстурные функции
 			glad_glGenTextures = (PFNGLGENTEXTURESPROC)GetAnyGLFuncAddress("glGenTextures");
@@ -158,6 +159,7 @@ namespace NK {
 			glad_glTexParameteri = (PFNGLTEXPARAMETERIPROC)GetAnyGLFuncAddress("glTexParameteri");
 			glad_glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)GetAnyGLFuncAddress("glGenerateMipmap");
 			glad_glActiveTexture = (PFNGLACTIVETEXTUREPROC)GetAnyGLFuncAddress("glActiveTexture");
+            glad_glDeleteTextures = (PFNGLDELETETEXTURESPROC)GetAnyGLFuncAddress("glDeleteTextures");
 
 			// Проверка ВСЕХ загруженных функций (добавь к уже существующим проверкам)
 			if (!glad_glCreateShader) { NK_CORE_ERROR("glCreateShader not loaded"); return; }
@@ -200,12 +202,15 @@ namespace NK {
 			}
 
             if (!glad_glUniformMatrix4fv) { NK_CORE_ERROR("glUniformMatrix4fv not loaded"); return; }
+            if (!glad_glUniform1i) { NK_CORE_ERROR("glUniform1i not loaded"); return; }
 
             if (!glad_glGenTextures || !glad_glBindTexture || !glad_glTexImage2D ||
                 !glad_glTexParameteri || !glad_glGenerateMipmap || !glad_glActiveTexture) {
                 NK_CORE_ERROR("Texture functions not loaded");
                 return;
             }
+
+            if (!glad_glDeleteTextures) { NK_CORE_ERROR("glDeleteTextures not loaded"); return; }
 
             // Настройка viewport
             RECT rect;

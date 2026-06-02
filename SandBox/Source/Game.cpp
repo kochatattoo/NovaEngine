@@ -9,104 +9,99 @@
 #include <Renderer/IndexBuffer.h>
 #include <memory>
 #include <Renderer/Camera.h>
+#include <Renderer/Texture2D.h>
 
 // Вершинный шейдер (позиция и цвет из вершин)
 static const char* s_VertexShaderSrc = R"(
 #version 330 core
-layout(location = 0) in vec3 a_Position;
-layout(location = 1) in vec4 a_Color;
-
-uniform mat4 u_ViewProjection;   // матрица Проекция * Вид
-
-out vec4 v_Color;
+layout(location = 0) in vec2 a_Position;  // позиция (2D)
+layout(location = 1) in vec2 a_TexCoord;  // UV
+uniform mat4 u_ViewProjection;
+out vec2 v_TexCoord;
 void main() {
-    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
-    v_Color = a_Color;
+    gl_Position = u_ViewProjection * vec4(a_Position, 0.0, 1.0);
+    v_TexCoord = a_TexCoord;
 }
 )";
 
 // Фрагментный шейдер (просто выводит цвет)
 static const char* s_FragmentShaderSrc = R"(
 #version 330 core
-in vec4 v_Color;
+in vec2 v_TexCoord;
 out vec4 FragColor;
+uniform sampler2D u_Texture;
 void main() {
-    FragColor = v_Color;
+    FragColor = texture(u_Texture, v_TexCoord);
 }
 )";
 
 class SandboxApp : public NK::Application {
 public:
     void OnStart() override {
-		// Вершины треугольника: позиция (x,y,z) + цвет (r,g,b,a)
-		float vertices[] = {
-			// позиция (x,y,z)        цвет (r,g,b,a)
-		// Передняя грань (z = 0.5)
-		-0.5f, -0.5f,  0.5f,   1.0f, 0.0f, 0.0f, 1.0f, // красный
-		 0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 0.0f, 1.0f, // зелёный
-		 0.5f,  0.5f,  0.5f,   0.0f, 0.0f, 1.0f, 1.0f, // синий
-		-0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 0.0f, 1.0f, // жёлтый
-		// Задняя грань (z = -0.5)
-		-0.5f, -0.5f, -0.5f,   1.0f, 0.0f, 1.0f, 1.0f, // фиолетовый
-		 0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 1.0f, 1.0f, // циан
-		 0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f, 1.0f, // красный
-		-0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f, 1.0f, // зелёный
-		};
-		// Индексы (необязательно, но для примера)
-		uint32_t indices[] = {
-			// Передняя грань (0,1,2, 0,2,3)
-			0, 1, 2, 2, 3, 0,
-			// Задняя грань (4,5,6, 4,6,7) – обход против часовой, если смотреть снаружи
-			4, 6, 5, 4, 7, 6,
-			// Верхняя грань (3,2,6, 3,6,7)
-			3, 2, 6, 3, 6, 7,
-			// Нижняя грань (0,4,5, 0,5,1)
-			0, 4, 5, 0, 5, 1,
-			// Левая грань (0,3,7, 0,7,4)
-			0, 3, 7, 0, 7, 4,
-			// Правая грань (1,5,6, 1,6,2)
-			1, 5, 6, 1, 6, 2
-		};
+		// Загружаем текстуру (путь укажи к своему PNG, например "assets/textures/apple.png")
+		m_Texture = std::make_unique<NK::Texture2D>("assets/textures/test.png");
 
-		// Создаём шейдер
+		// Шейдер для спрайта
 		m_Shader = std::make_unique<NK::Shader>(s_VertexShaderSrc, s_FragmentShaderSrc);
 
-		// Создаём VAO и привязываем буферы
-		m_VAO = std::make_shared<NK::VertexArray>();
-		auto vb = std::make_shared<NK::VertexBuffer>(vertices, sizeof(vertices));
-		auto ib = std::make_shared<NK::IndexBuffer>(indices, 36);
+		// Прямоугольник (квад) размером 1x1 (будет масштабироваться через матрицу камеры или Model)
+		float vertices[] = {
+			// позиция (x,y)    UV (u,v)
+			-0.5f, -0.5f,       0.0f, 0.0f,  // левый нижний
+			 0.5f, -0.5f,       1.0f, 0.0f,  // правый нижний
+			 0.5f,  0.5f,       1.0f, 1.0f,  // правый верхний
+			-0.5f,  0.5f,       0.0f, 1.0f   // левый верхний
+		};
+		// Индексы (без них можно glDrawArrays)
+		uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
 
-		m_VAO->AddVertexBuffer(vb);
-		m_VAO->SetIndexBuffer(ib);
+		// Создаём VAO и VBO
+		glGenVertexArrays(1, &m_QuadVAO);
+		glBindVertexArray(m_QuadVAO);
 
-		float aspect = (float)1280 / 720; // пока хардкод, можно брать из окна
-		m_Camera = std::make_unique<NK::Camera>(45.0f, aspect, 0.1f, 100.0f);
+		glGenBuffers(1, &m_QuadVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_QuadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        NK_INFO("Sandbox started! Press SPACE to change color, ESC to exit.");
-        NK::Renderer::SetClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+		// Настраиваем атрибуты
+		// Позиция (location = 0)
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		// UV (location = 1)
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+		// Индексный буфер (можно без него, но сделаем для единообразия)
+		uint32_t ibo;
+		glGenBuffers(1, &ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		// VAO запоминает индексный буфер
+		glBindVertexArray(0); // отключаем
+
+		// Камера ортографическая (для 2D)
+		// Но у нас пока нет ортокамеры, используем перспективу, но с подходящим размером.
+		// Позже в Части 12 сделаем OrthoCamera. Пока просто подвинем камеру назад и сделаем объект маленьким.
+		m_Camera = std::make_unique<NK::Camera>(45.0f, 1280.0f / 720.0f, 0.1f, 100.0f);
+		m_Camera->SetPosition(glm::vec3(0.0f, 0.0f, 5.0f));
+		m_Camera->SetTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+		m_Camera->Update();
     }
 
     void OnUpdate(float deltaTime) override {
+		NK::Renderer::BeginFrame();
 
-		// Обновим камеру (можно двигать через клавиши, но пока просто вращаем объект)
-	// Для вращения объекта нам нужна модельная матрица. Мы можем передать её в шейдер.
-	// У нас пока нет u_Model, поэтому добавим uniform u_Model и будем передавать полную MVP.
-	// Чтобы не усложнять, в этом примере просто будем вращать саму камеру вокруг начала координат.
-
-		static float angle = 0.0f;
-		angle += deltaTime * 0.5f; // вращаемся со скоростью 0.5 рад/с
-		float radius = 3.0f;
-		glm::vec3 pos = glm::vec3(glm::cos(angle) * radius, 1.0f, glm::sin(angle) * radius);
-		m_Camera->SetPosition(pos);
-		m_Camera->SetTarget(glm::vec3(0.0f, 0.0f, 0.0f));
-		m_Camera->Update();
-
-		// Используем шейдер и передаём матрицу
 		m_Shader->Bind();
+		m_Texture->Bind(0); // текстура на слоте 0
+		// Передаём матрицу камеры (пока без Model)
 		m_Shader->SetUniformMat4("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
+		// Устанавливаем uniform для текстуры (слот 0)
+		m_Shader->SetUniform1i("u_Texture", 0);
 
-		m_VAO->Bind();
-		glDrawElements(GL_TRIANGLES, m_VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		glBindVertexArray(m_QuadVAO);
+		// Рисуем с индексами или без
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // 6 индексов
+		// glDrawArrays(GL_TRIANGLES, 0, 4);
 
 		NK::Renderer::EndFrame();
     }
@@ -139,6 +134,9 @@ private:
 	std::shared_ptr<NK::VertexArray> m_VAO;
 	std::unique_ptr<NK::Camera> m_Camera;
 	float m_ColorR = 1.0f, m_ColorG = 1.0f, m_ColorB = 1.0f;
+	std::unique_ptr<NK::Texture2D> m_Texture;
+	uint32_t m_QuadVAO;    // VAO для прямоугольника
+	uint32_t m_QuadVBO;    // VBO для прямоугольника
 };
 
 NK::Application* NK::CreateApplication() {

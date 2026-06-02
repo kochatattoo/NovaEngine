@@ -20,6 +20,8 @@ namespace NK {
 
 		void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
 
+		void SetUniform1i(const std::string& name, int value);
+
 	private:
 		uint32_t m_RendererID;
 		// Кэш для uniform-локаций

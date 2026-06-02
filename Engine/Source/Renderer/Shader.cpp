@@ -57,6 +57,12 @@ namespace NK {
 			glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
+	void Shader::SetUniform1i(const std::string& name, int value) {
+		int location = GetUniformLocation(name);
+		if (location != -1)
+			glUniform1i(location, value);
+	}
+
 	int Shader::GetUniformLocation(const std::string& name) const {
 		// Если уже кэшировано, возвращаем
 		auto it = m_UniformLocationCache.find(name);

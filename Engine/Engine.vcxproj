@@ -162,7 +162,7 @@
     <ClInclude Include="Include\Renderer\VertexBuffer.h" />
     <ClInclude Include="Include\Window\Window.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Source\std\stb_image.h" />
+    <ClInclude Include="Source\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
@@ -183,7 +183,7 @@
     <ClCompile Include="Source\Renderer\Texture2D.cpp" />
     <ClCompile Include="Source\Renderer\VertexArray.cpp" />
     <ClCompile Include="Source\Renderer\VertexBuffer.cpp" />
-    <ClCompile Include="Source\std\stb_image.cpp" />
+    <ClCompile Include="Source\stb\stb_image.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

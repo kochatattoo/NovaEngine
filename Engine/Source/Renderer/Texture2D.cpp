@@ -1,6 +1,6 @@
 #include "Renderer/Texture2D.h"
 #include "Core/Log.h"
-#include <std/stb_image.h>
+#include <stb/stb_image.h>
 
 namespace NK {
 
