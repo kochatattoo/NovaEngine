@@ -3,6 +3,7 @@
 #include <memory>   // для std::unique_ptr (Scope)
 #include "Core/Log.h"
 #include "Core/Application.h"
+#include "Core/ResourceManager.h"
 
 namespace NK {
 
@@ -27,6 +28,7 @@ namespace NK {
         // Получить ссылку на окно (понадобится позже)
         class Window* GetWindow() { return m_Window.get(); }
         static Engine& Get() { return *s_Instance; }
+        ResourceManager& GetResourceManager() { return m_ResourceManager; }
 
     private:
         void Initialize();  // Инициализация подсистем
@@ -38,6 +40,7 @@ namespace NK {
         EngineConfig m_Config;
 
         static Engine* s_Instance;  // Синглтон
+        ResourceManager m_ResourceManager;
     };
 
 } // namespace NK

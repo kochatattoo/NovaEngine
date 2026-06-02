@@ -38,11 +38,10 @@ void main() {
 class SandboxApp : public NK::Application {
 public:
     void OnStart() override {
-		// Загружаем текстуру (путь укажи к своему PNG, например "assets/textures/apple.png")
-		m_Texture = std::make_unique<NK::Texture2D>("assets/textures/test.png");
-
-		// Шейдер для спрайта
-		m_Shader = std::make_unique<NK::Shader>(s_VertexShaderSrc, s_FragmentShaderSrc);
+		// Получаем шейдер через ресурс-менеджер
+		m_Shader = NK::Engine::Get().GetResourceManager().GetShader("SpriteShader", s_VertexShaderSrc, s_FragmentShaderSrc);
+		// Получаем текстуру
+		m_Texture = NK::Engine::Get().GetResourceManager().GetTexture("assets/textures/test.png");
 
 		// Прямоугольник (квад) размером 1x1 (будет масштабироваться через матрицу камеры или Model)
 		float vertices[] = {
@@ -130,11 +129,12 @@ public:
     }
 
 private:
-	std::unique_ptr<NK::Shader> m_Shader;
+	std::shared_ptr<NK::Shader> m_Shader;
+	std::shared_ptr<NK::Texture2D> m_Texture;
 	std::shared_ptr<NK::VertexArray> m_VAO;
 	std::unique_ptr<NK::Camera> m_Camera;
 	float m_ColorR = 1.0f, m_ColorG = 1.0f, m_ColorB = 1.0f;
-	std::unique_ptr<NK::Texture2D> m_Texture;
+
 	uint32_t m_QuadVAO;    // VAO для прямоугольника
 	uint32_t m_QuadVBO;    // VBO для прямоугольника
 };

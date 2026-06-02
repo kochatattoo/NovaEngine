@@ -147,6 +147,8 @@
     <ClInclude Include="Include\Core\Engine.h" />
     <ClInclude Include="Include\Core\EntryPoint.h" />
     <ClInclude Include="Include\Core\Log.h" />
+    <ClInclude Include="Include\Core\ResourceManager.h" />
+    <ClInclude Include="Include\Core\ResourcePool.h" />
     <ClInclude Include="Include\Core\Timer.h" />
     <ClInclude Include="Include\Event\Event.h" />
     <ClInclude Include="Include\glad\gl.h" />
@@ -173,6 +175,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Core\Log.cpp" />
+    <ClCompile Include="Source\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Renderer\Camera.cpp" />

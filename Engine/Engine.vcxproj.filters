@@ -120,6 +120,12 @@
     <ClInclude Include="Source\stb\stb_image.h">
       <Filter>Source\stb</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Core\ResourcePool.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\ResourceManager.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -166,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="Source\stb\stb_image.cpp">
       <Filter>Source\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\ResourceManager.cpp">
+      <Filter>Source\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
