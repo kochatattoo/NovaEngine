@@ -151,6 +151,14 @@ namespace NK {
 			glad_glUniform4f = (PFNGLUNIFORM4FPROC)GetAnyGLFuncAddress("glUniform4f");
             glad_glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)GetAnyGLFuncAddress("glUniformMatrix4fv");
 
+			// Текстурные функции
+			glad_glGenTextures = (PFNGLGENTEXTURESPROC)GetAnyGLFuncAddress("glGenTextures");
+			glad_glBindTexture = (PFNGLBINDTEXTUREPROC)GetAnyGLFuncAddress("glBindTexture");
+			glad_glTexImage2D = (PFNGLTEXIMAGE2DPROC)GetAnyGLFuncAddress("glTexImage2D");
+			glad_glTexParameteri = (PFNGLTEXPARAMETERIPROC)GetAnyGLFuncAddress("glTexParameteri");
+			glad_glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)GetAnyGLFuncAddress("glGenerateMipmap");
+			glad_glActiveTexture = (PFNGLACTIVETEXTUREPROC)GetAnyGLFuncAddress("glActiveTexture");
+
 			// Проверка ВСЕХ загруженных функций (добавь к уже существующим проверкам)
 			if (!glad_glCreateShader) { NK_CORE_ERROR("glCreateShader not loaded"); return; }
 			if (!glad_glShaderSource) { NK_CORE_ERROR("glShaderSource not loaded"); return; }
@@ -192,6 +200,12 @@ namespace NK {
 			}
 
             if (!glad_glUniformMatrix4fv) { NK_CORE_ERROR("glUniformMatrix4fv not loaded"); return; }
+
+            if (!glad_glGenTextures || !glad_glBindTexture || !glad_glTexImage2D ||
+                !glad_glTexParameteri || !glad_glGenerateMipmap || !glad_glActiveTexture) {
+                NK_CORE_ERROR("Texture functions not loaded");
+                return;
+            }
 
             // Настройка viewport
             RECT rect;
