@@ -39,7 +39,9 @@ class SandboxApp : public NK::Application {
 public:
     void OnStart() override {
 		// Загружаем и выполняем скрипт
-		NK::Engine::Get().GetLuaManager().RunScript("assets/scripts/game.lua");
+		auto& lua = NK::Engine::Get().GetLuaManager();
+		bool ok = lua.RunScript("assets/scripts/game.lua");
+		if (ok) lua.CallFunction("OnStart");
 
 		// Вызываем Lua-функцию OnStart
 		NK::Engine::Get().GetLuaManager().CallFunction("OnStart");

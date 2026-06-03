@@ -219,7 +219,7 @@ namespace NK {
 
             // Выводим версию OpenGL для подтверждения
             const char* version = (const char*)glGetString(GL_VERSION);
-            NK_CORE_INFO("OpenGL context created successfully. Version: {0}", version ? version : "unknown");
+            NK_CORE_INFO("OpenGL context created successfully. Version: %s", version ? version : "unknown");
         }
 
         void MakeCurrent() override {

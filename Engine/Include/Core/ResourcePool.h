@@ -14,11 +14,11 @@ namespace NK {
 		std::shared_ptr<T> Get(const std::string& key, Args&&... args) {
 			auto it = m_Resources.find(key);
 			if (it != m_Resources.end()) {
-				NK_CORE_TRACE("ResourcePool: returning cached '{0}'", key);
+				NK_CORE_TRACE("ResourcePool: returning cached '%s'", key);
 				return it->second;
 			}
 
-			NK_CORE_INFO("ResourcePool: loading '{0}'", key);
+			NK_CORE_INFO("ResourcePool: loading '%s'", key.c_str());
 			auto resource = std::make_shared<T>(std::forward<Args>(args)...);
 			m_Resources[key] = resource;
 			return resource;

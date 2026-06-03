@@ -83,7 +83,7 @@ namespace NK {
 
 		// Регистрируем функцию логирования
 		L.set_function("Log", [](const std::string& msg) {
-			NK_INFO("{0}", msg);
+			NK_INFO("%s", msg.c_str());
 			});
 
 		// Регистрируем опрос клавиш (через старый Input)

@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <sol/sol.hpp>
+#include "Core/Log.h"
 
 namespace NK {
 
@@ -21,7 +22,7 @@ namespace NK {
 		auto CallFunction(const std::string& funcName, Args&&... args) -> decltype(auto) {
 			sol::protected_function func = m_State[funcName];
 			if (!func.valid()) {
-				// NK_CORE_ERROR("Lua function '{0}' not found", funcName);
+				NK_CORE_ERROR("Lua function '%s' not found", funcName.c_str());
 				return decltype(func())();
 			}
 			return func(std::forward<Args>(args)...);
