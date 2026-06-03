@@ -49,7 +49,7 @@ namespace NK {
         m_GraphicsContext.reset(GraphicsContext::Create(m_Hwnd));
         m_GraphicsContext->Init(m_Hwnd);
 
-        NK_CORE_INFO("Window created: {0}x{1}", m_Data.Width, m_Data.Height);
+        NK_CORE_INFO("Window created:  %dx%d", m_Data.Width, m_Data.Height);
     }
 
     void Window::Shutdown() {
@@ -110,7 +110,7 @@ namespace NK {
                     uint32_t height = HIWORD(lParam);
                     window->m_Data.Width = width;
                     window->m_Data.Height = height;
-                    NK_CORE_TRACE("Window resized to {0}x{1}", width, height);
+                    NK_CORE_TRACE("Window resized to  %dx%d", width, height);
                     return 0;
                 }
 
