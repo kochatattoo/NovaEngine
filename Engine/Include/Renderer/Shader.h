@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <glad/gl.h>    // типы OpenGL
- #include <glm/glm.hpp>
+#include <glm/glm.hpp>
 #include <unordered_map>
 
 namespace NK {

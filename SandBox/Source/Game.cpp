@@ -38,6 +38,12 @@ void main() {
 class SandboxApp : public NK::Application {
 public:
     void OnStart() override {
+		// Загружаем и выполняем скрипт
+		NK::Engine::Get().GetLuaManager().RunScript("assets/scripts/game.lua");
+
+		// Вызываем Lua-функцию OnStart
+		NK::Engine::Get().GetLuaManager().CallFunction("OnStart");
+
 		// Получаем шейдер через ресурс-менеджер
 		m_Shader = NK::Engine::Get().GetResourceManager().GetShader("SpriteShader", s_VertexShaderSrc, s_FragmentShaderSrc);
 		// Получаем текстуру
@@ -88,6 +94,8 @@ public:
     }
 
     void OnUpdate(float deltaTime) override {
+		NK::Engine::Get().GetLuaManager().CallFunction("OnUpdate", deltaTime);
+
 		NK::Renderer::BeginFrame();
 
 		m_Shader->Bind();

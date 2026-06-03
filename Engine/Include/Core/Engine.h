@@ -4,6 +4,7 @@
 #include "Core/Log.h"
 #include "Core/Application.h"
 #include "Core/ResourceManager.h"
+#include "Core/LuaManager.h"
 
 namespace NK {
 
@@ -29,10 +30,12 @@ namespace NK {
         class Window* GetWindow() { return m_Window.get(); }
         static Engine& Get() { return *s_Instance; }
         ResourceManager& GetResourceManager() { return m_ResourceManager; }
+        LuaManager& GetLuaManager() { return m_LuaManager; }
 
     private:
         void Initialize();  // »нициализаци€ подсистем
         void MainLoop();    // √лавный цикл (будет вынесен из Run дл€ гибкости)
+        void SetupLuaBindings();
 
         bool m_Running = false;
         std::unique_ptr<class Window> m_Window; // ”мный указатель, как в C# объекты управл€ютс€ автоматически
@@ -41,6 +44,7 @@ namespace NK {
 
         static Engine* s_Instance;  // —инглтон
         ResourceManager m_ResourceManager;
+        LuaManager m_LuaManager;
     };
 
 } // namespace NK

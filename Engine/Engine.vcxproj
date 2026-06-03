@@ -81,7 +81,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -99,7 +100,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -115,7 +117,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -133,7 +136,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -142,11 +146,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\lua\src\lapi.h" />
+    <ClInclude Include="..\Libraries\lua\src\lauxlib.h" />
+    <ClInclude Include="..\Libraries\lua\src\lcode.h" />
+    <ClInclude Include="..\Libraries\lua\src\lctype.h" />
+    <ClInclude Include="..\Libraries\lua\src\ldebug.h" />
+    <ClInclude Include="..\Libraries\lua\src\ldo.h" />
+    <ClInclude Include="..\Libraries\lua\src\lfunc.h" />
+    <ClInclude Include="..\Libraries\lua\src\lgc.h" />
+    <ClInclude Include="..\Libraries\lua\src\ljumptab.h" />
+    <ClInclude Include="..\Libraries\lua\src\llex.h" />
+    <ClInclude Include="..\Libraries\lua\src\llimits.h" />
+    <ClInclude Include="..\Libraries\lua\src\lmem.h" />
+    <ClInclude Include="..\Libraries\lua\src\lobject.h" />
+    <ClInclude Include="..\Libraries\lua\src\lopcodes.h" />
+    <ClInclude Include="..\Libraries\lua\src\lopnames.h" />
+    <ClInclude Include="..\Libraries\lua\src\lparser.h" />
+    <ClInclude Include="..\Libraries\lua\src\lprefix.h" />
+    <ClInclude Include="..\Libraries\lua\src\lstate.h" />
+    <ClInclude Include="..\Libraries\lua\src\lstring.h" />
+    <ClInclude Include="..\Libraries\lua\src\ltable.h" />
+    <ClInclude Include="..\Libraries\lua\src\ltm.h" />
+    <ClInclude Include="..\Libraries\lua\src\lua.h" />
+    <ClInclude Include="..\Libraries\lua\src\lua.hpp" />
+    <ClInclude Include="..\Libraries\lua\src\luaconf.h" />
+    <ClInclude Include="..\Libraries\lua\src\lualib.h" />
+    <ClInclude Include="..\Libraries\lua\src\lundump.h" />
+    <ClInclude Include="..\Libraries\lua\src\lvm.h" />
+    <ClInclude Include="..\Libraries\lua\src\lzio.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Include\Core\Application.h" />
     <ClInclude Include="Include\Core\Engine.h" />
     <ClInclude Include="Include\Core\EntryPoint.h" />
     <ClInclude Include="Include\Core\Log.h" />
+    <ClInclude Include="Include\Core\LuaManager.h" />
     <ClInclude Include="Include\Core\ResourceManager.h" />
     <ClInclude Include="Include\Core\ResourcePool.h" />
     <ClInclude Include="Include\Core\Timer.h" />
@@ -167,6 +200,38 @@
     <ClInclude Include="Source\stb\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Libraries\lua\src\lapi.c" />
+    <ClCompile Include="..\Libraries\lua\src\lauxlib.c" />
+    <ClCompile Include="..\Libraries\lua\src\lbaselib.c" />
+    <ClCompile Include="..\Libraries\lua\src\lcode.c" />
+    <ClCompile Include="..\Libraries\lua\src\lcorolib.c" />
+    <ClCompile Include="..\Libraries\lua\src\lctype.c" />
+    <ClCompile Include="..\Libraries\lua\src\ldblib.c" />
+    <ClCompile Include="..\Libraries\lua\src\ldebug.c" />
+    <ClCompile Include="..\Libraries\lua\src\ldo.c" />
+    <ClCompile Include="..\Libraries\lua\src\ldump.c" />
+    <ClCompile Include="..\Libraries\lua\src\lfunc.c" />
+    <ClCompile Include="..\Libraries\lua\src\lgc.c" />
+    <ClCompile Include="..\Libraries\lua\src\linit.c" />
+    <ClCompile Include="..\Libraries\lua\src\liolib.c" />
+    <ClCompile Include="..\Libraries\lua\src\llex.c" />
+    <ClCompile Include="..\Libraries\lua\src\lmathlib.c" />
+    <ClCompile Include="..\Libraries\lua\src\lmem.c" />
+    <ClCompile Include="..\Libraries\lua\src\loadlib.c" />
+    <ClCompile Include="..\Libraries\lua\src\lobject.c" />
+    <ClCompile Include="..\Libraries\lua\src\lopcodes.c" />
+    <ClCompile Include="..\Libraries\lua\src\loslib.c" />
+    <ClCompile Include="..\Libraries\lua\src\lparser.c" />
+    <ClCompile Include="..\Libraries\lua\src\lstate.c" />
+    <ClCompile Include="..\Libraries\lua\src\lstring.c" />
+    <ClCompile Include="..\Libraries\lua\src\lstrlib.c" />
+    <ClCompile Include="..\Libraries\lua\src\ltable.c" />
+    <ClCompile Include="..\Libraries\lua\src\ltablib.c" />
+    <ClCompile Include="..\Libraries\lua\src\ltm.c" />
+    <ClCompile Include="..\Libraries\lua\src\lundump.c" />
+    <ClCompile Include="..\Libraries\lua\src\lutf8lib.c" />
+    <ClCompile Include="..\Libraries\lua\src\lvm.c" />
+    <ClCompile Include="..\Libraries\lua\src\lzio.c" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -175,6 +240,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Core\Log.cpp" />
+    <ClCompile Include="Source\Core\LuaManager.cpp" />
     <ClCompile Include="Source\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
@@ -188,6 +254,9 @@
     <ClCompile Include="Source\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Source\stb\stb_image.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Libraries\lua\src\Makefile" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

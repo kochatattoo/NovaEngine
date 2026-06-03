@@ -3,6 +3,10 @@
 #include "Core/Timer.h"
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
+#include "Renderer/GraphicsContext.h"
+#include "Input/Input.h"          // для опроса клавиш в Lua
+#include "Core/LuaManager.h"
+#include <sol/sol.hpp>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
@@ -25,6 +29,10 @@ namespace NK {
 			});
 		// Инициализируем рендерер (после того, как контекст уже создан внутри Window)
 		Renderer::Init();
+
+		// Настройка биндингов Lua (должна быть после создания LuaManager, который уже создан в конструкторе Engine)
+		SetupLuaBindings();
+
 		NK_CORE_INFO("Engine initialized.");
 	}
 
@@ -49,7 +57,6 @@ namespace NK {
 			{
 				auto event = m_Window->PollEvent();
 				while (event) {
-					NK_TRACE("Event: {0}", event->GetName()); // отладочный вывод (можно убрать)
 					m_App->OnEvent(*event);
 					event = m_Window->PollEvent();
 				}
@@ -69,6 +76,32 @@ namespace NK {
 
 		m_App->OnShutdown();
 		Shutdown();
+	}
+
+	void Engine::SetupLuaBindings() {
+		sol::state& L = m_LuaManager.GetState();
+
+		// Регистрируем функцию логирования
+		L.set_function("Log", [](const std::string& msg) {
+			NK_INFO("{0}", msg);
+			});
+
+		// Регистрируем опрос клавиш (через старый Input)
+		L.set_function("IsKeyDown", [](int key) -> bool {
+			return Input::IsKeyDown(key);
+			});
+
+		// Установка цвета очистки фона
+		L.set_function("SetClearColor", [](float r, float g, float b, float a) {
+			Renderer::SetClearColor(r, g, b, a);
+			});
+
+		// Регистрируем получение Engine
+		L.set_function("GetEngine", [this]() -> Engine& {
+			return *this;
+			});
+
+		// Позже можно экспортировать классы Renderer, Application и т.д.
 	}
 
 	void Engine::Shutdown() {
