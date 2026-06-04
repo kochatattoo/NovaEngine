@@ -32,6 +32,7 @@ namespace NK {
         uint32_t GetHeight() const { return m_Data.Height; }
         GraphicsContext* GetGraphicsContext() { return m_GraphicsContext.get(); }
         std::unique_ptr<Event> PollEvent();
+        std::function<void(uint32_t, uint32_t)> ResizeCallback;
 
     private:
         void Init();    // Регистрация класса окна и создание

@@ -30,6 +30,12 @@ namespace NK {
 		m_Window = std::make_unique<Window>(WindowProperties{
 			m_Config.Title, m_Config.Width, m_Config.Height
 			});
+
+		m_Window->ResizeCallback = [this](uint32_t w, uint32_t h) {
+			m_Scene.GetCamera().OnWindowResized(w, h);
+			// Также обновим viewport OpenGL
+			glViewport(0, 0, w, h);
+			};
 		// Инициализируем рендерер (после того, как контекст уже создан внутри Window)
 		Renderer::Init();
 

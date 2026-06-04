@@ -18,6 +18,7 @@ namespace NK {
 		void SetShader(std::shared_ptr<Shader> shader);
 		// –исует спрайт, использу€ матрицу камеры из Engine
 		void Render(); 
+		void Render(const glm::mat4& viewProjection);
 
 		void OnStart() override;
 		void OnUpdate(float deltaTime) override; // тут будет отрисовка

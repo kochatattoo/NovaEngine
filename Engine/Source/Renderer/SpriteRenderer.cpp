@@ -83,6 +83,26 @@ namespace NK {
 		if (err) NK_CORE_ERROR("OpenGL error: %d", err);
 	}
 
+	void SpriteRenderer::Render(const glm::mat4& viewProjection) {
+		if (!m_Texture || !m_Shader) return;
+		auto* transform = m_Owner->GetComponent<Transform>();
+		if (!transform) return;
+
+		m_Shader->Bind();
+		m_Texture->Bind(0);
+		m_Shader->SetUniform1i("u_Texture", 0);
+		m_Shader->SetUniformMat4("u_ViewProjection", viewProjection);
+		m_Shader->SetUniformMat4("u_Model", transform->GetModelMatrix());
+
+		InitQuad();
+		glBindVertexArray(s_QuadVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		m_Shader->Unbind();
+	}
+
 	void SpriteRenderer::OnStart() {
 		InitQuad();
 		// Если не установлен шейдер, попробуем взять дефолтный из ресурсов

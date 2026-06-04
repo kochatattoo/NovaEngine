@@ -195,6 +195,7 @@
     <ClInclude Include="Include\Renderer\Camera.h" />
     <ClInclude Include="Include\Renderer\GraphicsContext.h" />
     <ClInclude Include="Include\Renderer\IndexBuffer.h" />
+    <ClInclude Include="Include\Renderer\OrthographicCamera.h" />
     <ClInclude Include="Include\Renderer\Renderer.h" />
     <ClInclude Include="Include\Renderer\Shader.h" />
     <ClInclude Include="Include\Renderer\SpriteRenderer.h" />
@@ -257,6 +258,7 @@
     <ClCompile Include="Source\Renderer\Camera.cpp" />
     <ClCompile Include="Source\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Source\Renderer\IndexBuffer.cpp" />
+    <ClCompile Include="Source\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Renderer\Shader.cpp" />
     <ClCompile Include="Source\Renderer\SpriteRenderer.cpp" />

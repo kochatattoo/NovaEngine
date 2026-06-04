@@ -1,6 +1,8 @@
 #include "Core/Scene.h"
 #include <Core/Log.h>
 #include <Renderer/SpriteRenderer.h>
+#include <Core/Engine.h>
+#include <Window/Window.h>
 
 namespace NK {
 
@@ -12,14 +14,20 @@ namespace NK {
 	}
 
 	void Scene::OnRender() {
+		const glm::mat4& viewProj = m_Camera.GetViewProjectionMatrix();
 		for (auto& obj : m_Objects) {
 			auto* sr = obj->GetComponent<SpriteRenderer>();
-			if (sr) sr->Render();
+			if (sr) {
+				sr->Render(viewProj); // передаём матрицу
+			}
 		}
 	}
 
 	void Scene::OnStart() {
 		NK_CORE_INFO("Scene OnStart");
+		auto* window = Engine::Get().GetWindow();
+		m_Camera.OnWindowResized(window->GetWidth(), window->GetHeight());
+
 		for (auto& obj : m_Objects) {
 			obj->OnStart();
 		}

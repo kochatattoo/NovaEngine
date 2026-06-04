@@ -234,6 +234,9 @@
     <ClInclude Include="Include\Core\Scene.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Renderer\OrthographicCamera.h">
+      <Filter>Include\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -397,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="Source\Core\Scene.cpp">
       <Filter>Source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\OrthographicCamera.cpp">
+      <Filter>Source\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
