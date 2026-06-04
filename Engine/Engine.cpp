@@ -1,6 +1,9 @@
 ﻿#include "Core/Engine.h"
 #include "Core/Application.h"
 #include "Core/Timer.h"
+#include "Core/Transform.h"
+#include "Core/ScriptComponent.h"
+#include "Renderer/SpriteRenderer.h"
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/GraphicsContext.h"
@@ -39,6 +42,7 @@ namespace NK {
 	void Engine::Run(Application* app) {
 		m_App = app;
 		Initialize();
+		m_Scene.OnStart();
 		m_App->OnStart();
 		m_Running = true;
 
@@ -67,6 +71,7 @@ namespace NK {
 				ctx->MakeCurrent();
 			Renderer::BeginFrame();                 // очистка
 
+			m_Scene.OnUpdate(dt);
 			m_App->OnUpdate(dt);                    // игровая логика
 
 			Renderer::EndFrame();
@@ -80,6 +85,56 @@ namespace NK {
 
 	void Engine::SetupLuaBindings() {
 		sol::state& L = m_LuaManager.GetState();
+
+		// Регистрируем Transform
+		L.new_usertype<Transform>("Transform",
+			"SetPosition", sol::overload(
+				[](Transform& t, float x, float y, float z) {
+					t.SetPosition(glm::vec3(x, y, z));
+				},
+				[](Transform& t, const glm::vec3& pos) {
+					t.SetPosition(pos);
+				}
+			),
+			"GetPosition", [](Transform& t) -> std::tuple<float, float, float> {
+				auto& p = t.GetPosition();
+				return { p.x, p.y, p.z };
+			},
+			"SetRotation", &Transform::SetRotation,
+			"GetRotationDegrees", &Transform::GetRotationDegrees,
+			"SetScale", [](Transform& t, float x, float y) { t.SetScale(glm::vec2(x, y)); },
+			"GetScale", [](Transform& t) -> std::tuple<float, float> {
+				auto& s = t.GetScale();
+				return { s.x, s.y };
+			},
+			sol::base_classes, sol::bases<Component>()
+		);
+
+		// SpriteRenderer
+		L.new_usertype<SpriteRenderer>("SpriteRenderer",
+			"SetTexture", &SpriteRenderer::SetTexture,
+			"SetShader", &SpriteRenderer::SetShader,
+			sol::base_classes, sol::bases<Component>()
+		);
+
+		// GameObject
+		L.new_usertype<GameObject>("GameObject",
+			"AddComponent_Transform", [](GameObject& obj) { return obj.AddComponent<Transform>(); },
+			"AddComponent_SpriteRenderer", [](GameObject& obj) { return obj.AddComponent<SpriteRenderer>(); },
+			"AddComponent_Script", [](GameObject& obj, const std::string& path) { return obj.AddComponent<ScriptComponent>(path); },
+			"GetTransform", [](GameObject& obj) { return obj.GetComponent<Transform>(); },
+			"GetSpriteRenderer", [](GameObject& obj) { return obj.GetComponent<SpriteRenderer>(); },
+			"GetName", &GameObject::GetName,
+			"OnStart", &GameObject::OnStart,
+			"OnUpdate", &GameObject::OnUpdate
+		);
+
+		// Scene
+		L.new_usertype<Scene>("Scene",
+			"CreateGameObject", &Scene::CreateGameObject,
+			"OnStart", &Scene::OnStart,
+			"OnUpdate", &Scene::OnUpdate
+		);
 
 		// Регистрируем функцию логирования
 		L.set_function("Log", [](const std::string& msg) {
@@ -101,7 +156,16 @@ namespace NK {
 			return *this;
 			});
 
-		// Позже можно экспортировать классы Renderer, Application и т.д.
+		// Предоставим доступ к сцене из Lua
+		L.set_function("GetScene", [this]() -> Scene& { return m_Scene; });
+
+		L.set_function("GetTexture", [](const std::string& path) {
+			return Engine::Get().GetResourceManager().GetTexture(path);
+			});
+
+		L.set_function("GetShader", [](const std::string& name, const std::string& vSrc, const std::string& fSrc) {
+			return Engine::Get().GetResourceManager().GetShader(name, vSrc, fSrc);
+			});
 	}
 
 	void Engine::Shutdown() {

@@ -5,6 +5,7 @@
 #include "Core/Application.h"
 #include "Core/ResourceManager.h"
 #include "Core/LuaManager.h"
+#include "Core/Scene.h"
 
 namespace NK {
 
@@ -31,6 +32,7 @@ namespace NK {
         static Engine& Get() { return *s_Instance; }
         ResourceManager& GetResourceManager() { return m_ResourceManager; }
         LuaManager& GetLuaManager() { return m_LuaManager; }
+        Scene& GetScene() { return m_Scene; }
 
     private:
         void Initialize();  // Инициализация подсистем
@@ -45,6 +47,7 @@ namespace NK {
         static Engine* s_Instance;  // Синглтон
         ResourceManager m_ResourceManager;
         LuaManager m_LuaManager;
+        Scene m_Scene;
     };
 
 } // namespace NK

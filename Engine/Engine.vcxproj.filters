@@ -216,6 +216,24 @@
     <ClInclude Include="Include\Core\LuaManager.h">
       <Filter>Include\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Core\Component.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Transform.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Renderer\SpriteRenderer.h">
+      <Filter>Include\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\GameObject.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\ScriptComponent.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Scene.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -363,6 +381,21 @@
       <Filter>Source\Lua</Filter>
     </ClCompile>
     <ClCompile Include="Source\Core\LuaManager.cpp">
+      <Filter>Source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Transform.cpp">
+      <Filter>Source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\SpriteRenderer.cpp">
+      <Filter>Source\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\ScriptComponent.cpp">
+      <Filter>Source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\GameObject.cpp">
+      <Filter>Source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Scene.cpp">
       <Filter>Source\Core</Filter>
     </ClCompile>
   </ItemGroup>
