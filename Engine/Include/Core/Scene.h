@@ -3,6 +3,7 @@
 #include <memory>
 #include "Core/GameObject.h"
 #include <Renderer/OrthographicCamera.h>
+#include <UI/Anchor.h>
 
 namespace NK {
 
@@ -22,6 +23,9 @@ namespace NK {
 		OrthographicCamera& GetGameCamera() { return m_GameCamera; }
 		OrthographicCamera& GetUICamera() { return m_UICamera; }
 
+		void RegisterAnchor(Anchor* anchor);
+		void RecalculateAnchors(uint32_t width, uint32_t height);
+
 		const std::vector<std::unique_ptr<GameObject>>& GetObjects() const { return m_Objects; }
 		const std::vector<std::unique_ptr<GameObject>>& GetUIObjects() const { return m_UIObjects; }
 
@@ -33,6 +37,8 @@ namespace NK {
 		// UI
 		std::vector<std::unique_ptr<GameObject>> m_UIObjects;
 		OrthographicCamera m_UICamera{ 0.0f, 1280.0f, 720.0f, 0.0f }; // top = 720, bottom = 0 → Y вниз
+
+		std::vector<Anchor*> m_Anchors;
 
 		bool m_Started = false;
 	};

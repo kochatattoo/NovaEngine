@@ -32,6 +32,16 @@ namespace NK {
 		return raw;
 	}
 
+	void Scene::RegisterAnchor(Anchor* anchor) {
+		m_Anchors.push_back(anchor);
+	}
+
+	void Scene::RecalculateAnchors(uint32_t width, uint32_t height) {
+		for (auto* anchor : m_Anchors) {
+			anchor->UpdatePosition(width, height);
+		}
+	}
+
 	void Scene::AddUIObject(GameObject* obj) {
 		// Если объект уже принадлежит другому списку, нужно быть осторожным.
 		// Пока предполагаем, что obj был создан через CreateGameObject и ещё не добавлен в UI.
@@ -53,12 +63,24 @@ namespace NK {
 
 		// Рендерим UI
 		const glm::mat4& uiViewProj = m_UICamera.GetViewProjectionMatrix();
+
+		// Сортируем UI-объекты по ZOrder (меньшие числа рисуются раньше, большие — поверх)
+		std::sort(m_UIObjects.begin(), m_UIObjects.end(),
+			[](const std::unique_ptr<GameObject>& a, const std::unique_ptr<GameObject>& b) {
+				return a->GetZOrder() < b->GetZOrder();
+			});
+
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_CULL_FACE);
 
 		for (auto& obj : m_UIObjects) {
+			auto* sr = obj->GetComponent<SpriteRenderer>();
+			if (sr) {
+				// NK_CORE_INFO("Rendering SpriteRenderer (UI)");
+				sr->Render(uiViewProj);
+			}
 			auto* tr = obj->GetComponent<TextRenderer>();
 			if (tr) {
 				// NK_CORE_INFO("Rendering TextRenderer");
@@ -67,11 +89,6 @@ namespace NK {
 					uiViewProj[0][0], uiViewProj[1][1], uiViewProj[3][0], uiViewProj[3][1]);*/
 
 				tr->Render(uiViewProj);
-			}
-			auto* sr = obj->GetComponent<SpriteRenderer>();
-			if (sr) {
-				// NK_CORE_INFO("Rendering SpriteRenderer (UI)");
-				sr->Render(uiViewProj);
 			}
 		}
 		glEnable(GL_CULL_FACE);

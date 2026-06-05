@@ -18,6 +18,7 @@ namespace NK {
 		void SetShader(std::shared_ptr<Shader> shader);
 		// Рисует спрайт, используя матрицу камеры из Engine
 		void Render(const glm::mat4& viewProjection);
+		void SetAlignment(float hAlign, float vAlign) { m_HAlign = hAlign; m_VAlign = vAlign; }
 
 		void SetCustomSize(const glm::vec2& size) { m_CustomSize = size; }
 		glm::vec2 GetCustomSize() const { return m_CustomSize; }
@@ -33,7 +34,8 @@ namespace NK {
 	private:
 		std::shared_ptr<Texture2D> m_Texture;
 		std::shared_ptr<Shader> m_Shader;
-		// VAO и VBO для квада (можно сделать статическими общими для всех спрайтов)
+		float m_HAlign = 0.0f;
+		float m_VAlign = 0.0f;
 		static uint32_t s_QuadVAO;
 		static uint32_t s_QuadVBO;
 		static bool s_Initialized;

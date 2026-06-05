@@ -13,6 +13,7 @@
 #include <sol/sol.hpp>
 #include <Renderer/TextRenderer.h>
 #include <UI/Button.h>
+#include <UI/Anchor.h>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
@@ -40,6 +41,7 @@ namespace NK {
 			m_Scene.GetUICamera().SetProjection(0.0f, (float)w, (float)h, 0.0f);
 			// Также обновим viewport OpenGL
 			glViewport(0, 0, w, h);
+			m_Scene.RecalculateAnchors(w, h);
 			};
 		// Инициализируем рендерер (после того, как контекст уже создан внутри Window)
 		Renderer::Init();
@@ -143,6 +145,7 @@ namespace NK {
 		L.new_usertype<SpriteRenderer>("SpriteRenderer",
 			"SetTexture", &SpriteRenderer::SetTexture,
 			"SetShader", &SpriteRenderer::SetShader,
+			"SetAlignment", [](SpriteRenderer& sr, double h, double v) { sr.SetAlignment((float)h, (float)v); },
 			"SetIsUI", &SpriteRenderer::SetIsUI,
 			sol::base_classes, sol::bases<Component>()
 		);
@@ -158,10 +161,13 @@ namespace NK {
 			"AddComponent_TextRenderer", [](GameObject& obj) { return obj.AddComponent<TextRenderer>(); },
 			"AddComponent_Button", [](GameObject& obj) { return obj.AddComponent<Button>(); },
 			"AddComponent_Script", [](GameObject& obj, const std::string& path) { return obj.AddComponent<ScriptComponent>(path); },
+			"AddComponent_Anchor", [](GameObject& obj) { return obj.AddComponent<Anchor>(); },
 			"GetTransform", [](GameObject& obj) { return obj.GetComponent<Transform>(); },
 			"GetSpriteRenderer", [](GameObject& obj) { return obj.GetComponent<SpriteRenderer>(); },
 			"GetTextRenderer", [](GameObject& obj) { return obj.GetComponent<TextRenderer>(); },
 			"GetButton", [](GameObject& obj) { return obj.GetComponent<Button>(); },
+			"SetZOrder", & GameObject::SetZOrder,
+			"GetZOrder", & GameObject::GetZOrder,
 			"GetName", &GameObject::GetName,
 			"OnStart", &GameObject::OnStart,
 			"OnUpdate", &GameObject::OnUpdate
@@ -186,6 +192,7 @@ namespace NK {
 			"SetFont", &TextRenderer::SetFont,
 			"SetText", &TextRenderer::SetText,
 			"SetFontSize", [](TextRenderer& tr, double size) { tr.SetFontSize((float)size); },
+			"SetAlignment", [](TextRenderer& tr, double h, double v) { tr.SetAlignment((float)h, (float)v); },
 			"SetColor", [](TextRenderer& tr, int r, int g, int b, int a) {
 				tr.SetColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
 			},
@@ -195,9 +202,23 @@ namespace NK {
 		// Button
 		L.new_usertype<Button>("Button",
 			"SetCallback", &Button::SetCallback,
+			"SetOnClick", &Button::SetOnClick,
+			"SetOnPointerDown", &Button::SetOnPointerDown,
+			"SetOnPointerUp", &Button::SetOnPointerDown,
+			"SetOnPointerExit", &Button::SetOnPointerExit,
+			"SetOnPointerUp", &Button::SetOnPointerUp,
 			"SetSize", [](Button& btn, double x, double y) {
-				btn.SetSize((float)x, (float)y); 
+				btn.SetSize((float)x, (float)y);
 			},
+			sol::base_classes, sol::bases<Component>()
+		);
+
+		// Anchor
+		L.new_usertype<Anchor>("Anchor",
+			"SetPreset", [](Anchor& a, int preset) { a.SetPreset(static_cast<AnchorPreset>(preset)); },
+			"SetScreenAnchor", [](Anchor& a, double sx, double sy) { a.SetScreenAnchor((float)sx, (float)sy); },
+			"SetObjectAnchor", [](Anchor& a, double ox, double oy) { a.SetObjectAnchor((float)ox, (float)oy); },
+			"SetSize", [](Anchor& a, double w, double h) { a.SetSize(glm::vec2((float)w, (float)h)); },
 			sol::base_classes, sol::bases<Component>()
 		);
 

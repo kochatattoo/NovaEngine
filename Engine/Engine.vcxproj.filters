@@ -255,6 +255,9 @@
     <ClInclude Include="Include\UI\Button.h">
       <Filter>Include\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\UI\Anchor.h">
+      <Filter>Include\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -432,6 +435,9 @@
       <Filter>Source\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\UI\Button.cpp">
+      <Filter>Source\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI\Anchor.cpp">
       <Filter>Source\UI</Filter>
     </ClCompile>
   </ItemGroup>

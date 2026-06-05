@@ -40,10 +40,14 @@ namespace NK {
 
 		bool IsStarted() const { return m_Started; }
 
+		void SetZOrder(int z) { m_ZOrder = z; }
+		int GetZOrder() const { return m_ZOrder; }
+
 	private:
 		std::string m_Name;
 		std::vector<std::unique_ptr<Component>> m_Components;
-		bool m_Started = false;   // <-- новое
+		bool m_Started = false;
+		int m_ZOrder = 0;
 	};
 
 } // namespace NK
