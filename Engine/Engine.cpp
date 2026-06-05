@@ -165,6 +165,8 @@ namespace NK {
 			"GetSpriteRenderer", [](GameObject& obj) { return obj.GetComponent<SpriteRenderer>(); },
 			"GetTextRenderer", [](GameObject& obj) { return obj.GetComponent<TextRenderer>(); },
 			"GetButton", [](GameObject& obj) { return obj.GetComponent<Button>(); },
+			"SetZOrder", & GameObject::SetZOrder,
+			"GetZOrder", & GameObject::GetZOrder,
 			"GetName", &GameObject::GetName,
 			"OnStart", &GameObject::OnStart,
 			"OnUpdate", &GameObject::OnUpdate

@@ -63,6 +63,13 @@ namespace NK {
 
 		// –ендерим UI
 		const glm::mat4& uiViewProj = m_UICamera.GetViewProjectionMatrix();
+
+		// —ортируем UI-объекты по ZOrder (меньшие числа рисуютс€ раньше, большие Ч поверх)
+		std::sort(m_UIObjects.begin(), m_UIObjects.end(),
+			[](const std::unique_ptr<GameObject>& a, const std::unique_ptr<GameObject>& b) {
+				return a->GetZOrder() < b->GetZOrder();
+			});
+
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
