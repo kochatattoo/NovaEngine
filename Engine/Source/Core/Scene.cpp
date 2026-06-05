@@ -32,6 +32,16 @@ namespace NK {
 		return raw;
 	}
 
+	void Scene::RegisterAnchor(Anchor* anchor) {
+		m_Anchors.push_back(anchor);
+	}
+
+	void Scene::RecalculateAnchors(uint32_t width, uint32_t height) {
+		for (auto* anchor : m_Anchors) {
+			anchor->UpdatePosition(width, height);
+		}
+	}
+
 	void Scene::AddUIObject(GameObject* obj) {
 		// Если объект уже принадлежит другому списку, нужно быть осторожным.
 		// Пока предполагаем, что obj был создан через CreateGameObject и ещё не добавлен в UI.

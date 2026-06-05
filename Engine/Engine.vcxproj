@@ -208,6 +208,7 @@
     <ClInclude Include="Include\Renderer\Texture2D.h" />
     <ClInclude Include="Include\Renderer\VertexArray.h" />
     <ClInclude Include="Include\Renderer\VertexBuffer.h" />
+    <ClInclude Include="Include\UI\Anchor.h" />
     <ClInclude Include="Include\UI\Button.h" />
     <ClInclude Include="Include\Window\Window.h" />
     <ClInclude Include="pch.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="Source\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Source\stb\stb_image.cpp" />
     <ClCompile Include="Source\stb\stb_truetype.cpp" />
+    <ClCompile Include="Source\UI\Anchor.cpp" />
     <ClCompile Include="Source\UI\Button.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
   </ItemGroup>

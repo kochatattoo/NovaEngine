@@ -13,6 +13,7 @@
 #include <sol/sol.hpp>
 #include <Renderer/TextRenderer.h>
 #include <UI/Button.h>
+#include <UI/Anchor.h>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
@@ -40,6 +41,7 @@ namespace NK {
 			m_Scene.GetUICamera().SetProjection(0.0f, (float)w, (float)h, 0.0f);
 			// Также обновим viewport OpenGL
 			glViewport(0, 0, w, h);
+			m_Scene.RecalculateAnchors(w, h);
 			};
 		// Инициализируем рендерер (после того, как контекст уже создан внутри Window)
 		Renderer::Init();
@@ -158,6 +160,7 @@ namespace NK {
 			"AddComponent_TextRenderer", [](GameObject& obj) { return obj.AddComponent<TextRenderer>(); },
 			"AddComponent_Button", [](GameObject& obj) { return obj.AddComponent<Button>(); },
 			"AddComponent_Script", [](GameObject& obj, const std::string& path) { return obj.AddComponent<ScriptComponent>(path); },
+			"AddComponent_Anchor", [](GameObject& obj) { return obj.AddComponent<Anchor>(); },
 			"GetTransform", [](GameObject& obj) { return obj.GetComponent<Transform>(); },
 			"GetSpriteRenderer", [](GameObject& obj) { return obj.GetComponent<SpriteRenderer>(); },
 			"GetTextRenderer", [](GameObject& obj) { return obj.GetComponent<TextRenderer>(); },
@@ -196,8 +199,15 @@ namespace NK {
 		L.new_usertype<Button>("Button",
 			"SetCallback", &Button::SetCallback,
 			"SetSize", [](Button& btn, double x, double y) {
-				btn.SetSize((float)x, (float)y); 
+				btn.SetSize((float)x, (float)y);
 			},
+			sol::base_classes, sol::bases<Component>()
+		);
+
+		// Anchor
+		L.new_usertype<Anchor>("Anchor",
+			"SetPreset", [](Anchor& a, int preset) { a.SetPreset(static_cast<AnchorPreset>(preset)); },
+			"SetSize", [](Anchor& a, double w, double h) { a.SetSize(glm::vec2((float)w, (float)h)); },
 			sol::base_classes, sol::bases<Component>()
 		);
 
