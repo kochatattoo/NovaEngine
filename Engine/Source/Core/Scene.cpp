@@ -4,6 +4,7 @@
 #include "Renderer/TextRenderer.h"
 #include <Core/Engine.h>
 #include <Window/Window.h>
+#include <UI/Button.h>
 
 namespace NK {
 
@@ -52,11 +53,19 @@ namespace NK {
 
 		// Рендерим UI
 		const glm::mat4& uiViewProj = m_UICamera.GetViewProjectionMatrix();
-		glDisable(GL_DEPTH_TEST);   // <-- отключаем тест глубины для UI
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_CULL_FACE);
+
 		for (auto& obj : m_UIObjects) {
 			auto* tr = obj->GetComponent<TextRenderer>();
 			if (tr) {
 				// NK_CORE_INFO("Rendering TextRenderer");
+
+				/*NK_CORE_INFO("UI ViewProj matrix: [0][0]=%.3f, [1][1]=%.3f, [3][0]=%.1f, [3][1]=%.1f",
+					uiViewProj[0][0], uiViewProj[1][1], uiViewProj[3][0], uiViewProj[3][1]);*/
+
 				tr->Render(uiViewProj);
 			}
 			auto* sr = obj->GetComponent<SpriteRenderer>();
@@ -65,6 +74,8 @@ namespace NK {
 				sr->Render(uiViewProj);
 			}
 		}
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 	}
 

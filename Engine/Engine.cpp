@@ -29,6 +29,7 @@ namespace NK {
 	}
 
 	void Engine::Initialize() {
+		SetConsoleOutputCP(CP_UTF8);
 		NK_CORE_INFO("Initializing subsystems...");
 		m_Window = std::make_unique<Window>(WindowProperties{
 			m_Config.Title, m_Config.Width, m_Config.Height
@@ -121,14 +122,9 @@ namespace NK {
 
 		// Регистрируем Transform
 		L.new_usertype<Transform>("Transform",
-			"SetPosition", sol::overload(
-				[](Transform& t, float x, float y, float z) {
-					t.SetPosition(glm::vec3(x, y, z));
-				},
-				[](Transform& t, const glm::vec3& pos) {
-					t.SetPosition(pos);
-				}
-			),
+			"SetPosition", [](Transform& t, double x, double y, double z) {
+				t.SetPosition(glm::vec3((float)x, (float)y, (float)z));
+			},
 			"GetPosition", [](Transform& t) -> std::tuple<float, float, float> {
 				auto& p = t.GetPosition();
 				return { p.x, p.y, p.z };
@@ -147,12 +143,17 @@ namespace NK {
 		L.new_usertype<SpriteRenderer>("SpriteRenderer",
 			"SetTexture", &SpriteRenderer::SetTexture,
 			"SetShader", &SpriteRenderer::SetShader,
+			"SetIsUI", &SpriteRenderer::SetIsUI,
 			sol::base_classes, sol::bases<Component>()
 		);
 
 		// GameObject
 		L.new_usertype<GameObject>("GameObject",
-			"AddComponent_Transform", [](GameObject& obj) { return obj.AddComponent<Transform>(); },
+			"AddComponent_Transform", [](GameObject& obj) -> Transform* {
+				auto* t = obj.GetComponent<Transform>();
+				if (t) return t;                              // возвращаем существующий
+				return obj.AddComponent<Transform>();          // если нет – создаём
+			},
 			"AddComponent_SpriteRenderer", [](GameObject& obj) { return obj.AddComponent<SpriteRenderer>();},
 			"AddComponent_TextRenderer", [](GameObject& obj) { return obj.AddComponent<TextRenderer>(); },
 			"AddComponent_Button", [](GameObject& obj) { return obj.AddComponent<Button>(); },
@@ -184,7 +185,7 @@ namespace NK {
 		L.new_usertype<TextRenderer>("TextRenderer",
 			"SetFont", &TextRenderer::SetFont,
 			"SetText", &TextRenderer::SetText,
-			"SetFontSize", &TextRenderer::SetFontSize,
+			"SetFontSize", [](TextRenderer& tr, double size) { tr.SetFontSize((float)size); },
 			"SetColor", [](TextRenderer& tr, int r, int g, int b, int a) {
 				tr.SetColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
 			},
@@ -194,10 +195,9 @@ namespace NK {
 		// Button
 		L.new_usertype<Button>("Button",
 			"SetCallback", &Button::SetCallback,
-			"SetSize", sol::overload(
-				[](Button& btn, float x, float y) { btn.SetSize(x, y); },
-				[](Button& btn, const glm::vec2& size) { btn.SetSize(size); }
-			),
+			"SetSize", [](Button& btn, double x, double y) {
+				btn.SetSize((float)x, (float)y); 
+			},
 			sol::base_classes, sol::bases<Component>()
 		);
 

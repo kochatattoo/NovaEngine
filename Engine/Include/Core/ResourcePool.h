@@ -14,7 +14,7 @@ namespace NK {
 		std::shared_ptr<T> Get(const std::string& key, Args&&... args) {
 			auto it = m_Resources.find(key);
 			if (it != m_Resources.end()) {
-				NK_CORE_TRACE("ResourcePool: returning cached '%s'", key);
+				NK_CORE_TRACE("ResourcePool: returning cached '%s'", key.c_str());
 				return it->second;
 			}
 

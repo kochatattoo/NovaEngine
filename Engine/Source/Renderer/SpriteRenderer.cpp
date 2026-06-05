@@ -55,51 +55,44 @@ namespace NK {
 		s_Initialized = true;
 	}
 
-	void SpriteRenderer::Render() {
-		if (!m_Texture || !m_Shader) return;
-		auto* transform = m_Owner->GetComponent<Transform>();
-		if (!transform) return;
-
-		// Берём глобальную камеру из Engine (если её нет, используем единичную матрицу)
-		glm::mat4 viewProjection = glm::mat4(1.0f);
-		// В будущем здесь будет Engine::Get().GetMainCamera().GetViewProjectionMatrix();
-
-		m_Shader->Bind();
-		m_Texture->Bind(0);
-		m_Shader->SetUniform1i("u_Texture", 0);
-		m_Shader->SetUniformMat4("u_ViewProjection", viewProjection);
-		m_Shader->SetUniformMat4("u_Model", transform->GetModelMatrix());
-
-		InitQuad(); // убедимся, что квад создан
-		glBindVertexArray(s_QuadVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-		glBindVertexArray(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		m_Shader->Unbind();
-
-
-		GLenum err = glGetError();
-		if (err) NK_CORE_ERROR("OpenGL error: %d", err);
-	}
-
 	void SpriteRenderer::Render(const glm::mat4& viewProjection) {
 		if (!m_Texture || !m_Shader) return;
 		auto* transform = m_Owner->GetComponent<Transform>();
 		if (!transform) return;
 
+		int texW = m_Texture->GetWidth();
+		int texH = m_Texture->GetHeight();
+
+		float ppu = m_IsUI ? 1.0f : m_PixelsPerUnit; // UI – 1:1 с пикселями, игра – PPU
+		float renderW = (m_CustomSize.x > 0.0f) ? m_CustomSize.x : (float)texW / ppu;
+		float renderH = (m_CustomSize.y > 0.0f) ? m_CustomSize.y : (float)texH / ppu;
+
+		glm::vec3 pos = transform->GetPosition();
+
+		glm::mat4 model;
+		if (m_IsUI) {
+			// Для UI: позиция задаёт левый верхний угол
+			model = glm::translate(glm::mat4(1.0f), pos + glm::vec3(renderW * 0.5f, renderH * 0.5f, 0.0f));
+			model = glm::scale(model, glm::vec3(renderW * 0.5f, renderH * 0.5f, 1.0f));
+		}
+		else {
+			// Для игровых объектов: позиция задаёт центр спрайта
+			model = glm::translate(glm::mat4(1.0f), pos);
+			model = glm::scale(model, glm::vec3(renderW * 0.5f, renderH * 0.5f, 1.0f));
+		}
+
 		m_Shader->Bind();
 		m_Texture->Bind(0);
 		m_Shader->SetUniform1i("u_Texture", 0);
 		m_Shader->SetUniformMat4("u_ViewProjection", viewProjection);
-		m_Shader->SetUniformMat4("u_Model", transform->GetModelMatrix());
+		m_Shader->SetUniformMat4("u_Model", model);
 
 		InitQuad();
 		glBindVertexArray(s_QuadVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
+
 		m_Shader->Unbind();
 	}
 

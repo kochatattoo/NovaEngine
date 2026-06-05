@@ -49,7 +49,7 @@ namespace NK {
 	}
 
 	void TextRenderer::UpdateTexture() {
-		if (!m_Font) {
+		/*if (!m_Font) {
 			NK_CORE_INFO("UpdateTexture: no font");
 			return;
 		}
@@ -57,14 +57,17 @@ namespace NK {
 			NK_CORE_INFO("UpdateTexture: text unchanged");
 			return;
 		}
-		NK_CORE_INFO("UpdateTexture: creating texture for '%s'", m_Text.c_str());
+		NK_CORE_INFO("UpdateTexture: creating texture for '%s'", m_Text.c_str());*/
+
 		m_Texture = m_Font->CreateTextTexture(m_Text, m_FontSize, m_Color[0], m_Color[1], m_Color[2], m_Color[3]);
-		if (m_Texture) {
-			NK_CORE_INFO("UpdateTexture: texture created, size %dx%d", m_Texture->GetWidth(), m_Texture->GetHeight());
-		}
-		else {
-			NK_CORE_INFO("UpdateTexture: FAILED to create texture");
-		}
+
+		/*	if (m_Texture) {
+				NK_CORE_INFO("UpdateTexture: texture created, size %dx%d", m_Texture->GetWidth(), m_Texture->GetHeight());
+			}
+			else {
+				NK_CORE_INFO("UpdateTexture: FAILED to create texture");
+			}*/
+
 		m_TextChanged = false;
 	}
 
@@ -75,13 +78,13 @@ namespace NK {
 		if(!m_Font)
 			NK_CORE_INFO("TextRenderer: font is NULL");
 
-		if (!m_Shader || !m_Font) return;
+		// if (!m_Shader || !m_Font) return;
 		UpdateTexture();
 
-		if (m_Texture)
+		/*if (m_Texture)
 			NK_CORE_INFO("TextRenderer: texture OK, size %dx%d", m_Texture->GetWidth(), m_Texture->GetHeight());
 		else
-			NK_CORE_INFO("TextRenderer: texture is NULL");
+			NK_CORE_INFO("TextRenderer: texture is NULL");*/
 
 		if (!m_Texture) return;
 
@@ -91,6 +94,9 @@ namespace NK {
 		int texW = m_Texture->GetWidth();
 		int texH = m_Texture->GetHeight();
 		glm::vec3 pos = transform->GetPosition();
+
+		/*NK_CORE_INFO("Render Text: transform pos=(%.1f, %.1f), tex=%dx%d",
+			pos.x, pos.y, texW, texH);*/
 
 		// ћодельна€ матрица: позици€ + смещение на полразмера (чтобы левый верхний угол совпадал с позицией)
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), pos + glm::vec3(texW * 0.5f, texH * 0.5f, 0.0f));
@@ -104,6 +110,10 @@ namespace NK {
 
 		InitQuad();
 		glBindVertexArray(s_QuadVAO);
+
+		/*NK_CORE_INFO("Drawing text: VAO=%u, texW=%d, texH=%d, pos=(%.1f,%.1f)",
+			s_QuadVAO, texW, texH, pos.x, pos.y);*/
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);

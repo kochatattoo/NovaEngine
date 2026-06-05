@@ -71,6 +71,14 @@ namespace NK {
         return event;
     }
 
+	void Window::GetMouseClientPosition(int& outX, int& outY) {
+		POINT pt;
+		GetCursorPos(&pt);
+		ScreenToClient(m_Hwnd, &pt);
+		outX = pt.x;
+		outY = pt.y;
+	}
+
     void Window::OnUpdate() {
         MSG msg;
         // Обрабатываем все накопившиеся сообщения
@@ -111,6 +119,10 @@ namespace NK {
                     window->m_Data.Width = width;
                     window->m_Data.Height = height;
                     NK_CORE_TRACE("Window resized to  %dx%d", width, height);
+
+					if (window->ResizeCallback)
+						window->ResizeCallback(width, height);
+
                     return 0;
                 }
 

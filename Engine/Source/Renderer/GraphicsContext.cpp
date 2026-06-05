@@ -104,14 +104,15 @@ namespace NK {
             glad_glClearColor = (PFNGLCLEARCOLORPROC)GetAnyGLFuncAddress("glClearColor");
             glad_glClear = (PFNGLCLEARPROC)GetAnyGLFuncAddress("glClear");
             glad_glViewport = (PFNGLVIEWPORTPROC)GetAnyGLFuncAddress("glViewport");
+            glad_glBlendFunc = (PFNGLBLENDFUNCPROC)GetAnyGLFuncAddress("glBlendFunc");
 
 			// Дополнительно: для возможной диагностики
 			glad_glGetString = (PFNGLGETSTRINGPROC)GetAnyGLFuncAddress("glGetString");
 			glad_glGetError = (PFNGLGETERRORPROC)GetAnyGLFuncAddress("glGetError");
 
 			// Проверяем, что критически важные функции загружены
-			if (!glad_glEnable || !glad_glClear || !glad_glClearColor 
-                || !glad_glViewport || !glad_glDisable) {
+			if (!glad_glEnable || !glad_glClear || !glad_glClearColor
+                || !glad_glViewport || !glad_glDisable || !glad_glBlendFunc) {
 				NK_CORE_ERROR("Failed to load essential OpenGL functions");
 				return;
 			}

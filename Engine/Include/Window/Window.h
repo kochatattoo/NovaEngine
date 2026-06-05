@@ -31,6 +31,7 @@ namespace NK {
         uint32_t GetWidth() const { return m_Data.Width; }
         uint32_t GetHeight() const { return m_Data.Height; }
         GraphicsContext* GetGraphicsContext() { return m_GraphicsContext.get(); }
+        void GetMouseClientPosition(int& outX, int& outY);
         std::unique_ptr<Event> PollEvent();
         std::function<void(uint32_t, uint32_t)> ResizeCallback;
 

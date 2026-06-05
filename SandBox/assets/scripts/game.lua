@@ -44,34 +44,48 @@ function OnStart()
     
       -- UI: текст
     local font = LoadFont("assets/fonts/arial.ttf")  -- убедись, что шрифт лежит здесь
+     Log("Font loaded: " .. tostring(font))
     if font then
+        Log("Font is valid")
         local textObj = scene:CreateUIObject("WelcomeText")
+        Log("Text object created")
         local tt = textObj:AddComponent_Transform()
         tt:SetPosition(50, 50, 0)
         local tr = textObj:AddComponent_TextRenderer()
+        Log("TextRenderer added")
         tr:SetFont(font)
+        Log("Font set")
         tr:SetText("Hello, UI!")
+        Log("Text set")
         tr:SetColor(255, 215, 0, 255) -- золотой
+        Log("Color set")
     else
         Log("Failed to load font")
     end
 
-    -- UI: кнопка
+     -- UI: кнопка
     local btnObj = scene:CreateUIObject("TestButton")
+    Log("Button object created")
     local bt = btnObj:AddComponent_Transform()
     bt:SetPosition(200, 200, 0)
     local bgr = btnObj:AddComponent_SpriteRenderer()
-    -- Если есть текстура фона, раскомментируй и укажи путь
-    -- bgr:SetTexture(GetTexture("assets/ui/button.png"))
+    -- чтобы увидеть кнопку даже без текстуры фона, зададим ей цветной прямоугольник? Но SpriteRenderer не умеет цвет без текстуры.
+    -- Поэтому временно зададим любую существующую текстуру, например test.png
+    bgr:SetTexture(GetTexture("assets/textures/test.png"))
+    Log("Button background set")
     local btr = btnObj:AddComponent_TextRenderer()
     if font then
         btr:SetFont(font)
+        btr:SetText("Click me")
+        btr:SetColor(255, 255, 255, 255)
+        Log("Button text set")
+    else
+        Log("Font not available for button text")
     end
-    btr:SetText("Click me")
-    btr:SetColor(255, 255, 255, 255)
     local button = btnObj:AddComponent_Button()
     button:SetSize(200, 50)
     button:SetCallback(function() Log("Button clicked!") end)
+    Log("Button setup done")
 
     Log("Scene setup finished")
 end
