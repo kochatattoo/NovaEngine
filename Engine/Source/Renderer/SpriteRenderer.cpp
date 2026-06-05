@@ -84,6 +84,12 @@ namespace NK {
 		m_Shader->Bind();
 		m_Texture->Bind(0);
 		m_Shader->SetUniform1i("u_Texture", 0);
+
+		if (m_UseColor)
+			m_Shader->SetUniform4f("u_Color", m_Color.r, m_Color.g, m_Color.b, m_Color.a);
+		else
+			m_Shader->SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
+
 		m_Shader->SetUniformMat4("u_ViewProjection", viewProjection);
 		m_Shader->SetUniformMat4("u_Model", model);
 

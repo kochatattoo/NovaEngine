@@ -9,7 +9,7 @@ public:
     void OnStart() override {
 		// Загружаем и выполняем скрипт
 		auto& lua = NK::Engine::Get().GetLuaManager();
-		if (lua.RunScript("assets/scripts/game.lua")) {
+		if (lua.RunScript("assets/scripts/game_match3.lua")) {
 			lua.CallFunction("OnStart");
 		}
         // Scene::OnStart() вызывается внутри Engine::Run

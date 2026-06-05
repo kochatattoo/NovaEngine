@@ -64,6 +64,12 @@
     <Filter Include="Source\UI">
       <UniqueIdentifier>{9f4d0208-f839-4aef-9f7a-bb74e62d8f32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\Game">
+      <UniqueIdentifier>{789ce86a-e364-4ffb-9dc3-16bb72a92a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game">
+      <UniqueIdentifier>{f2127ee3-4628-42cd-95c2-eee2eef86283}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -258,6 +264,9 @@
     <ClInclude Include="Include\UI\Anchor.h">
       <Filter>Include\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Game\Match3Board.h">
+      <Filter>Include\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -439,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="Source\UI\Anchor.cpp">
       <Filter>Source\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\Match3Board.cpp">
+      <Filter>Source\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
