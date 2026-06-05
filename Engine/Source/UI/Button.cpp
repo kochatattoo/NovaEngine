@@ -41,19 +41,32 @@ namespace NK {
 		bool inside = (mouseX >= pos.x && mouseX <= pos.x + m_Size.x &&
 			mouseY >= pos.y && mouseY <= pos.y + m_Size.y);
 
-		if (inside) {
-			if (!m_Hovered) {
-				m_Hovered = true;
-			}
-			if (Input::IsMouseButtonDown(VK_LBUTTON)) {
-				if (m_Callback) {
-					m_Callback();
-					NK_INFO("Button clicked!");
-				}
+		// Обработка наведения
+		if (inside && !m_Hovered) {
+			m_Hovered = true;
+			if (m_OnPointerEnter) m_OnPointerEnter();
+		}
+		else if (!inside && m_Hovered) {
+			m_Hovered = false;
+			if (m_OnPointerExit) m_OnPointerExit();
+		}
+
+		// Обработка нажатия/отпускания мыши
+		if (Input::IsMouseButtonDown(VK_LBUTTON)) {
+			if (inside && !m_Pressed) {
+				m_Pressed = true;
+				if (m_OnPointerDown) m_OnPointerDown();
 			}
 		}
 		else {
-			m_Hovered = false;
+			if (m_Pressed) {
+				if (inside) {
+					if (m_OnClick) m_OnClick();
+					NK_INFO("Button clicked!");
+				}
+				m_Pressed = false;
+				if (m_OnPointerUp) m_OnPointerUp();
+			}
 		}
 	}
 

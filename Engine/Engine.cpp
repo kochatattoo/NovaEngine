@@ -198,6 +198,11 @@ namespace NK {
 		// Button
 		L.new_usertype<Button>("Button",
 			"SetCallback", &Button::SetCallback,
+			"SetOnClick", &Button::SetOnClick,
+			"SetOnPointerDown", &Button::SetOnPointerDown,
+			"SetOnPointerUp", &Button::SetOnPointerDown,
+			"SetOnPointerExit", &Button::SetOnPointerExit,
+			"SetOnPointerUp", &Button::SetOnPointerUp,
 			"SetSize", [](Button& btn, double x, double y) {
 				btn.SetSize((float)x, (float)y);
 			},
