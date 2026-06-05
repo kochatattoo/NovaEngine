@@ -76,6 +76,11 @@ namespace NK {
 		glDisable(GL_CULL_FACE);
 
 		for (auto& obj : m_UIObjects) {
+			auto* sr = obj->GetComponent<SpriteRenderer>();
+			if (sr) {
+				// NK_CORE_INFO("Rendering SpriteRenderer (UI)");
+				sr->Render(uiViewProj);
+			}
 			auto* tr = obj->GetComponent<TextRenderer>();
 			if (tr) {
 				// NK_CORE_INFO("Rendering TextRenderer");
@@ -84,11 +89,6 @@ namespace NK {
 					uiViewProj[0][0], uiViewProj[1][1], uiViewProj[3][0], uiViewProj[3][1]);*/
 
 				tr->Render(uiViewProj);
-			}
-			auto* sr = obj->GetComponent<SpriteRenderer>();
-			if (sr) {
-				// NK_CORE_INFO("Rendering SpriteRenderer (UI)");
-				sr->Render(uiViewProj);
 			}
 		}
 		glEnable(GL_CULL_FACE);

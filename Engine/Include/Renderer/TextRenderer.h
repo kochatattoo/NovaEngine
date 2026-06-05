@@ -20,6 +20,7 @@ namespace NK {
 
 		void OnStart() override;
 		void Render(const glm::mat4& viewProj); // вызывается Scene
+		void SetAlignment(float hAlign, float vAlign);
 
 	private:
 		void UpdateTexture();
@@ -31,6 +32,9 @@ namespace NK {
 		std::shared_ptr<Texture2D> m_Texture;
 		std::shared_ptr<Shader> m_Shader;
 		bool m_TextChanged = true;
+
+		float m_HAlign = 0.0f;
+		float m_VAlign = 0.0f;
 
 		// Статический меш (квад 1x1)
 		static uint32_t s_QuadVAO;

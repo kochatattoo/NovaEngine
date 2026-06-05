@@ -145,6 +145,7 @@ namespace NK {
 		L.new_usertype<SpriteRenderer>("SpriteRenderer",
 			"SetTexture", &SpriteRenderer::SetTexture,
 			"SetShader", &SpriteRenderer::SetShader,
+			"SetAlignment", [](SpriteRenderer& sr, double h, double v) { sr.SetAlignment((float)h, (float)v); },
 			"SetIsUI", &SpriteRenderer::SetIsUI,
 			sol::base_classes, sol::bases<Component>()
 		);
@@ -191,6 +192,7 @@ namespace NK {
 			"SetFont", &TextRenderer::SetFont,
 			"SetText", &TextRenderer::SetText,
 			"SetFontSize", [](TextRenderer& tr, double size) { tr.SetFontSize((float)size); },
+			"SetAlignment", [](TextRenderer& tr, double h, double v) { tr.SetAlignment((float)h, (float)v); },
 			"SetColor", [](TextRenderer& tr, int r, int g, int b, int a) {
 				tr.SetColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
 			},
@@ -214,6 +216,8 @@ namespace NK {
 		// Anchor
 		L.new_usertype<Anchor>("Anchor",
 			"SetPreset", [](Anchor& a, int preset) { a.SetPreset(static_cast<AnchorPreset>(preset)); },
+			"SetScreenAnchor", [](Anchor& a, double sx, double sy) { a.SetScreenAnchor((float)sx, (float)sy); },
+			"SetObjectAnchor", [](Anchor& a, double ox, double oy) { a.SetObjectAnchor((float)ox, (float)oy); },
 			"SetSize", [](Anchor& a, double w, double h) { a.SetSize(glm::vec2((float)w, (float)h)); },
 			sol::base_classes, sol::bases<Component>()
 		);

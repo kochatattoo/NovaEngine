@@ -35,6 +35,11 @@ namespace NK {
 		m_TextChanged = true;
 	}
 
+	void TextRenderer::SetAlignment(float horizontal, float vertical) {
+		m_HAlign = horizontal;
+		m_VAlign = vertical;
+	}
+
 	void TextRenderer::OnStart() {
 		NK_CORE_INFO("TextRenderer::OnStart called");
 		if (!m_Shader) {
@@ -99,7 +104,10 @@ namespace NK {
 			pos.x, pos.y, texW, texH);*/
 
 		// ћодельна€ матрица: позици€ + смещение на полразмера (чтобы левый верхний угол совпадал с позицией)
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), pos + glm::vec3(texW * 0.5f, texH * 0.5f, 0.0f));
+		//glm::mat4 model = glm::translate(glm::mat4(1.0f), pos + glm::vec3(texW * 0.5f, texH * 0.5f, 0.0f));
+		float offsetX = texW * (m_HAlign);
+		float offsetY = texH * (m_VAlign);
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), pos + glm::vec3(offsetX, offsetY, 0.0f));
 		model = glm::scale(model, glm::vec3(texW * 0.5f, texH * 0.5f, 1.0f));
 
 		m_Shader->Bind();
