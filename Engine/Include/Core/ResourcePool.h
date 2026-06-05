@@ -14,7 +14,7 @@ namespace NK {
 		std::shared_ptr<T> Get(const std::string& key, Args&&... args) {
 			auto it = m_Resources.find(key);
 			if (it != m_Resources.end()) {
-				NK_CORE_TRACE("ResourcePool: returning cached '%s'", key);
+				NK_CORE_TRACE("ResourcePool: returning cached '%s'", key.c_str());
 				return it->second;
 			}
 
@@ -22,6 +22,15 @@ namespace NK {
 			auto resource = std::make_shared<T>(std::forward<Args>(args)...);
 			m_Resources[key] = resource;
 			return resource;
+		}
+
+		std::shared_ptr<T> GetCached(const std::string& key) {
+			auto it = m_Resources.find(key);
+			return (it != m_Resources.end()) ? it->second : nullptr;
+		}
+
+		void Put(const std::string& key, std::shared_ptr<T> resource) {
+			m_Resources[key] = resource;
 		}
 
 		// Удалить из кэша (ресурс освободится, если на него нет других ссылок)

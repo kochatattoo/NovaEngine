@@ -17,6 +17,10 @@ namespace NK {
 			const std::string& vertexSrc,
 			const std::string& fragmentSrc);
 
+		std::shared_ptr<Shader> GetShader(const std::string& name);
+
+		ResourcePool<Shader>& GetShaderPool() { return m_Shaders; }
+
 		// Очистить все ресурсы (например, при смене сцены)
 		void ClearAll();
 

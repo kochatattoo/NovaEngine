@@ -83,6 +83,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -102,6 +103,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -119,6 +121,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -138,6 +141,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -176,28 +180,39 @@
     <ClInclude Include="..\Libraries\lua\src\lzio.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Include\Core\Application.h" />
+    <ClInclude Include="Include\Core\Component.h" />
     <ClInclude Include="Include\Core\Engine.h" />
     <ClInclude Include="Include\Core\EntryPoint.h" />
+    <ClInclude Include="Include\Core\GameObject.h" />
     <ClInclude Include="Include\Core\Log.h" />
     <ClInclude Include="Include\Core\LuaManager.h" />
     <ClInclude Include="Include\Core\ResourceManager.h" />
     <ClInclude Include="Include\Core\ResourcePool.h" />
+    <ClInclude Include="Include\Core\Scene.h" />
+    <ClInclude Include="Include\Core\ScriptComponent.h" />
     <ClInclude Include="Include\Core\Timer.h" />
+    <ClInclude Include="Include\Core\Transform.h" />
     <ClInclude Include="Include\Event\Event.h" />
     <ClInclude Include="Include\glad\gl.h" />
     <ClInclude Include="Include\glad\khrplatform.h" />
     <ClInclude Include="Include\Input\Input.h" />
     <ClInclude Include="Include\Renderer\Camera.h" />
+    <ClInclude Include="Include\Renderer\Font.h" />
     <ClInclude Include="Include\Renderer\GraphicsContext.h" />
     <ClInclude Include="Include\Renderer\IndexBuffer.h" />
+    <ClInclude Include="Include\Renderer\OrthographicCamera.h" />
     <ClInclude Include="Include\Renderer\Renderer.h" />
     <ClInclude Include="Include\Renderer\Shader.h" />
+    <ClInclude Include="Include\Renderer\SpriteRenderer.h" />
+    <ClInclude Include="Include\Renderer\TextRenderer.h" />
     <ClInclude Include="Include\Renderer\Texture2D.h" />
     <ClInclude Include="Include\Renderer\VertexArray.h" />
     <ClInclude Include="Include\Renderer\VertexBuffer.h" />
+    <ClInclude Include="Include\UI\Button.h" />
     <ClInclude Include="Include\Window\Window.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Source\stb\stb_image.h" />
+    <ClInclude Include="Source\stb\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Libraries\lua\src\lapi.c" />
@@ -239,20 +254,30 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Core\GameObject.cpp" />
     <ClCompile Include="Source\Core\Log.cpp" />
     <ClCompile Include="Source\Core\LuaManager.cpp" />
     <ClCompile Include="Source\Core\ResourceManager.cpp" />
+    <ClCompile Include="Source\Core\Scene.cpp" />
+    <ClCompile Include="Source\Core\ScriptComponent.cpp" />
+    <ClCompile Include="Source\Core\Transform.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Renderer\Camera.cpp" />
+    <ClCompile Include="Source\Renderer\Font.cpp" />
     <ClCompile Include="Source\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Source\Renderer\IndexBuffer.cpp" />
+    <ClCompile Include="Source\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Renderer\Shader.cpp" />
+    <ClCompile Include="Source\Renderer\SpriteRenderer.cpp" />
+    <ClCompile Include="Source\Renderer\TextRenderer.cpp" />
     <ClCompile Include="Source\Renderer\Texture2D.cpp" />
     <ClCompile Include="Source\Renderer\VertexArray.cpp" />
     <ClCompile Include="Source\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Source\stb\stb_image.cpp" />
+    <ClCompile Include="Source\stb\stb_truetype.cpp" />
+    <ClCompile Include="Source\UI\Button.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -25,7 +25,12 @@ namespace NK {
 				NK_CORE_ERROR("Lua function '%s' not found", funcName.c_str());
 				return decltype(func())();
 			}
-			return func(std::forward<Args>(args)...);
+			sol::protected_function_result result = func(std::forward<Args>(args)...);
+			if (!result.valid()) {
+				sol::error err = result;
+				NK_CORE_ERROR("Error in Lua function '%s': %s", funcName.c_str(), err.what());
+			}
+			return result;
 		}
 
 		// Ёкспортировать C++-класс или функцию в Lua
