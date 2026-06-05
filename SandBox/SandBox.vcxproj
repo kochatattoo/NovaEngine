@@ -78,6 +78,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -85,7 +86,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -98,6 +99,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,7 +107,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -116,6 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,7 +126,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,6 +139,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,7 +147,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

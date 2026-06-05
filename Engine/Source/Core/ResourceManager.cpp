@@ -13,6 +13,10 @@ namespace NK {
 		return m_Shaders.Get(key, vertexSrc, fragmentSrc);
 	}
 
+	std::shared_ptr<Shader> ResourceManager::GetShader(const std::string& name) {
+		return m_Shaders.GetCached(name);
+	}
+
 	void ResourceManager::ClearAll() {
 		m_Textures.Clear();
 		m_Shaders.Clear();

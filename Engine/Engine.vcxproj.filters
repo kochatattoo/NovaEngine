@@ -58,6 +58,12 @@
     <Filter Include="Source\Lua">
       <UniqueIdentifier>{ab1ebb1d-65a6-4ee6-aab4-872ce0a7e01d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\UI">
+      <UniqueIdentifier>{39f0143a-236e-4296-86e1-338ed153be6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\UI">
+      <UniqueIdentifier>{9f4d0208-f839-4aef-9f7a-bb74e62d8f32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -237,6 +243,18 @@
     <ClInclude Include="Include\Renderer\OrthographicCamera.h">
       <Filter>Include\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\stb\stb_truetype.h">
+      <Filter>Source\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Renderer\Font.h">
+      <Filter>Include\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Renderer\TextRenderer.h">
+      <Filter>Include\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\UI\Button.h">
+      <Filter>Include\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -403,6 +421,18 @@
     </ClCompile>
     <ClCompile Include="Source\Renderer\OrthographicCamera.cpp">
       <Filter>Source\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\stb\stb_truetype.cpp">
+      <Filter>Source\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\Font.cpp">
+      <Filter>Source\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\TextRenderer.cpp">
+      <Filter>Source\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI\Button.cpp">
+      <Filter>Source\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

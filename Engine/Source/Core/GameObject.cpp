@@ -14,6 +14,7 @@ namespace NK {
 		for (auto& c : m_Components) {
 			c->OnStart();
 		}
+		m_Started = true;
 	}
 
 	void GameObject::OnUpdate(float deltaTime) {

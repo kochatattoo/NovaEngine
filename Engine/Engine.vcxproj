@@ -83,6 +83,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -102,6 +103,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -119,6 +121,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -138,6 +141,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\lua\src;$(ProjectDir)Libraries;$(ProjectDir)Include;$(ProjectDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -193,18 +197,22 @@
     <ClInclude Include="Include\glad\khrplatform.h" />
     <ClInclude Include="Include\Input\Input.h" />
     <ClInclude Include="Include\Renderer\Camera.h" />
+    <ClInclude Include="Include\Renderer\Font.h" />
     <ClInclude Include="Include\Renderer\GraphicsContext.h" />
     <ClInclude Include="Include\Renderer\IndexBuffer.h" />
     <ClInclude Include="Include\Renderer\OrthographicCamera.h" />
     <ClInclude Include="Include\Renderer\Renderer.h" />
     <ClInclude Include="Include\Renderer\Shader.h" />
     <ClInclude Include="Include\Renderer\SpriteRenderer.h" />
+    <ClInclude Include="Include\Renderer\TextRenderer.h" />
     <ClInclude Include="Include\Renderer\Texture2D.h" />
     <ClInclude Include="Include\Renderer\VertexArray.h" />
     <ClInclude Include="Include\Renderer\VertexBuffer.h" />
+    <ClInclude Include="Include\UI\Button.h" />
     <ClInclude Include="Include\Window\Window.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Source\stb\stb_image.h" />
+    <ClInclude Include="Source\stb\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Libraries\lua\src\lapi.c" />
@@ -256,16 +264,20 @@
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Renderer\Camera.cpp" />
+    <ClCompile Include="Source\Renderer\Font.cpp" />
     <ClCompile Include="Source\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="Source\Renderer\IndexBuffer.cpp" />
     <ClCompile Include="Source\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Renderer\Shader.cpp" />
     <ClCompile Include="Source\Renderer\SpriteRenderer.cpp" />
+    <ClCompile Include="Source\Renderer\TextRenderer.cpp" />
     <ClCompile Include="Source\Renderer\Texture2D.cpp" />
     <ClCompile Include="Source\Renderer\VertexArray.cpp" />
     <ClCompile Include="Source\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Source\stb\stb_image.cpp" />
+    <ClCompile Include="Source\stb\stb_truetype.cpp" />
+    <ClCompile Include="Source\UI\Button.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

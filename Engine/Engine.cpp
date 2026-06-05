@@ -7,9 +7,12 @@
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/GraphicsContext.h"
+#include "Renderer/Font.h"
 #include "Input/Input.h"          // для опроса клавиш в Lua
 #include "Core/LuaManager.h"
 #include <sol/sol.hpp>
+#include <Renderer/TextRenderer.h>
+#include <UI/Button.h>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
@@ -32,7 +35,8 @@ namespace NK {
 			});
 
 		m_Window->ResizeCallback = [this](uint32_t w, uint32_t h) {
-			m_Scene.GetCamera().OnWindowResized(w, h);
+			m_Scene.GetGameCamera().OnWindowResized(w, h);
+			m_Scene.GetUICamera().SetProjection(0.0f, (float)w, (float)h, 0.0f);
 			// Также обновим viewport OpenGL
 			glViewport(0, 0, w, h);
 			};
@@ -41,6 +45,29 @@ namespace NK {
 
 		// Настройка биндингов Lua (должна быть после создания LuaManager, который уже создан в конструкторе Engine)
 		SetupLuaBindings();
+
+		std::string defaultV = R"(#version 330 core
+						layout(location = 0) in vec2 a_Position;
+						layout(location = 1) in vec2 a_TexCoord;
+						uniform mat4 u_ViewProjection;
+						uniform mat4 u_Model;
+						out vec2 v_TexCoord;
+				void main() {
+					gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 0.0, 1.0);
+					v_TexCoord = a_TexCoord;
+				}
+			)";
+		std::string defaultF = R"(#version 330 core
+						in vec2 v_TexCoord;
+						out vec4 FragColor;
+						uniform sampler2D u_Texture;
+				void main() {
+					FragColor = texture(u_Texture, v_TexCoord);
+				}
+			)";
+
+		auto defaultShader = std::make_shared<Shader>(defaultV, defaultF);
+		m_ResourceManager.GetShaderPool().Put("DefaultSprite", defaultShader); // нужен метод Put в ResourcePool
 
 		NK_CORE_INFO("Engine initialized.");
 	}
@@ -126,10 +153,14 @@ namespace NK {
 		// GameObject
 		L.new_usertype<GameObject>("GameObject",
 			"AddComponent_Transform", [](GameObject& obj) { return obj.AddComponent<Transform>(); },
-			"AddComponent_SpriteRenderer", [](GameObject& obj) { return obj.AddComponent<SpriteRenderer>(); },
+			"AddComponent_SpriteRenderer", [](GameObject& obj) { return obj.AddComponent<SpriteRenderer>();},
+			"AddComponent_TextRenderer", [](GameObject& obj) { return obj.AddComponent<TextRenderer>(); },
+			"AddComponent_Button", [](GameObject& obj) { return obj.AddComponent<Button>(); },
 			"AddComponent_Script", [](GameObject& obj, const std::string& path) { return obj.AddComponent<ScriptComponent>(path); },
 			"GetTransform", [](GameObject& obj) { return obj.GetComponent<Transform>(); },
 			"GetSpriteRenderer", [](GameObject& obj) { return obj.GetComponent<SpriteRenderer>(); },
+			"GetTextRenderer", [](GameObject& obj) { return obj.GetComponent<TextRenderer>(); },
+			"GetButton", [](GameObject& obj) { return obj.GetComponent<Button>(); },
 			"GetName", &GameObject::GetName,
 			"OnStart", &GameObject::OnStart,
 			"OnUpdate", &GameObject::OnUpdate
@@ -138,8 +169,36 @@ namespace NK {
 		// Scene
 		L.new_usertype<Scene>("Scene",
 			"CreateGameObject", &Scene::CreateGameObject,
+			"CreateUIObject", &Scene::CreateUIObject,
 			"OnStart", &Scene::OnStart,
-			"OnUpdate", &Scene::OnUpdate
+			"OnUpdate", &Scene::OnUpdate,
+			"OnRender", &Scene::OnRender
+		);
+
+		// Font
+		L.new_usertype<Font>("Font",
+			"CreateTextTexture", &Font::CreateTextTexture
+		);
+
+		// TextRenderer
+		L.new_usertype<TextRenderer>("TextRenderer",
+			"SetFont", &TextRenderer::SetFont,
+			"SetText", &TextRenderer::SetText,
+			"SetFontSize", &TextRenderer::SetFontSize,
+			"SetColor", [](TextRenderer& tr, int r, int g, int b, int a) {
+				tr.SetColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
+			},
+			sol::base_classes, sol::bases<Component>()
+		);
+
+		// Button
+		L.new_usertype<Button>("Button",
+			"SetCallback", &Button::SetCallback,
+			"SetSize", sol::overload(
+				[](Button& btn, float x, float y) { btn.SetSize(x, y); },
+				[](Button& btn, const glm::vec2& size) { btn.SetSize(size); }
+			),
+			sol::base_classes, sol::bases<Component>()
 		);
 
 		// Регистрируем функцию логирования
@@ -171,6 +230,16 @@ namespace NK {
 
 		L.set_function("GetShader", [](const std::string& name, const std::string& vSrc, const std::string& fSrc) {
 			return Engine::Get().GetResourceManager().GetShader(name, vSrc, fSrc);
+			});
+
+		L.set_function("LoadFont", [](const std::string& path) -> std::shared_ptr<Font> {
+			try {
+				auto font = std::make_shared<Font>(path);
+				return font;
+			}
+			catch (...) {
+				return nullptr;
+			}
 			});
 	}
 

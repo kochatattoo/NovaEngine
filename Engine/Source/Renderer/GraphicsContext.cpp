@@ -97,6 +97,7 @@ namespace NK {
 
             // Функции, используемые в Renderer
             glad_glEnable = (PFNGLENABLEPROC)GetAnyGLFuncAddress("glEnable");
+            glad_glDisable = (PFNGLDISABLEPROC)GetAnyGLFuncAddress("glDisable");
             glad_glDepthFunc = (PFNGLDEPTHFUNCPROC)GetAnyGLFuncAddress("glDepthFunc");
             glad_glCullFace = (PFNGLCULLFACEPROC)GetAnyGLFuncAddress("glCullFace");
             glad_glFrontFace = (PFNGLFRONTFACEPROC)GetAnyGLFuncAddress("glFrontFace");
@@ -109,7 +110,8 @@ namespace NK {
 			glad_glGetError = (PFNGLGETERRORPROC)GetAnyGLFuncAddress("glGetError");
 
 			// Проверяем, что критически важные функции загружены
-			if (!glad_glEnable || !glad_glClear || !glad_glClearColor || !glad_glViewport) {
+			if (!glad_glEnable || !glad_glClear || !glad_glClearColor 
+                || !glad_glViewport || !glad_glDisable) {
 				NK_CORE_ERROR("Failed to load essential OpenGL functions");
 				return;
 			}

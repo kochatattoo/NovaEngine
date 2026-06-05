@@ -21,6 +21,7 @@ namespace NK {
 			auto component = std::make_unique<T>(this, std::forward<Args>(args)...);
 			T* rawPtr = component.get();
 			m_Components.push_back(std::move(component));
+			if (m_Started) rawPtr->OnStart();
 			return rawPtr;
 		}
 
@@ -37,9 +38,12 @@ namespace NK {
 		void OnStart();   // вызывает OnStart для всех компонентов
 		void OnUpdate(float deltaTime);
 
+		bool IsStarted() const { return m_Started; }
+
 	private:
 		std::string m_Name;
 		std::vector<std::unique_ptr<Component>> m_Components;
+		bool m_Started = false;   // <-- новое
 	};
 
 } // namespace NK

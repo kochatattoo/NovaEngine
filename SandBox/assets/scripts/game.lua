@@ -26,14 +26,54 @@ void main() {
 function OnStart()
      Log("Game script started")
     local scene = GetScene()
+    Log("Scene obtained")
     local player = scene:CreateGameObject("Player")
+    Log("Player created")
     local transform = player:AddComponent_Transform()
     transform:SetPosition(0, 0, 0)
+    Log("Transform added")
     local renderer = player:AddComponent_SpriteRenderer()
+    Log("SpriteRenderer added")
     local shader = GetShader("SpriteShader", vertexSrc, fragmentSrc)
+    Log("Shader obtained: " .. tostring(shader))
     local texture = GetTexture("assets/textures/test.png")
+    Log("Texture obtained: " .. tostring(texture))
     renderer:SetShader(shader)
     renderer:SetTexture(texture)
+    Log("Shader and Texture set")
+    
+      -- UI: текст
+    local font = LoadFont("assets/fonts/arial.ttf")  -- убедись, что шрифт лежит здесь
+    if font then
+        local textObj = scene:CreateUIObject("WelcomeText")
+        local tt = textObj:AddComponent_Transform()
+        tt:SetPosition(50, 50, 0)
+        local tr = textObj:AddComponent_TextRenderer()
+        tr:SetFont(font)
+        tr:SetText("Hello, UI!")
+        tr:SetColor(255, 215, 0, 255) -- золотой
+    else
+        Log("Failed to load font")
+    end
+
+    -- UI: кнопка
+    local btnObj = scene:CreateUIObject("TestButton")
+    local bt = btnObj:AddComponent_Transform()
+    bt:SetPosition(200, 200, 0)
+    local bgr = btnObj:AddComponent_SpriteRenderer()
+    -- Если есть текстура фона, раскомментируй и укажи путь
+    -- bgr:SetTexture(GetTexture("assets/ui/button.png"))
+    local btr = btnObj:AddComponent_TextRenderer()
+    if font then
+        btr:SetFont(font)
+    end
+    btr:SetText("Click me")
+    btr:SetColor(255, 255, 255, 255)
+    local button = btnObj:AddComponent_Button()
+    button:SetSize(200, 50)
+    button:SetCallback(function() Log("Button clicked!") end)
+
+    Log("Scene setup finished")
 end
 
 function OnUpdate(dt)
