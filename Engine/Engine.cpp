@@ -14,6 +14,7 @@
 #include <Renderer/TextRenderer.h>
 #include <UI/Button.h>
 #include <UI/Anchor.h>
+#include <Game/Match3Board.h>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
@@ -147,6 +148,10 @@ namespace NK {
 			"SetShader", &SpriteRenderer::SetShader,
 			"SetAlignment", [](SpriteRenderer& sr, double h, double v) { sr.SetAlignment((float)h, (float)v); },
 			"SetIsUI", &SpriteRenderer::SetIsUI,
+			"SetColor", [](SpriteRenderer& sr, double r, double g, double b, double a) {
+				sr.SetColor((float)r, (float)g, (float)b, (float)a);
+			},
+			"SetUseColor", & SpriteRenderer::SetUseColor,
 			sol::base_classes, sol::bases<Component>()
 		);
 
@@ -179,7 +184,16 @@ namespace NK {
 			"CreateUIObject", &Scene::CreateUIObject,
 			"OnStart", &Scene::OnStart,
 			"OnUpdate", &Scene::OnUpdate,
-			"OnRender", &Scene::OnRender
+			"OnRender", &Scene::OnRender,
+			"GetGameCamera", &Scene::GetGameCamera,   // <-- добавить
+			"GetUICamera", &Scene::GetUICamera        // <-- добавить (на будущее)
+		);
+
+		L.new_usertype<OrthographicCamera>("OrthographicCamera",
+			"GetLeft", &OrthographicCamera::GetLeft,
+			"GetRight", &OrthographicCamera::GetRight,
+			"GetBottom", &OrthographicCamera::GetBottom,
+			"GetTop", &OrthographicCamera::GetTop
 		);
 
 		// Font
@@ -220,6 +234,25 @@ namespace NK {
 			"SetObjectAnchor", [](Anchor& a, double ox, double oy) { a.SetObjectAnchor((float)ox, (float)oy); },
 			"SetSize", [](Anchor& a, double w, double h) { a.SetSize(glm::vec2((float)w, (float)h)); },
 			sol::base_classes, sol::bases<Component>()
+		);
+
+		L.new_usertype<Match3Board>("Match3Board",
+			sol::constructors<Match3Board(int, int, double, double)>(),
+			"FillRandom", &Match3Board::FillRandom,
+			"GetTile", &Match3Board::GetTile,
+			"SetTile", &Match3Board::SetTile,
+			"Swap", &Match3Board::Swap,
+			"FindMatches", &Match3Board::FindMatches,
+			"RemoveTiles", &Match3Board::RemoveTiles,
+			"ApplyGravity", &Match3Board::ApplyGravity,
+			"FillEmpty", &Match3Board::FillEmpty,
+			"GetCellPosition", [](Match3Board& board, int r, int c) -> std::tuple<float, float> {
+				auto pos = board.GetCellPosition(r, c);
+				return { pos.x, pos.y };
+			},
+			"GetRows", & Match3Board::GetRows,
+			"GetCols", & Match3Board::GetCols,
+			"OnTileChanged", & Match3Board::OnTileChanged
 		);
 
 		// Регистрируем функцию логирования

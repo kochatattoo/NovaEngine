@@ -23,6 +23,9 @@ namespace NK {
 		void SetCustomSize(const glm::vec2& size) { m_CustomSize = size; }
 		glm::vec2 GetCustomSize() const { return m_CustomSize; }
 
+		void SetColor(float r, float g, float b, float a) { m_Color = glm::vec4(r, g, b, a); m_UseColor = true; }
+		void SetUseColor(bool use) { m_UseColor = use; }
+
 		void OnStart() override;
 		void OnUpdate(float deltaTime) override; // тут будет отрисовка
 
@@ -34,6 +37,8 @@ namespace NK {
 	private:
 		std::shared_ptr<Texture2D> m_Texture;
 		std::shared_ptr<Shader> m_Shader;
+		glm::vec4 m_Color = glm::vec4(1.0f);
+		bool m_UseColor = false;
 		float m_HAlign = 0.0f;
 		float m_VAlign = 0.0f;
 		static uint32_t s_QuadVAO;

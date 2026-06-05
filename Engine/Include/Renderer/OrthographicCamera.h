@@ -9,6 +9,11 @@ namespace NK {
 		// left, right, bottom, top Ц границы видимой области
 		OrthographicCamera(float left, float right, float bottom, float top);
 
+		float GetLeft() const { return m_Left; }
+		float GetRight() const { return m_Right; }
+		float GetBottom() const { return m_Bottom; }
+		float GetTop() const { return m_Top; }
+
 		// ”становить границы
 		void SetProjection(float left, float right, float bottom, float top);
 
