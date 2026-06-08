@@ -243,11 +243,13 @@ namespace NK {
 			"GetTile", &Match3Board::GetTile,
 			"SetTile", &Match3Board::SetTile,
 			"IsValidCell", &Match3Board::IsValidCell,
+			"HasPossibleMoves", &Match3Board::HasPossibleMoves,
 			"Swap", &Match3Board::Swap,
 			"FindMatches", &Match3Board::FindMatches,
 			"RemoveTiles", &Match3Board::RemoveTiles,
 			"ApplyGravity", &Match3Board::ApplyGravity,
 			"FillEmpty", &Match3Board::FillEmpty,
+			"Mix", &Match3Board::Mix,
 			"GetCellPosition", [](Match3Board& board, int r, int c) -> std::tuple<float, float> {
 				auto pos = board.GetCellPosition(r, c);
 				return { pos.x, pos.y };

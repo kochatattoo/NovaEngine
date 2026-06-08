@@ -17,6 +17,7 @@ namespace NK {
 		void SetTile(int row, int col, TileType type);
 		TileType GetTile(int row, int col) const;
 		bool IsValidCell(int row, int col) const;
+		bool HasPossibleMoves();
 
 		// Базовые операции
 		bool Swap(int r1, int c1, int r2, int c2);  // вернёт true, если обмен возможен
@@ -24,6 +25,7 @@ namespace NK {
 		void RemoveTiles(const std::vector<std::pair<int, int>>& cells);
 		void ApplyGravity();                         // сдвигает плитки вниз
 		void FillEmpty();                            // заполняет пустые клетки новыми случайными плитками
+		void Mix();
 
 		int GetRows() const { return m_Rows; }
 		int GetCols() const { return m_Cols; }

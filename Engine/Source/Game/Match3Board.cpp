@@ -54,6 +54,31 @@ namespace NK {
 		return row >= 0 && row < m_Rows && col >= 0 && col < m_Cols;
 	}
 
+	bool Match3Board::HasPossibleMoves() {
+		// Перебираем все клетки
+		for (int r = 0; r < m_Rows; ++r) {
+			for (int c = 0; c < m_Cols; ++c) {
+				if (m_Grid[r][c] == -1) continue;
+				// Проверяем обмен с соседом справа
+				if (c + 1 < m_Cols && m_Grid[r][c + 1] != -1) {
+					// Временный swap
+					std::swap(m_Grid[r][c], m_Grid[r][c + 1]);
+					auto matches = FindMatches();
+					std::swap(m_Grid[r][c], m_Grid[r][c + 1]); // возвращаем обратно
+					if (!matches.empty()) return true;
+				}
+				// Проверяем обмен с соседом снизу
+				if (r + 1 < m_Rows && m_Grid[r + 1][c] != -1) {
+					std::swap(m_Grid[r][c], m_Grid[r + 1][c]);
+					auto matches = FindMatches();
+					std::swap(m_Grid[r][c], m_Grid[r + 1][c]);
+					if (!matches.empty()) return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	glm::vec2 Match3Board::GetCellPosition(int row, int col) const {
 		// Центр ячейки: отступ + (col+0.5)*cellSize, (row+0.5)*cellSize
 		float x = (col + 0.5f) * m_CellSize / m_PixelsPerUnit;
@@ -149,5 +174,12 @@ namespace NK {
 					if (OnTileChanged) OnTileChanged(r, c, m_Grid[r][c]);
 				}
 			}
+	}
+
+	void Match3Board::Mix() {
+		do {
+			// Заполняем заново, избегая начальных троек
+			FillRandom();   // используйте вариант с проверкой троек (см. ниже)
+		} while (!HasPossibleMoves());
 	}
 }
