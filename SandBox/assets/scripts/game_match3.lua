@@ -112,8 +112,12 @@ function OnStart()
     -- Заполняем доску
     Log("--- START BOARD GENERATION ---")
     board:FillRandom()
+        if not board:HasPossibleMoves() then
+        Log("No possible moves at start, mixing...")
+        board:Mix()
+        Log("Board mixed")
+        end
     Log("--- END BOARD GENERATION ---")
-
 end
 
 function OnUpdate(dt)
@@ -171,6 +175,10 @@ function OnUpdate(dt)
                             board:ApplyGravity()
                             board:FillEmpty()
                             newMatches = board:FindMatches()
+                        end
+                        if not board:HasPossibleMoves() then
+                             Log("No possible moves, mixing...")
+                             board:Mix()
                         end
                     end
                 end
