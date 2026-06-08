@@ -193,7 +193,8 @@ namespace NK {
 			"GetLeft", &OrthographicCamera::GetLeft,
 			"GetRight", &OrthographicCamera::GetRight,
 			"GetBottom", &OrthographicCamera::GetBottom,
-			"GetTop", &OrthographicCamera::GetTop
+			"GetTop", &OrthographicCamera::GetTop,
+			"ScreenToWorldPoint", &OrthographicCamera::ScreenToWorldPoint
 		);
 
 		// Font
@@ -241,6 +242,7 @@ namespace NK {
 			"FillRandom", &Match3Board::FillRandom,
 			"GetTile", &Match3Board::GetTile,
 			"SetTile", &Match3Board::SetTile,
+			"IsValidCell", &Match3Board::IsValidCell,
 			"Swap", &Match3Board::Swap,
 			"FindMatches", &Match3Board::FindMatches,
 			"RemoveTiles", &Match3Board::RemoveTiles,
@@ -253,6 +255,12 @@ namespace NK {
 			"GetRows", & Match3Board::GetRows,
 			"GetCols", & Match3Board::GetCols,
 			"OnTileChanged", & Match3Board::OnTileChanged
+		);
+
+		L.new_usertype<glm::vec2>("vec2",
+			sol::constructors<glm::vec2(), glm::vec2(float, float)>(),
+			"x", &glm::vec2::x,
+			"y", &glm::vec2::y
 		);
 
 		// Регистрируем функцию логирования
@@ -294,6 +302,24 @@ namespace NK {
 			catch (...) {
 				return nullptr;
 			}
+			});
+
+		L.set_function("GetMousePosition", [this]() -> std::tuple<int, int> {
+			int x, y;
+			Engine::Get().GetWindow()->GetMouseClientPosition(x, y);
+			return { x, y };
+			});
+
+		L.set_function("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
+
+		L.set_function("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
+
+		L.set_function("IsMouseButtonDown", [](int button) -> bool {
+			return Input::IsMouseButtonDown(button);
+			});
+
+		L.set_function("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
+			return Texture2D::CreateSolidColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
 			});
 	}
 

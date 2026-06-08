@@ -6,11 +6,15 @@
 
 class SandboxApp : public NK::Application {
 public:
+	SandboxApp()
+		: _luaManager(&NK::Engine::Get().GetLuaManager()) // Получаем ссылку и берем её адрес
+	{
+		// Теперь _luaManager гарантированно готов к работе
+	}
+
     void OnStart() override {
-		// Загружаем и выполняем скрипт
-		auto& lua = NK::Engine::Get().GetLuaManager();
-		if (lua.RunScript("assets/scripts/game_match3.lua")) {
-			lua.CallFunction("OnStart");
+		if (_luaManager -> RunScript("assets/scripts/game_match3.lua")) {
+			_luaManager -> CallFunction("OnStart");
 		}
         // Scene::OnStart() вызывается внутри Engine::Run
     }
@@ -18,7 +22,9 @@ public:
     void OnUpdate(float deltaTime) override {
 		// 1. Обновляем логику всех объектов (включая Lua-скрипты)
 		NK::Engine::Get().GetScene().OnUpdate(deltaTime);
-
+		
+        _luaManager->CallFunction("OnUpdate", deltaTime);
+	
 		// 2. Начинаем кадр
 		NK::Renderer::BeginFrame();
 
@@ -54,6 +60,7 @@ public:
 
 private:
 	float m_ColorR = 1.0f, m_ColorG = 1.0f, m_ColorB = 1.0f;
+    NK::LuaManager* _luaManager;
 };
 
 NK::Application* NK::CreateApplication() {

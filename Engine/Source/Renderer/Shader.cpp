@@ -25,7 +25,7 @@ namespace NK {
 		if (!success) {
 			char infoLog[512];
 			glGetProgramInfoLog(m_RendererID, 512, nullptr, infoLog);
-			NK_CORE_ERROR("Shader program linking failed: {0}", infoLog);
+			NK_CORE_ERROR("Shader program linking failed: %s", infoLog);
 		}
 
 		// Шейдеры больше не нужны, их можно удалить
@@ -71,7 +71,7 @@ namespace NK {
 
 		int location = glGetUniformLocation(m_RendererID, name.c_str());
 		if (location == -1)
-			NK_CORE_WARN("Uniform {0} not found in shader", name);
+			NK_CORE_WARN("Uniform %s not found in shader", name);
 
 		m_UniformLocationCache[name] = location;
 		return location;
@@ -89,7 +89,7 @@ namespace NK {
 		if (!success) {
 			char infoLog[512];
 			glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-			NK_CORE_ERROR("Shader compilation error ({0}): {1}", type, infoLog);
+			NK_CORE_ERROR("Shader compilation error (%d): %s", type, infoLog);
 		}
 		return shader;
 	}

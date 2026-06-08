@@ -8,6 +8,7 @@ namespace NK {
 	class Match3Board {
 	public:
 		using TileType = int;
+
 		using Grid = std::vector<std::vector<TileType>>;
 
 		Match3Board(int rows, int cols, float cellSize = 64.0f, float pixelsPerUnit = 100.0f);
@@ -39,5 +40,4 @@ namespace NK {
 		float m_PixelsPerUnit;
 		Grid m_Grid;
 	};
-
 }
