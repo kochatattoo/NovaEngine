@@ -20,6 +20,12 @@ namespace NK {
 		m_Shader = shader;
 	}
 
+	void SpriteRenderer::SetColor(float r, float g, float b, float a) {
+		m_Color = glm::vec4(r, g, b, a);
+		m_UseColor = true;
+		NK_CORE_INFO("SpriteRenderer::SetColor called: r=%f, g=%f, b=%f, a=%f, useColor=%d", r, g, b, a, m_UseColor);
+	}
+
 	void SpriteRenderer::InitQuad() {
 		if (s_Initialized) return;
 

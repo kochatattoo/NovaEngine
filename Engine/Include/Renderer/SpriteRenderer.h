@@ -23,7 +23,7 @@ namespace NK {
 		void SetCustomSize(const glm::vec2& size) { m_CustomSize = size; }
 		glm::vec2 GetCustomSize() const { return m_CustomSize; }
 
-		void SetColor(float r, float g, float b, float a) { m_Color = glm::vec4(r, g, b, a); m_UseColor = true; }
+		void SetColor(float r, float g, float b, float a);
 		void SetUseColor(bool use) { m_UseColor = use; }
 
 		void OnStart() override;

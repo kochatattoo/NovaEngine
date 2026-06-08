@@ -1,9 +1,24 @@
 #include "Renderer/Texture2D.h"
 #include "Core/Log.h"
 #include <stb/stb_image.h>
+#include <sol/usertype_storage.hpp>
 
 namespace NK {
 	Texture2D::Texture2D() : m_RendererID(0), m_Width(0), m_Height(0) {}
+
+	std::shared_ptr<Texture2D> Texture2D::CreateSolidColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+		const int w = 64, h = 64;
+		std::vector<uint8_t> data(w * h * 4);
+		for (int i = 0; i < w * h; ++i) {
+			data[i * 4 + 0] = r;
+			data[i * 4 + 1] = g;
+			data[i * 4 + 2] = b;
+			data[i * 4 + 3] = a;
+		}
+		auto tex = std::make_shared<Texture2D>();
+		tex->CreateFromData(w, h, data.data());
+		return tex;
+	}
 
 	void Texture2D::CreateFromData(int width, int height, const void* data) {
 		if (m_RendererID) glDeleteTextures(1, &m_RendererID); // на всякий случай

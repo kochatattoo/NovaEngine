@@ -10,14 +10,33 @@ namespace NK {
 	{
 	}
 
+	enum class TileType : int {
+		Normal0 = 0, Normal1 = 1, Normal2 = 2, Normal3 = 3, Normal4 = 4, Normal5 = 5,
+		SpecialBomb = 100, SpecialRainbow = 101  // зарезервировано
+	};
+
 	void Match3Board::FillRandom() {
 		static std::mt19937 rng(std::random_device{}());
 		std::uniform_int_distribution<int> dist(0, 5);
-		for (int r = 0; r < m_Rows; ++r)
+
+		for (int r = 0; r < m_Rows; ++r) {
 			for (int c = 0; c < m_Cols; ++c) {
-				m_Grid[r][c] = dist(rng);
-				if (OnTileChanged) OnTileChanged(r, c, m_Grid[r][c]);
+				TileType type;
+				bool valid = false;
+				while (!valid) {
+					type = dist(rng);
+					// Проверяем горизонтальные тройки (слева)
+					if (c >= 2 && m_Grid[r][c - 1] == type && m_Grid[r][c - 2] == type)
+						continue;
+					// Проверяем вертикальные тройки (сверху)
+					if (r >= 2 && m_Grid[r - 1][c] == type && m_Grid[r - 2][c] == type)
+						continue;
+					valid = true;
+				}
+				m_Grid[r][c] = type;
+				if (OnTileChanged) OnTileChanged(r, c, type);
 			}
+		}
 	}
 
 	void Match3Board::SetTile(int row, int col, TileType type) {
@@ -33,6 +52,31 @@ namespace NK {
 
 	bool Match3Board::IsValidCell(int row, int col) const {
 		return row >= 0 && row < m_Rows && col >= 0 && col < m_Cols;
+	}
+
+	bool Match3Board::HasPossibleMoves() {
+		// Перебираем все клетки
+		for (int r = 0; r < m_Rows; ++r) {
+			for (int c = 0; c < m_Cols; ++c) {
+				if (m_Grid[r][c] == -1) continue;
+				// Проверяем обмен с соседом справа
+				if (c + 1 < m_Cols && m_Grid[r][c + 1] != -1) {
+					// Временный swap
+					std::swap(m_Grid[r][c], m_Grid[r][c + 1]);
+					auto matches = FindMatches();
+					std::swap(m_Grid[r][c], m_Grid[r][c + 1]); // возвращаем обратно
+					if (!matches.empty()) return true;
+				}
+				// Проверяем обмен с соседом снизу
+				if (r + 1 < m_Rows && m_Grid[r + 1][c] != -1) {
+					std::swap(m_Grid[r][c], m_Grid[r + 1][c]);
+					auto matches = FindMatches();
+					std::swap(m_Grid[r][c], m_Grid[r + 1][c]);
+					if (!matches.empty()) return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	glm::vec2 Match3Board::GetCellPosition(int row, int col) const {
@@ -55,33 +99,40 @@ namespace NK {
 
 	std::vector<std::pair<int, int>> Match3Board::FindMatches() const {
 		std::vector<std::pair<int, int>> matches;
-		// Горизонтальные
+
+		// Горизонтальные цепочки
 		for (int r = 0; r < m_Rows; ++r) {
-			for (int c = 0; c < m_Cols - 2; ++c) {
-				if (m_Grid[r][c] != -1 &&
-					m_Grid[r][c] == m_Grid[r][c + 1] &&
-					m_Grid[r][c] == m_Grid[r][c + 2])
-				{
-					matches.emplace_back(r, c);
-					matches.emplace_back(r, c + 1);
-					matches.emplace_back(r, c + 2);
+			int start = 0;
+			while (start < m_Cols) {
+				if (m_Grid[r][start] == -1) { ++start; continue; }
+				int end = start;
+				while (end + 1 < m_Cols && m_Grid[r][end + 1] == m_Grid[r][start]) ++end;
+				int length = end - start + 1;
+				if (length >= 3) {
+					for (int c = start; c <= end; ++c)
+						matches.emplace_back(r, c);
 				}
+				start = end + 1;
 			}
 		}
-		// Вертикальные
+
+		// Вертикальные цепочки
 		for (int c = 0; c < m_Cols; ++c) {
-			for (int r = 0; r < m_Rows - 2; ++r) {
-				if (m_Grid[r][c] != -1 &&
-					m_Grid[r][c] == m_Grid[r + 1][c] &&
-					m_Grid[r][c] == m_Grid[r + 2][c])
-				{
-					matches.emplace_back(r, c);
-					matches.emplace_back(r + 1, c);
-					matches.emplace_back(r + 2, c);
+			int start = 0;
+			while (start < m_Rows) {
+				if (m_Grid[start][c] == -1) { ++start; continue; }
+				int end = start;
+				while (end + 1 < m_Rows && m_Grid[end + 1][c] == m_Grid[start][c]) ++end;
+				int length = end - start + 1;
+				if (length >= 3) {
+					for (int r = start; r <= end; ++r)
+						matches.emplace_back(r, c);
 				}
+				start = end + 1;
 			}
 		}
-		// Уникальность
+
+		// Удаляем дубликаты
 		std::sort(matches.begin(), matches.end());
 		matches.erase(std::unique(matches.begin(), matches.end()), matches.end());
 		return matches;
@@ -125,4 +176,10 @@ namespace NK {
 			}
 	}
 
+	void Match3Board::Mix() {
+		do {
+			// Заполняем заново, избегая начальных троек
+			FillRandom();   // используйте вариант с проверкой троек (см. ниже)
+		} while (!HasPossibleMoves());
+	}
 }
