@@ -1,4 +1,4 @@
-#include "Game/Match3Board.h"
+п»ї#include "Game/Match3Board.h"
 #include <algorithm>
 #include <random>
 
@@ -12,7 +12,7 @@ namespace NK {
 
 	enum class TileType : int {
 		Normal0 = 0, Normal1 = 1, Normal2 = 2, Normal3 = 3, Normal4 = 4, Normal5 = 5,
-		SpecialBomb = 100, SpecialRainbow = 101  // зарезервировано
+		SpecialBomb = 100, SpecialRainbow = 101  // Р·Р°СЂРµР·РµСЂРІРёСЂРѕРІР°РЅРѕ
 	};
 
 	void Match3Board::FillRandom() {
@@ -25,10 +25,10 @@ namespace NK {
 				bool valid = false;
 				while (!valid) {
 					type = dist(rng);
-					// Проверяем горизонтальные тройки (слева)
+					// РџСЂРѕРІРµСЂСЏРµРј РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Рµ С‚СЂРѕР№РєРё (СЃР»РµРІР°)
 					if (c >= 2 && m_Grid[r][c - 1] == type && m_Grid[r][c - 2] == type)
 						continue;
-					// Проверяем вертикальные тройки (сверху)
+					// РџСЂРѕРІРµСЂСЏРµРј РІРµСЂС‚РёРєР°Р»СЊРЅС‹Рµ С‚СЂРѕР№РєРё (СЃРІРµСЂС…Сѓ)
 					if (r >= 2 && m_Grid[r - 1][c] == type && m_Grid[r - 2][c] == type)
 						continue;
 					valid = true;
@@ -55,19 +55,19 @@ namespace NK {
 	}
 
 	bool Match3Board::HasPossibleMoves() {
-		// Перебираем все клетки
+		// РџРµСЂРµР±РёСЂР°РµРј РІСЃРµ РєР»РµС‚РєРё
 		for (int r = 0; r < m_Rows; ++r) {
 			for (int c = 0; c < m_Cols; ++c) {
 				if (m_Grid[r][c] == -1) continue;
-				// Проверяем обмен с соседом справа
+				// РџСЂРѕРІРµСЂСЏРµРј РѕР±РјРµРЅ СЃ СЃРѕСЃРµРґРѕРј СЃРїСЂР°РІР°
 				if (c + 1 < m_Cols && m_Grid[r][c + 1] != -1) {
-					// Временный swap
+					// Р’СЂРµРјРµРЅРЅС‹Р№ swap
 					std::swap(m_Grid[r][c], m_Grid[r][c + 1]);
 					auto matches = FindMatches();
-					std::swap(m_Grid[r][c], m_Grid[r][c + 1]); // возвращаем обратно
+					std::swap(m_Grid[r][c], m_Grid[r][c + 1]); // РІРѕР·РІСЂР°С‰Р°РµРј РѕР±СЂР°С‚РЅРѕ
 					if (!matches.empty()) return true;
 				}
-				// Проверяем обмен с соседом снизу
+				// РџСЂРѕРІРµСЂСЏРµРј РѕР±РјРµРЅ СЃ СЃРѕСЃРµРґРѕРј СЃРЅРёР·Сѓ
 				if (r + 1 < m_Rows && m_Grid[r + 1][c] != -1) {
 					std::swap(m_Grid[r][c], m_Grid[r + 1][c]);
 					auto matches = FindMatches();
@@ -80,7 +80,7 @@ namespace NK {
 	}
 
 	glm::vec2 Match3Board::GetCellPosition(int row, int col) const {
-		// Центр ячейки: отступ + (col+0.5)*cellSize, (row+0.5)*cellSize
+		// Р¦РµРЅС‚СЂ СЏС‡РµР№РєРё: РѕС‚СЃС‚СѓРї + (col+0.5)*cellSize, (row+0.5)*cellSize
 		float x = (col + 0.5f) * m_CellSize / m_PixelsPerUnit;
 		float y = (row + 0.5f) * m_CellSize / m_PixelsPerUnit;
 		return glm::vec2(x, y);
@@ -88,7 +88,7 @@ namespace NK {
 
 	bool Match3Board::Swap(int r1, int c1, int r2, int c2) {
 		if (!IsValidCell(r1, c1) || !IsValidCell(r2, c2)) return false;
-		// Обмен
+		// РћР±РјРµРЅ
 		std::swap(m_Grid[r1][c1], m_Grid[r2][c2]);
 		if (OnTileChanged) {
 			OnTileChanged(r1, c1, m_Grid[r1][c1]);
@@ -100,41 +100,62 @@ namespace NK {
 	std::vector<std::pair<int, int>> Match3Board::FindMatches() const {
 		std::vector<std::pair<int, int>> matches;
 
-		// Горизонтальные цепочки
+		// Р’СЂРµРјРµРЅРЅР°СЏ РјР°С‚СЂРёС†Р° С„Р»Р°РіРѕРІ РґР»СЏ РѕС‚РјРµС‚РєРё СЏС‡РµРµРє РЅР° СѓРґР°Р»РµРЅРёРµ
+		std::vector<std::vector<bool>> marked(m_Rows, std::vector<bool>(m_Cols, false));
+
+		// 1. Р“РѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Рµ С†РµРїРѕС‡РєРё (в‰Ґ3)
 		for (int r = 0; r < m_Rows; ++r) {
-			int start = 0;
-			while (start < m_Cols) {
-				if (m_Grid[r][start] == -1) { ++start; continue; }
-				int end = start;
-				while (end + 1 < m_Cols && m_Grid[r][end + 1] == m_Grid[r][start]) ++end;
-				int length = end - start + 1;
-				if (length >= 3) {
-					for (int c = start; c <= end; ++c)
-						matches.emplace_back(r, c);
+			for (int c = 0; c < m_Cols - 2; ++c) {
+				int type = m_Grid[r][c];
+				if (type == -1) continue;
+
+				if (m_Grid[r][c + 1] == type && m_Grid[r][c + 2] == type) {
+					marked[r][c] = true;
+					marked[r][c + 1] = true;
+					marked[r][c + 2] = true;
+
+					// Р Р°СЃС€РёСЂСЏРµРј С†РµРїРѕС‡РєСѓ РІРїСЂР°РІРѕ
+					int nextC = c + 3;
+					while (nextC < m_Cols && m_Grid[r][nextC] == type) {
+						marked[r][nextC] = true;
+						nextC++;
+					}
 				}
-				start = end + 1;
 			}
 		}
 
-		// Вертикальные цепочки
+		// 2. Р’РµСЂС‚РёРєР°Р»СЊРЅС‹Рµ С†РµРїРѕС‡РєРё (в‰Ґ3)
 		for (int c = 0; c < m_Cols; ++c) {
-			int start = 0;
-			while (start < m_Rows) {
-				if (m_Grid[start][c] == -1) { ++start; continue; }
-				int end = start;
-				while (end + 1 < m_Rows && m_Grid[end + 1][c] == m_Grid[start][c]) ++end;
-				int length = end - start + 1;
-				if (length >= 3) {
-					for (int r = start; r <= end; ++r)
-						matches.emplace_back(r, c);
+			for (int r = 0; r < m_Rows - 2; ++r) {
+				int type = m_Grid[r][c];
+				if (type == -1) continue;
+
+				if (m_Grid[r + 1][c] == type && m_Grid[r + 2][c] == type) {
+					marked[r][c] = true;
+					marked[r + 1][c] = true;
+					marked[r + 2][c] = true;
+
+					// Р Р°СЃС€РёСЂСЏРµРј С†РµРїРѕС‡РєСѓ РІРЅРёР·
+					int nextR = r + 3;
+					while (nextR < m_Rows && m_Grid[nextR][c] == type) {
+						marked[nextR][c] = true;
+						nextR++;
+					}
 				}
-				start = end + 1;
 			}
 		}
 
-		// Удаляем дубликаты
+		// 3. РЎРѕР±РёСЂР°РµРј РІСЃРµ РїРѕРјРµС‡РµРЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹
+		for (int r = 0; r < m_Rows; ++r) {
+			for (int c = 0; c < m_Cols; ++c) {
+				if (marked[r][c]) {
+					matches.emplace_back(r, c);
+				}
+			}
+		}
+
+		// РЎРѕСЂС‚РёСЂСѓРµРј РґР»СЏ РїСЂРµРґСЃРєР°Р·СѓРµРјРѕРіРѕ РїРѕСЂСЏРґРєР°
 		std::sort(matches.begin(), matches.end());
-		matches.erase(std::unique(matches.begin(), matches.end()), matches.end());
 		return matches;
 	}
 
@@ -178,8 +199,8 @@ namespace NK {
 
 	void Match3Board::Mix() {
 		do {
-			// Заполняем заново, избегая начальных троек
-			FillRandom();   // используйте вариант с проверкой троек (см. ниже)
+			// Р—Р°РїРѕР»РЅСЏРµРј Р·Р°РЅРѕРІРѕ, РёР·Р±РµРіР°СЏ РЅР°С‡Р°Р»СЊРЅС‹С… С‚СЂРѕРµРє
+			FillRandom();   // РёСЃРїРѕР»СЊР·СѓР№С‚Рµ РІР°СЂРёР°РЅС‚ СЃ РїСЂРѕРІРµСЂРєРѕР№ С‚СЂРѕРµРє (СЃРј. РЅРёР¶Рµ)
 		} while (!HasPossibleMoves());
 	}
 }

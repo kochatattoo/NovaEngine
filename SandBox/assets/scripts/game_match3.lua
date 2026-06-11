@@ -164,13 +164,20 @@ function OnUpdate(dt)
                         -- Неудачный обмен — возвращаем обратно
                         board:Swap(pressedRow, pressedCol, row, col)
                     else
+                        -- Подсчёт очков
+                        score = score + #matches
+                        Log(string.format("Found %d tiles to remove. Score: %d", #matches, score))
+
                         -- Удаляем совпадения, применяем гравитацию и заполняем пустоты
                         board:RemoveTiles(matches)
                         board:ApplyGravity()
                         board:FillEmpty()
+
                         -- Цепная реакция
                         local newMatches = board:FindMatches()
                         while #newMatches > 0 do
+                            score = score + #newMatches
+                            Log(string.format("Cascade! Removed %d more tiles. Score: %d", #newMatches, score))
                             board:RemoveTiles(newMatches)
                             board:ApplyGravity()
                             board:FillEmpty()
