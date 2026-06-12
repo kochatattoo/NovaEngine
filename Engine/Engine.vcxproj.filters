@@ -258,6 +258,9 @@
     <ClInclude Include="Include\UI\Anchor.h">
       <Filter>Include\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Core\LuaBindings.h">
+      <Filter>Include\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -439,6 +442,9 @@
     </ClCompile>
     <ClCompile Include="Source\UI\Anchor.cpp">
       <Filter>Source\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\LuaBindings.cpp">
+      <Filter>Source\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

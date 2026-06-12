@@ -189,6 +189,7 @@
     <ClInclude Include="Include\Core\EntryPoint.h" />
     <ClInclude Include="Include\Core\GameObject.h" />
     <ClInclude Include="Include\Core\Log.h" />
+    <ClInclude Include="Include\Core\LuaBindings.h" />
     <ClInclude Include="Include\Core\LuaManager.h" />
     <ClInclude Include="Include\Core\ResourceManager.h" />
     <ClInclude Include="Include\Core\ResourcePool.h" />
@@ -261,6 +262,7 @@
     </ClCompile>
     <ClCompile Include="Source\Core\GameObject.cpp" />
     <ClCompile Include="Source\Core\Log.cpp" />
+    <ClCompile Include="Source\Core\LuaBindings.cpp" />
     <ClCompile Include="Source\Core\LuaManager.cpp" />
     <ClCompile Include="Source\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\Core\Scene.cpp" />
