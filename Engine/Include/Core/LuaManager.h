@@ -35,8 +35,9 @@ namespace NK {
 
 		// Экспортировать C++-класс или функцию в Lua
 		template<typename T, typename... Args>
-		void RegisterClass(const std::string& name) {
-			m_State.new_usertype<T>(name, Args()...);
+		void BindClass(const std::string& name, Args&&... args) {
+			// std::forward правильно прокинет все пары "Имя", &Метод внутрь sol2
+			m_State.new_usertype<T>(name, std::forward<Args>(args)...);
 		}
 
 		// Простейшая регистрация функции

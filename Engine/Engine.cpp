@@ -120,10 +120,9 @@ namespace NK {
 	}
 
 	void Engine::SetupLuaBindings() {
-		sol::state& L = m_LuaManager.GetState();
 
 		// Регистрируем Transform
-		L.new_usertype<Transform>("Transform",
+		m_LuaManager.BindClass<Transform>("Transform",
 			"SetPosition", [](Transform& t, double x, double y, double z) {
 				t.SetPosition(glm::vec3((float)x, (float)y, (float)z));
 			},
@@ -142,7 +141,7 @@ namespace NK {
 		);
 
 		// SpriteRenderer
-		L.new_usertype<SpriteRenderer>("SpriteRenderer",
+		m_LuaManager.BindClass<SpriteRenderer>("SpriteRenderer",
 			"SetTexture", &SpriteRenderer::SetTexture,
 			"SetShader", &SpriteRenderer::SetShader,
 			"SetAlignment", [](SpriteRenderer& sr, double h, double v) { sr.SetAlignment((float)h, (float)v); },
@@ -155,7 +154,7 @@ namespace NK {
 		);
 
 		// GameObject
-		L.new_usertype<GameObject>("GameObject",
+		m_LuaManager.BindClass<GameObject>("GameObject",
 			"AddComponent_Transform", [](GameObject& obj) -> Transform* {
 				auto* t = obj.GetComponent<Transform>();
 				if (t) return t;                              // возвращаем существующий
@@ -178,7 +177,7 @@ namespace NK {
 		);
 
 		// Scene
-		L.new_usertype<Scene>("Scene",
+		m_LuaManager.BindClass<Scene>("Scene",
 			"CreateGameObject", &Scene::CreateGameObject,
 			"CreateUIObject", &Scene::CreateUIObject,
 			"OnStart", &Scene::OnStart,
@@ -188,7 +187,7 @@ namespace NK {
 			"GetUICamera", &Scene::GetUICamera        // <-- добавить (на будущее)
 		);
 
-		L.new_usertype<OrthographicCamera>("OrthographicCamera",
+		m_LuaManager.BindClass<OrthographicCamera>("OrthographicCamera",
 			"GetLeft", &OrthographicCamera::GetLeft,
 			"GetRight", &OrthographicCamera::GetRight,
 			"GetBottom", &OrthographicCamera::GetBottom,
@@ -197,12 +196,12 @@ namespace NK {
 		);
 
 		// Font
-		L.new_usertype<Font>("Font",
+		m_LuaManager.BindClass<Font>("Font",
 			"CreateTextTexture", &Font::CreateTextTexture
 		);
 
 		// TextRenderer
-		L.new_usertype<TextRenderer>("TextRenderer",
+		m_LuaManager.BindClass<TextRenderer>("TextRenderer",
 			"SetFont", &TextRenderer::SetFont,
 			"SetText", &TextRenderer::SetText,
 			"SetFontSize", [](TextRenderer& tr, double size) { tr.SetFontSize((float)size); },
@@ -214,7 +213,7 @@ namespace NK {
 		);
 
 		// Button
-		L.new_usertype<Button>("Button",
+		m_LuaManager.BindClass<Button>("Button",
 			"SetCallback", &Button::SetCallback,
 			"SetOnClick", &Button::SetOnClick,
 			"SetOnPointerDown", &Button::SetOnPointerDown,
@@ -228,7 +227,7 @@ namespace NK {
 		);
 
 		// Anchor
-		L.new_usertype<Anchor>("Anchor",
+		m_LuaManager.BindClass<Anchor>("Anchor",
 			"SetPreset", [](Anchor& a, int preset) { a.SetPreset(static_cast<AnchorPreset>(preset)); },
 			"SetScreenAnchor", [](Anchor& a, double sx, double sy) { a.SetScreenAnchor((float)sx, (float)sy); },
 			"SetObjectAnchor", [](Anchor& a, double ox, double oy) { a.SetObjectAnchor((float)ox, (float)oy); },
@@ -236,44 +235,44 @@ namespace NK {
 			sol::base_classes, sol::bases<Component>()
 		);
 
-		L.new_usertype<glm::vec2>("vec2",
+		m_LuaManager.BindClass<glm::vec2>("vec2",
 			sol::constructors<glm::vec2(), glm::vec2(float, float)>(),
 			"x", &glm::vec2::x,
 			"y", &glm::vec2::y
 		);
 
 		// Регистрируем функцию логирования
-		L.set_function("Log", [](const std::string& msg) {
+		m_LuaManager.RegisterFunction("Log", [](const std::string& msg) {
 			NK_INFO("%s", msg.c_str());
 			});
 
 		// Регистрируем опрос клавиш (через старый Input)
-		L.set_function("IsKeyDown", [](int key) -> bool {
+		m_LuaManager.RegisterFunction("IsKeyDown", [](int key) -> bool {
 			return Input::IsKeyDown(key);
 			});
 
 		// Установка цвета очистки фона
-		L.set_function("SetClearColor", [](float r, float g, float b, float a) {
+		m_LuaManager.RegisterFunction("SetClearColor", [](float r, float g, float b, float a) {
 			Renderer::SetClearColor(r, g, b, a);
 			});
 
 		// Регистрируем получение Engine
-		L.set_function("GetEngine", [this]() -> Engine& {
+		m_LuaManager.RegisterFunction("GetEngine", [this]() -> Engine& {
 			return *this;
 			});
 
 		// Предоставим доступ к сцене из Lua
-		L.set_function("GetScene", [this]() -> Scene& { return m_Scene; });
+		m_LuaManager.RegisterFunction("GetScene", [this]() -> Scene& { return m_Scene; });
 
-		L.set_function("GetTexture", [](const std::string& path) {
+		m_LuaManager.RegisterFunction("GetTexture", [](const std::string& path) {
 			return Engine::Get().GetResourceManager().GetTexture(path);
 			});
 
-		L.set_function("GetShader", [](const std::string& name, const std::string& vSrc, const std::string& fSrc) {
+		m_LuaManager.RegisterFunction("GetShader", [](const std::string& name, const std::string& vSrc, const std::string& fSrc) {
 			return Engine::Get().GetResourceManager().GetShader(name, vSrc, fSrc);
 			});
 
-		L.set_function("LoadFont", [](const std::string& path) -> std::shared_ptr<Font> {
+		m_LuaManager.RegisterFunction("LoadFont", [](const std::string& path) -> std::shared_ptr<Font> {
 			try {
 				auto font = std::make_shared<Font>(path);
 				return font;
@@ -283,21 +282,21 @@ namespace NK {
 			}
 			});
 
-		L.set_function("GetMousePosition", [this]() -> std::tuple<int, int> {
+		m_LuaManager.RegisterFunction("GetMousePosition", [this]() -> std::tuple<int, int> {
 			int x, y;
 			Engine::Get().GetWindow()->GetMouseClientPosition(x, y);
 			return { x, y };
 			});
 
-		L.set_function("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
+		m_LuaManager.RegisterFunction("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
 
-		L.set_function("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
+		m_LuaManager.RegisterFunction("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
 
-		L.set_function("IsMouseButtonDown", [](int button) -> bool {
+		m_LuaManager.RegisterFunction("IsMouseButtonDown", [](int button) -> bool {
 			return Input::IsMouseButtonDown(button);
 			});
 
-		L.set_function("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
+		m_LuaManager.RegisterFunction("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
 			return Texture2D::CreateSolidColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
 			});
 	}

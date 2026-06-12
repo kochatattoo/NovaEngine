@@ -19,10 +19,9 @@ namespace NK {
     }
 
     void Match3Game::SetupLuaBindings() {
-        auto& L = m_Lua.GetState();
 
         // Регистрация Match3Board
-        L.new_usertype<Match3Board>("Match3Board",
+        m_Lua.BindClass<Match3Board>("Match3Board",
             sol::constructors<Match3Board(int, int, double, double)>(),
             "FillRandom", &Match3Board::FillRandom,
             "GetTile", &Match3Board::GetTile,
@@ -45,22 +44,22 @@ namespace NK {
         );
 
         // Глобальные функции, нужные для игры
-        L.set_function("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
+        m_Lua.RegisterFunction("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
             return Texture2D::CreateSolidColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
             });
-        L.set_function("GetMousePosition", []() -> std::tuple<int, int> {
+        m_Lua.RegisterFunction("GetMousePosition", []() -> std::tuple<int, int> {
             int x, y;
             Engine::Get().GetWindow()->GetMouseClientPosition(x, y);
             return { x, y };
             });
-        L.set_function("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
-        L.set_function("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
-        L.set_function("IsMouseButtonDown", [](int button) -> bool {
+        m_Lua.RegisterFunction("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
+        m_Lua.RegisterFunction("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
+        m_Lua.RegisterFunction("IsMouseButtonDown", [](int button) -> bool {
             return Input::IsMouseButtonDown(button);
             });
 
         // Добавляем доступ к сцене и камере
-        L.set_function("GetScene", [this]() -> Scene& { return *m_Scene; });
+        m_Lua.RegisterFunction("GetScene", [this]() -> Scene& { return *m_Scene; });
         // Остальные общие функции (GetTexture, GetShader, Log и т.д.) уже зарегистрированы в Engine
     }
 
