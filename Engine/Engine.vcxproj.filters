@@ -55,14 +55,32 @@
     <Filter Include="Source\stb">
       <UniqueIdentifier>{3cdd1162-157c-485b-9a07-40676de7c9c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Lua">
-      <UniqueIdentifier>{ab1ebb1d-65a6-4ee6-aab4-872ce0a7e01d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\UI">
       <UniqueIdentifier>{39f0143a-236e-4296-86e1-338ed153be6b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\UI">
       <UniqueIdentifier>{9f4d0208-f839-4aef-9f7a-bb74e62d8f32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Lua">
+      <UniqueIdentifier>{837a237f-90a8-4296-ae4e-bae2ed97101c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Resource">
+      <UniqueIdentifier>{8db97276-eab4-42ac-98d8-077536e4b156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Scene">
+      <UniqueIdentifier>{288964ab-c231-4fbe-9e9a-7771131812cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lua">
+      <UniqueIdentifier>{ab1ebb1d-65a6-4ee6-aab4-872ce0a7e01d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\LuaManager">
+      <UniqueIdentifier>{a38f03db-c2e8-4bdb-8a75-5531f1832add}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Resource">
+      <UniqueIdentifier>{a78a92b7-186b-40e4-b969-0046aba6c3e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scene">
+      <UniqueIdentifier>{f4971a79-4ea8-4958-8e14-72cf54fe08a0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -128,12 +146,6 @@
     </ClInclude>
     <ClInclude Include="Source\stb\stb_image.h">
       <Filter>Source\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Core\ResourcePool.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Core\ResourceManager.h">
-      <Filter>Include\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Libraries\lua\src\lapi.h">
       <Filter>Source\Lua</Filter>
@@ -219,26 +231,8 @@
     <ClInclude Include="..\Libraries\lua\src\lzio.h">
       <Filter>Source\Lua</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Core\LuaManager.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Core\Component.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Core\Transform.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Renderer\SpriteRenderer.h">
       <Filter>Include\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Core\GameObject.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Core\ScriptComponent.h">
-      <Filter>Include\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Core\Scene.h">
-      <Filter>Include\Core</Filter>
     </ClInclude>
     <ClInclude Include="Include\Renderer\OrthographicCamera.h">
       <Filter>Include\Renderer</Filter>
@@ -258,8 +252,32 @@
     <ClInclude Include="Include\UI\Anchor.h">
       <Filter>Include\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Core\LuaBindings.h">
-      <Filter>Include\Core</Filter>
+    <ClInclude Include="Include\Scene\Component.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Scene\GameObject.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Scene\Scene.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Scene\ScriptComponent.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Scene\Transform.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Resource\ResourceManager.h">
+      <Filter>Include\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Resource\ResourcePool.h">
+      <Filter>Include\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lua\LuaBindings.h">
+      <Filter>Include\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lua\LuaManager.h">
+      <Filter>Include\Lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -307,9 +325,6 @@
     </ClCompile>
     <ClCompile Include="Source\stb\stb_image.cpp">
       <Filter>Source\stb</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Core\ResourceManager.cpp">
-      <Filter>Source\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\Libraries\lua\src\lapi.c">
       <Filter>Source\Lua</Filter>
@@ -407,23 +422,8 @@
     <ClCompile Include="..\Libraries\lua\src\lzio.c">
       <Filter>Source\Lua</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\LuaManager.cpp">
-      <Filter>Source\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Core\Transform.cpp">
-      <Filter>Source\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Renderer\SpriteRenderer.cpp">
       <Filter>Source\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Core\ScriptComponent.cpp">
-      <Filter>Source\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Core\GameObject.cpp">
-      <Filter>Source\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Core\Scene.cpp">
-      <Filter>Source\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Renderer\OrthographicCamera.cpp">
       <Filter>Source\Renderer</Filter>
@@ -443,8 +443,26 @@
     <ClCompile Include="Source\UI\Anchor.cpp">
       <Filter>Source\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\LuaBindings.cpp">
-      <Filter>Source\Core</Filter>
+    <ClCompile Include="Source\Resource\ResourceManager.cpp">
+      <Filter>Source\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lua\LuaBindings.cpp">
+      <Filter>Source\LuaManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lua\LuaManager.cpp">
+      <Filter>Source\LuaManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\GameObject.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Scene.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\ScriptComponent.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\Transform.cpp">
+      <Filter>Source\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

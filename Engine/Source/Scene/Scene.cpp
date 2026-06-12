@@ -1,4 +1,4 @@
-#include "Core/Scene.h"
+#include "Scene/Scene.h"
 #include <Core/Log.h>
 #include <Renderer/SpriteRenderer.h>
 #include "Renderer/TextRenderer.h"

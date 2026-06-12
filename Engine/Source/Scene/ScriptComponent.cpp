@@ -1,6 +1,6 @@
-#include "Core/ScriptComponent.h"
-#include "Core/GameObject.h"
-#include "Core/LuaManager.h"
+#include "Scene/ScriptComponent.h"
+#include "Scene/GameObject.h"
+#include "Lua/LuaManager.h"
 #include "Core/Engine.h"
 
 namespace NK {

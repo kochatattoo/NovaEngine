@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include <memory>
-#include "Core/GameObject.h"
+#include "Scene/GameObject.h"
 #include <Renderer/OrthographicCamera.h>
 #include <UI/Anchor.h>
 

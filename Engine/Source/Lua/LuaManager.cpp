@@ -1,4 +1,4 @@
-#include "Core/LuaManager.h"
+#include "Lua/LuaManager.h"
 #include "Core/Log.h"
 #include <cstdio>
 #include <sol/sol.hpp>

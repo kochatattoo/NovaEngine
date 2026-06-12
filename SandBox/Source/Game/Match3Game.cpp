@@ -4,7 +4,7 @@
 #include "Renderer/SpriteRenderer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/OrthographicCamera.h"
-#include "Core/ResourceManager.h"
+#include "Resource/ResourceManager.h"
 #include "Input/Input.h"
 #include "Window/Window.h"
 #include <sol/sol.hpp>

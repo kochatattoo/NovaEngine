@@ -1,6 +1,6 @@
 #include "UI/Button.h"
-#include "Core/GameObject.h"
-#include "Core/Transform.h"
+#include "Scene/GameObject.h"
+#include "Scene/Transform.h"
 #include "Renderer/SpriteRenderer.h"
 #include "Renderer/TextRenderer.h"
 #include "Input/Input.h"

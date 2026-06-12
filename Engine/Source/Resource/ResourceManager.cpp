@@ -1,4 +1,4 @@
-#include "Core/ResourceManager.h"
+#include "Resource/ResourceManager.h"
 
 namespace NK {
 

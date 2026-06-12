@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "Core/ResourcePool.h"
+#include "Resource/ResourcePool.h"
 #include "Renderer/Texture2D.h"
 #include "Renderer/Shader.h"
 

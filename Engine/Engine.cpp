@@ -1,15 +1,15 @@
 ﻿#include "Core/Engine.h"
 #include "Core/Application.h"
 #include "Core/Timer.h"
-#include "Core/Transform.h"
-#include "Core/ScriptComponent.h"
+#include "Scene/Transform.h"
+#include "Scene/ScriptComponent.h"
 #include "Renderer/SpriteRenderer.h"
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/GraphicsContext.h"
-#include "Core/LuaManager.h"
+#include "Lua/LuaManager.h"
 #include <Renderer/TextRenderer.h>
-#include <Core/LuaBindings.h>
+#include <Lua/LuaBindings.h>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;

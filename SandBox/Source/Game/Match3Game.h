@@ -2,8 +2,8 @@
 #include <memory>
 #include <string>
 #include "Game/Match3Board.h"
-#include "Core/LuaManager.h"
-#include "Core/Scene.h"
+#include "Lua/LuaManager.h"
+#include "Scene/Scene.h"
 #include "Core/Engine.h"
 
 namespace NK {

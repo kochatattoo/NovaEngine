@@ -1,8 +1,8 @@
 #include "Renderer/TextRenderer.h"
 #include "Renderer/Font.h"
-#include "Core/GameObject.h"
-#include "Core/Transform.h"
-#include "Core/ResourceManager.h"
+#include "Scene/GameObject.h"
+#include "Scene/Transform.h"
+#include "Resource/ResourceManager.h"
 #include "Core/Engine.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/gl.h>
