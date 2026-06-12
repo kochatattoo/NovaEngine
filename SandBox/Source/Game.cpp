@@ -3,28 +3,23 @@
 #include <Input/Input.h>        // старый ввод
 #include <Renderer/Renderer.h>
 #include <Event/Event.h>
+#include "Game/Match3Game.h"
 
 class SandboxApp : public NK::Application {
 public:
-	SandboxApp()
-		: _luaManager(&NK::Engine::Get().GetLuaManager()) // Получаем ссылку и берем её адрес
-	{
-		// Теперь _luaManager гарантированно готов к работе
-	}
+    SandboxApp() = default;
 
     void OnStart() override {
-		if (_luaManager -> RunScript("assets/scripts/game_match3.lua")) {
-			_luaManager -> CallFunction("OnStart");
-		}
-        // Scene::OnStart() вызывается внутри Engine::Run
+        m_Game = std::make_unique<NK::Match3Game>();
+        m_Game->Start();
     }
 
     void OnUpdate(float deltaTime) override {
 		// 1. Обновляем логику всех объектов (включая Lua-скрипты)
 		NK::Engine::Get().GetScene().OnUpdate(deltaTime);
-		
-        _luaManager->CallFunction("OnUpdate", deltaTime);
-	
+
+        if (m_Game) m_Game->Update(deltaTime);
+
 		// 2. Начинаем кадр
 		NK::Renderer::BeginFrame();
 
@@ -60,7 +55,7 @@ public:
 
 private:
 	float m_ColorR = 1.0f, m_ColorG = 1.0f, m_ColorB = 1.0f;
-    NK::LuaManager* _luaManager;
+    std::unique_ptr<NK::Match3Game> m_Game;
 };
 
 NK::Application* NK::CreateApplication() {

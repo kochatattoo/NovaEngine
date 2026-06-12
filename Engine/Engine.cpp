@@ -14,7 +14,6 @@
 #include <Renderer/TextRenderer.h>
 #include <UI/Button.h>
 #include <UI/Anchor.h>
-#include <Game/Match3Board.h>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
@@ -235,28 +234,6 @@ namespace NK {
 			"SetObjectAnchor", [](Anchor& a, double ox, double oy) { a.SetObjectAnchor((float)ox, (float)oy); },
 			"SetSize", [](Anchor& a, double w, double h) { a.SetSize(glm::vec2((float)w, (float)h)); },
 			sol::base_classes, sol::bases<Component>()
-		);
-
-		L.new_usertype<Match3Board>("Match3Board",
-			sol::constructors<Match3Board(int, int, double, double)>(),
-			"FillRandom", &Match3Board::FillRandom,
-			"GetTile", &Match3Board::GetTile,
-			"SetTile", &Match3Board::SetTile,
-			"IsValidCell", &Match3Board::IsValidCell,
-			"HasPossibleMoves", &Match3Board::HasPossibleMoves,
-			"Swap", &Match3Board::Swap,
-			"FindMatches", &Match3Board::FindMatches,
-			"RemoveTiles", &Match3Board::RemoveTiles,
-			"ApplyGravity", &Match3Board::ApplyGravity,
-			"FillEmpty", &Match3Board::FillEmpty,
-			"Mix", &Match3Board::Mix,
-			"GetCellPosition", [](Match3Board& board, int r, int c) -> std::tuple<float, float> {
-				auto pos = board.GetCellPosition(r, c);
-				return { pos.x, pos.y };
-			},
-			"GetRows", & Match3Board::GetRows,
-			"GetCols", & Match3Board::GetCols,
-			"OnTileChanged", & Match3Board::OnTileChanged
 		);
 
 		L.new_usertype<glm::vec2>("vec2",

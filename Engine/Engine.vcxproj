@@ -197,7 +197,6 @@
     <ClInclude Include="Include\Core\Timer.h" />
     <ClInclude Include="Include\Core\Transform.h" />
     <ClInclude Include="Include\Event\Event.h" />
-    <ClInclude Include="Include\Game\Match3Board.h" />
     <ClInclude Include="Include\glad\gl.h" />
     <ClInclude Include="Include\glad\khrplatform.h" />
     <ClInclude Include="Include\Input\Input.h" />
@@ -267,7 +266,6 @@
     <ClCompile Include="Source\Core\Scene.cpp" />
     <ClCompile Include="Source\Core\ScriptComponent.cpp" />
     <ClCompile Include="Source\Core\Transform.cpp" />
-    <ClCompile Include="Source\Game\Match3Board.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Renderer\Camera.cpp" />
