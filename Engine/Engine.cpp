@@ -11,6 +11,8 @@
 #include <Renderer/TextRenderer.h>
 #include <Lua/LuaBindings.h>
 
+#include "Input/InputManager.h"
+
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
 
@@ -39,6 +41,9 @@ namespace NK {
 			glViewport(0, 0, w, h);
 			m_Scene.RecalculateAnchors(w, h);
 			};
+		
+		InputManager::Get().SetWindowHandle(static_cast<HWND>(m_Window->GetNativeWindow()));
+		
 		// Инициализируем рендерер (после того, как контекст уже создан внутри Window)
 		Renderer::Init();
 
@@ -83,21 +88,13 @@ namespace NK {
 			float dt = timer.Tick();
 
 			m_Window->OnUpdate();                   // обработка сообщений
+			InputManager::Get().Update(); 
 			if (m_Window->ShouldClose())
 			{
 				NK_CORE_INFO("Window should close, breaking loop");
 				m_Running = false;
 			}
-
-			// Извлекаем все накопившиеся события и отправляем в приложение
-			{
-				auto event = m_Window->PollEvent();
-				while (event) {
-					m_App->OnEvent(*event);
-					event = m_Window->PollEvent();
-				}
-			}
-
+			
 			// Активируем контекст OpenGL (обычно уже активен, но для надёжности)
 			if (auto* ctx = m_Window->GetGraphicsContext())
 				ctx->MakeCurrent();

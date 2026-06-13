@@ -47,17 +47,7 @@ namespace NK {
         m_Lua.RegisterFunction("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
             return Texture2D::CreateSolidColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
             });
-        m_Lua.RegisterFunction("GetMousePosition", []() -> std::tuple<int, int> {
-            int x, y;
-            Engine::Get().GetWindow()->GetMouseClientPosition(x, y);
-            return { x, y };
-            });
-        m_Lua.RegisterFunction("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
-        m_Lua.RegisterFunction("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
-        m_Lua.RegisterFunction("IsMouseButtonDown", [](int button) -> bool {
-            return Input::IsMouseButtonDown(button);
-            });
-
+        
         // Добавляем доступ к сцене и камере
         m_Lua.RegisterFunction("GetScene", [this]() -> Scene& { return *m_Scene; });
         // Остальные общие функции (GetTexture, GetShader, Log и т.д.) уже зарегистрированы в Engine

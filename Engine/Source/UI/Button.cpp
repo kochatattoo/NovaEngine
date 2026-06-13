@@ -3,10 +3,11 @@
 #include "Scene/Transform.h"
 #include "Renderer/SpriteRenderer.h"
 #include "Renderer/TextRenderer.h"
-#include "Input/Input.h"
 #include <Core/Log.h>
 #include <Core/Engine.h>
 #include <Window/Window.h>
+
+#include "Input/InputManager.h"
 
 namespace NK {
 
@@ -30,35 +31,36 @@ namespace NK {
 		auto* transform = m_Owner->GetComponent<Transform>();
 		if (!transform) return;
 
+		// Применяем размер к спрайту, если он есть
 		if (m_Sprite) {
 			SyncSize();
 		}
 
-		int mouseX, mouseY;
-		Engine::Get().GetWindow() -> GetMouseClientPosition(mouseX, mouseY);
+		// Используем InputManager для получения позиции мыши
+		glm::vec2 mousePos = InputManager::Get().GetMousePosition();
+		int mouseX = static_cast<int>(mousePos.x);
+		int mouseY = static_cast<int>(mousePos.y);
 
 		glm::vec3 pos = transform->GetPosition();
 		bool inside = (mouseX >= pos.x && mouseX <= pos.x + m_Size.x &&
-			mouseY >= pos.y && mouseY <= pos.y + m_Size.y);
+					   mouseY >= pos.y && mouseY <= pos.y + m_Size.y);
 
 		// Обработка наведения
 		if (inside && !m_Hovered) {
 			m_Hovered = true;
 			if (m_OnPointerEnter) m_OnPointerEnter();
-		}
-		else if (!inside && m_Hovered) {
+		} else if (!inside && m_Hovered) {
 			m_Hovered = false;
 			if (m_OnPointerExit) m_OnPointerExit();
 		}
 
-		// Обработка нажатия/отпускания мыши
-		if (Input::IsMouseButtonDown(VK_LBUTTON)) {
+		// Обработка нажатия/отпускания кнопки мыши
+		if (InputManager::Get().GetMouseButton(MouseButton::Left)) {
 			if (inside && !m_Pressed) {
 				m_Pressed = true;
 				if (m_OnPointerDown) m_OnPointerDown();
 			}
-		}
-		else {
+		} else {
 			if (m_Pressed) {
 				if (inside) {
 					if (m_OnClick) m_OnClick();

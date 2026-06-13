@@ -16,15 +16,7 @@ namespace NK {
             ProcessEvent(*e);
         }
         m_EventQueue.clear();
-
-        // 2. Опрос «удерживаемых» клавиш через старый Input (временный вызов)
-        //    В будущем можно хранить состояния между кадрами.
-        //    Пока вызываем Input::IsKeyDown для всех зарегистрированных клавиш.
-        //    Мы просто обновим m_KeyHeld (не показано) через вызов Input::IsKeyDown,
-        //    но у нас нет хранилища удерживаемых клавиш. Пока оставим как есть:
-        //    методы GetKey будут напрямую дергать Input::IsKeyDown.
-        //    (Это временное решение, позже мы можем кэшировать состояние внутри InputManager)
-
+        
          // Сбрасываем «одноразовые» флаги (они будут установлены заново в следующем кадре)
         ResetOneShotStates();
     }
@@ -79,6 +71,14 @@ namespace NK {
 
     bool InputManager::GetMouseButton(MouseButton button) const {
         return Input::IsMouseButtonDown(static_cast<int>(button));
+    }
+    
+    glm::vec2 InputManager::GetMousePosition() const {
+        if (!m_WindowHandle) return glm::vec2(0.0f);
+        POINT pt;
+        GetCursorPos(&pt);
+        ScreenToClient(m_WindowHandle, &pt);
+        return glm::vec2(static_cast<float>(pt.x), static_cast<float>(pt.y));
     }
 
     void InputManager::ResetOneShotStates() {

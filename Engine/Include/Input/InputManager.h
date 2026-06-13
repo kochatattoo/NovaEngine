@@ -32,7 +32,8 @@ namespace NK {
         bool GetMouseButton(MouseButton button) const;
 
         // Позиция мыши
-        glm::vec2 GetMousePosition() const { return m_MousePosition; }
+        void SetWindowHandle(HWND hwnd) { m_WindowHandle = hwnd; }
+        glm::vec2 GetMousePosition() const;
 
     private:
         InputManager() = default;
@@ -46,8 +47,8 @@ namespace NK {
         std::unordered_map<MouseButton, bool> m_MouseJustPressed;
         std::unordered_map<MouseButton, bool> m_MouseJustReleased;
 
+        HWND m_WindowHandle = nullptr;
         glm::vec2 m_MousePosition = glm::vec2(0.0f);
-
         std::vector<std::unique_ptr<Event>> m_EventQueue;
     };
 

@@ -3,6 +3,7 @@
 #include <memory>
 #include <sol/sol.hpp>
 #include "Core/Log.h"
+#include <initializer_list>
 
 namespace NK {
 
@@ -44,6 +45,15 @@ namespace NK {
 		template<typename Func>
 		void RegisterFunction(const std::string& name, Func&& func) {
 			m_State.set_function(name, std::forward<Func>(func));
+		}
+		
+		template<typename Enum>
+		void RegisterEnum(const std::string& name, std::initializer_list<std::pair<const char*, Enum>> values) {
+			auto table = m_State.create_table();
+			for (auto& p : values) {
+				table[p.first] = p.second;
+			}
+			m_State[name] = table;
 		}
 
 	private:

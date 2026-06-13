@@ -1,5 +1,5 @@
 -- game_match3.lua
-Log("Script loaded: game_match3.lua")
+Log("=== SCRIPT VERSION INPUT v2 ===")
 
 local vertexSrc = [=[
 #version 330 core
@@ -47,6 +47,7 @@ local tileObjects = {}
 local pressedObj, pressedRow, pressedCol
 local gameCamera
 local BOARD_OFFSET_X, BOARD_OFFSET_Y
+local score = 0   -- добавлено: счётчик очков
 
 function OnStart()
     local scene = GetScene()
@@ -90,19 +91,14 @@ function OnStart()
             -- Обновляем позицию (важно для Swap и гравитации)
             local visualRow = (ROWS - 1) - row
             local x, y = board:GetCellPosition(visualRow, col)
-
             obj:GetTransform():SetPosition(x + BOARD_OFFSET_X, y + BOARD_OFFSET_Y, 0)
 
             -- Назначаем правильную цветную текстуру по типу
             local sr = obj:GetSpriteRenderer()
-            local tex = tileTextures[newType+1]
-            Log("newType = " .. newType)
+            local tex = tileTextures[newType + 1]
             if tex then
                 sr:SetTexture(tex)
                 Log("[Callback] Cells ["..key.."] -> C++ type: "..newType.." | texture set #"..(newType+1))
-
-                local actualType = board:GetTile(row, col)
-                Log("[FINAL] Actual type from board: " ..actualType)
             else
                 Log("[Warning] No texture for type "..newType)
             end
@@ -112,17 +108,18 @@ function OnStart()
     -- Заполняем доску
     Log("--- START BOARD GENERATION ---")
     board:FillRandom()
-        if not board:HasPossibleMoves() then
+    if not board:HasPossibleMoves() then
         Log("No possible moves at start, mixing...")
         board:Mix()
         Log("Board mixed")
-        end
+    end
     Log("--- END BOARD GENERATION ---")
 end
 
 function OnUpdate(dt)
     if not board then return end
 
+    -- Используем новые функции ввода
     local mx, my = GetMousePosition()
     local ww, wh = GetWindowWidth(), GetWindowHeight()
     local worldPos = gameCamera:ScreenToWorldPoint(mx, my, ww, wh)
@@ -130,7 +127,8 @@ function OnUpdate(dt)
     local col = math.floor((worldPos.x - BOARD_OFFSET_X) / cellSizeWorld)
     local row = math.floor((worldPos.y - BOARD_OFFSET_Y) / cellSizeWorld)
 
-    if IsMouseButtonDown(1) then
+    -- Замена IsMouseButtonDown(1) на GetMouseButton(MouseButton.Left)
+    if GetMouseButton(MouseButton.Left) then
         -- Кнопка нажата
         if not pressedObj and board:IsValidCell(row, col) then
             pressedRow, pressedCol = row, col

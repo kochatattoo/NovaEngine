@@ -37,10 +37,10 @@ namespace NK {
 		std::function<void()> m_OnPointerExit;
 		glm::vec2 m_Size = glm::vec2(100.0f, 50.0f);
 		bool m_Hovered = false;
+		bool m_Pressed = false;  // была ли нажата мышь внутри
 		SpriteRenderer* m_Sprite = nullptr;
 		TextRenderer* m_Text = nullptr;
 		bool m_RenderersCached = false;
-		bool m_Pressed = false;  // была ли нажата мышь внутри
 	};
 
 }
