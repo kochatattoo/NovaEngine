@@ -13,7 +13,6 @@
 #include "Renderer/Font.h"
 #include "Renderer/Texture2D.h"
 #include "Renderer/Renderer.h"
-#include "Renderer/Shader.h"
 #include "Input/Input.h"
 #include "Window/Window.h"
 #include "Core/Log.h"

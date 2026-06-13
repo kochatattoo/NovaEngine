@@ -64,7 +64,7 @@ namespace NK {
 
     bool InputManager::GetKey(KeyCode key) const {
         // Пока используем старый Input
-        return Input::IsKeyDown(static_cast<uint32_t>(key));
+        return Input::IsKeyDown(static_cast<KeyCode>(static_cast<uint32_t>(key)));
     }
 
     bool InputManager::GetMouseButtonDown(MouseButton button) const {
