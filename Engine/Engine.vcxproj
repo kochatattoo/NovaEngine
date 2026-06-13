@@ -192,6 +192,7 @@
     <ClInclude Include="Include\glad\gl.h" />
     <ClInclude Include="Include\glad\khrplatform.h" />
     <ClInclude Include="Include\Input\Input.h" />
+    <ClInclude Include="Include\Input\KeyCode\KeyCodes.h" />
     <ClInclude Include="Include\Lua\LuaBindings.h" />
     <ClInclude Include="Include\Lua\LuaManager.h" />
     <ClInclude Include="Include\Renderer\Camera.h" />

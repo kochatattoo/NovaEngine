@@ -4,11 +4,10 @@
 #include <Windows.h>
 #include <cstdint>
 
+#include "KeyCode/KeyCodes.h"
+
 namespace NK {
-
-    // Виртуальные коды клавиш Windows (можно использовать напрямую, но для удобства заведём using)
-    using KeyCode = uint32_t;
-
+    
     class Input {
     public:
         // Возвращает true, если клавиша удерживается в данный момент

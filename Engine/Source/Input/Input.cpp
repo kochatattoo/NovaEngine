@@ -5,7 +5,7 @@ namespace NK {
 
     bool Input::IsKeyDown(KeyCode keycode) {
         // Старший бит результата GetAsyncKeyState говорит, нажата ли клавиша сейчас
-        return (GetAsyncKeyState(keycode) & 0x8000) != 0;
+        return (GetAsyncKeyState(static_cast<int>(keycode)) & 0x8000) != 0;
     }
 
     bool Input::IsMouseButtonDown(int button) {

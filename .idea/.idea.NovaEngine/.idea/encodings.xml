@@ -2,6 +2,10 @@
 <project version="4">
   <component name="Encoding" addBOMForNewFiles="with BOM under Windows, with no BOM otherwise">
     <file url="file://$PROJECT_DIR$/Engine/Include/Core/Component.h" charset="ISO-8859-1" />
-    <file url="file://$PROJECT_DIR$/Engine/Include/Event/Event.h" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/Engine/Include/Event/Event.h" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/Engine/Include/Input/Input.h" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/Engine/Include/Input/KeyCode/KeyCodes.h" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/Engine/Include/Window/Window.h" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/Engine/Source/Input/Input.cpp" charset="windows-1251" />
   </component>
 </project>

@@ -145,12 +145,12 @@ namespace NK {
             "y", &glm::vec2::y
         );
 
-        // --- Глобальные функции ---
+        // --- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ---
         lua.RegisterFunction("Log", [](const std::string& msg) {
             NK_INFO("%s", msg.c_str());
             });
         lua.RegisterFunction("IsKeyDown", [](int key) -> bool {
-            return Input::IsKeyDown(key);
+            return Input::IsKeyDown(static_cast<KeyCode>(key));
             });
         lua.RegisterFunction("SetClearColor", [](float r, float g, float b, float a) {
             Renderer::SetClearColor(r, g, b, a);

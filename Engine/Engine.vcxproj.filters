@@ -279,6 +279,9 @@
     <ClInclude Include="Include\Lua\LuaManager.h">
       <Filter>Include\Lua</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Input\KeyCode\KeyCodes.h">
+      <Filter>Include\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

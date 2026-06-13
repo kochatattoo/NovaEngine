@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <functional>
+#include <Input/KeyCode/KeyCodes.h>
 
 namespace NK {
 
@@ -99,6 +99,20 @@ namespace NK {
 
         float XOffset, YOffset;   // обычно XOffset = 0, YOffset = ±1
         EVENT_CLASS_TYPE(MouseScrolled)
+    };
+
+    class MouseButtonPressedEvent : public Event {
+    public:
+        MouseButtonPressedEvent(MouseButton button) : Button(button) {}
+        MouseButton Button;
+        EVENT_CLASS_TYPE(MouseButtonPressed)
+    };
+
+    class MouseButtonReleasedEvent : public Event {
+    public:
+        MouseButtonReleasedEvent(MouseButton button) : Button(button) {}
+        MouseButton Button;
+        EVENT_CLASS_TYPE(MouseButtonReleased)
     };
 
     // Пока достаточно. Позже можно добавить MouseButtonPressed, WindowResize и т.д.

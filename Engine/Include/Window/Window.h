@@ -1,5 +1,6 @@
 #pragma once
 #define NOMINMAX
+#include <functional>
 #include <Windows.h>
 #include "Event/Event.h"
 #include <string>
