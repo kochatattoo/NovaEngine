@@ -145,7 +145,7 @@ namespace NK {
             "y", &glm::vec2::y
         );
 
-        // --- Глобальные функции ---
+        // --- Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё ---
         lua.RegisterFunction("Log", [](const std::string& msg) {
             NK_INFO("%s", msg.c_str());
             });
