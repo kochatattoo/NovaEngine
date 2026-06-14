@@ -28,6 +28,7 @@ namespace NK {
 		const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjection; }
 
 		glm::vec2 ScreenToWorldPoint(int screenX, int screenY, uint32_t windowWidth, uint32_t windowHeight) const;
+		glm::vec2 ScreenToUIPoint(int screenX, int screenY, uint32_t windowWidth, uint32_t windowHeight) const;
 
 		// Обновить размеры (вызывать при изменении окна)
 		void OnWindowResized(uint32_t width, uint32_t height);

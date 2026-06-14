@@ -95,7 +95,8 @@ namespace NK {
             "GetRight", &OrthographicCamera::GetRight,
             "GetBottom", &OrthographicCamera::GetBottom,
             "GetTop", &OrthographicCamera::GetTop,
-            "ScreenToWorldPoint", &OrthographicCamera::ScreenToWorldPoint
+            "ScreenToWorldPoint", &OrthographicCamera::ScreenToWorldPoint,
+            "ScreenToUIPoint", &OrthographicCamera::ScreenToUIPoint
         );
 
         // Font
