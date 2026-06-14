@@ -5,6 +5,7 @@
 #include "Scene/ScriptComponent.h"
 #include "Renderer/SpriteRenderer.h"
 #include "Window/Window.h"
+#include "Input/InputSystem.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/GraphicsContext.h"
 #include "Lua/LuaManager.h"
@@ -90,13 +91,7 @@ namespace NK {
 			}
 
 			// Извлекаем все накопившиеся события и отправляем в приложение
-			{
-				auto event = m_Window->PollEvent();
-				while (event) {
-					m_App->OnEvent(*event);
-					event = m_Window->PollEvent();
-				}
-			}
+			InputSystem::Get().Update();
 
 			// Активируем контекст OpenGL (обычно уже активен, но для надёжности)
 			if (auto* ctx = m_Window->GetGraphicsContext())

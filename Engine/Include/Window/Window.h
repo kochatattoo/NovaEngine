@@ -32,7 +32,6 @@ namespace NK {
         uint32_t GetHeight() const { return m_Data.Height; }
         GraphicsContext* GetGraphicsContext() { return m_GraphicsContext.get(); }
         void GetMouseClientPosition(int& outX, int& outY);
-        std::unique_ptr<Event> PollEvent();
         std::function<void(uint32_t, uint32_t)> ResizeCallback;
 
     private:
@@ -52,7 +51,6 @@ namespace NK {
         WindowData m_Data;
         bool m_ShouldClose = false;
         std::unique_ptr<GraphicsContext> m_GraphicsContext;
-        std::queue<std::unique_ptr<Event>> m_EventQueue;
     };
 
 } // namespace NK

@@ -1,4 +1,5 @@
 #include "Window/Window.h"
+#include "Input/InputSystem.h"
 
 namespace NK {
 
@@ -63,14 +64,6 @@ namespace NK {
         }
     }
 
-    std::unique_ptr<Event> Window::PollEvent() {
-        if (m_EventQueue.empty())
-            return nullptr;
-        auto event = std::move(m_EventQueue.front());
-        m_EventQueue.pop();
-        return event;
-    }
-
 	void Window::GetMouseClientPosition(int& outX, int& outY) {
 		POINT pt;
 		GetCursorPos(&pt);
@@ -89,7 +82,7 @@ namespace NK {
     }
 
     // Статическая функция обратного вызова
-    LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
+    LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         Window* window = nullptr;
         // При создании окна (WM_NCCREATE) извлекаем переданный this
@@ -106,7 +99,7 @@ namespace NK {
 
         // Если указатель есть, обрабатываем
         if (window) {
-            switch (msg) 
+            switch (msg)
             {
                 case WM_CLOSE:
                   window->m_ShouldClose = true;
@@ -128,26 +121,42 @@ namespace NK {
 
                 case WM_KEYDOWN: {
                     int keyCode = static_cast<int>(wParam);
-                    // 30-й бит lParam показывает, что клавиша была уже нажата ранее (repeat)
                     bool repeat = (lParam & 0x40000000) != 0;
-                    window->m_EventQueue.push(std::make_unique<KeyPressedEvent>(keyCode, repeat));
-                    return 0;   // Сообщение обработано
+                    InputSystem::Get().PushEvent(std::make_unique<KeyPressedEvent>(keyCode, repeat));
+                    return 0;
                 }
                 case WM_KEYUP: {
                     int keyCode = static_cast<int>(wParam);
-                    window->m_EventQueue.push(std::make_unique<KeyReleasedEvent>(keyCode));
+                    InputSystem::Get().PushEvent(std::make_unique<KeyReleasedEvent>(keyCode));
                     return 0;
                 }
                 case WM_MOUSEMOVE: {
                     float x = static_cast<float>(LOWORD(lParam));
                     float y = static_cast<float>(HIWORD(lParam));
-                    window->m_EventQueue.push(std::make_unique<MouseMovedEvent>(x, y));
+                    InputSystem::Get().PushEvent(std::make_unique<MouseMovedEvent>(x, y));
                     return 0;
                 }
+                case WM_LBUTTONDOWN:
+                    InputSystem::Get().PushEvent(std::make_unique<MouseButtonPressedEvent>(MouseButton::Left));
+                    return 0;
+                case WM_LBUTTONUP:
+                    InputSystem::Get().PushEvent(std::make_unique<MouseButtonReleasedEvent>(MouseButton::Left));
+                    return 0;
+                case WM_RBUTTONDOWN:
+                    InputSystem::Get().PushEvent(std::make_unique<MouseButtonPressedEvent>(MouseButton::Right));
+                    return 0;
+                case WM_RBUTTONUP:
+                    InputSystem::Get().PushEvent(std::make_unique<MouseButtonReleasedEvent>(MouseButton::Right));
+                    return 0;
+                case WM_MBUTTONDOWN:
+                    InputSystem::Get().PushEvent(std::make_unique<MouseButtonPressedEvent>(MouseButton::Middle));
+                    return 0;
+                case WM_MBUTTONUP:
+                    InputSystem::Get().PushEvent(std::make_unique<MouseButtonReleasedEvent>(MouseButton::Middle));
+                    return 0;
                 case WM_MOUSEWHEEL: {
-                    // Старшее слово wParam содержит дельту (обычно кратно 120)
                     float delta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / (float)WHEEL_DELTA;
-                    window->m_EventQueue.push(std::make_unique<MouseScrolledEvent>(0.0f, delta));
+                    InputSystem::Get().PushEvent(std::make_unique<MouseScrolledEvent>(0.0f, delta));
                     return 0;
                 }
             }
