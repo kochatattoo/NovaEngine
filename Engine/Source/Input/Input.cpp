@@ -24,4 +24,29 @@ namespace NK {
         SetCursorPos(x, y);
     }
 
+    bool Input::GetKey(KeyCode key) {
+        return IsKeyDown(static_cast<uint32_t>(key));
+    }
+
+    bool Input::GetKeyDown(KeyCode key) {
+        // Заглушка: в будущем можно хранить предыдущее состояние
+        return IsKeyDown(static_cast<uint32_t>(key));
+    }
+
+    bool Input::GetKeyUp(KeyCode key) {
+        return !IsKeyDown(static_cast<uint32_t>(key));
+    }
+
+    bool Input::GetMouseButton(MouseButton button) {
+        return IsMouseButtonDown(static_cast<int>(button));
+    }
+
+    bool Input::GetMouseButtonDown(MouseButton button) {
+        return IsMouseButtonDown(static_cast<int>(button));
+    }
+
+    bool Input::GetMouseButtonUp(MouseButton button) {
+        return !IsMouseButtonDown(static_cast<int>(button));
+    }
+
 } // namespace NK

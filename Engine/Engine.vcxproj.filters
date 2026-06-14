@@ -82,6 +82,9 @@
     <Filter Include="Source\Scene">
       <UniqueIdentifier>{f4971a79-4ea8-4958-8e14-72cf54fe08a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\Input\KeyCode">
+      <UniqueIdentifier>{71a6a4f7-6ceb-4d73-a838-bcc99b0d642a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -279,6 +282,12 @@
     <ClInclude Include="Include\Lua\LuaManager.h">
       <Filter>Include\Lua</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Input\KeyCode\KeyCodes.h">
+      <Filter>Include\Input\KeyCode</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Input\InputSystem.h">
+      <Filter>Include\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -463,6 +472,9 @@
     </ClCompile>
     <ClCompile Include="Source\Scene\Transform.cpp">
       <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\InputSystem.cpp">
+      <Filter>Source\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

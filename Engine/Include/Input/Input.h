@@ -3,6 +3,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <cstdint>
+#include "KeyCode/KeyCodes.h"
 
 namespace NK {
 
@@ -11,17 +12,17 @@ namespace NK {
 
     class Input {
     public:
-        // Возвращает true, если клавиша удерживается в данный момент
         static bool IsKeyDown(KeyCode keycode);
-
-        // Кнопки мыши (используем константы Windows)
         static bool IsMouseButtonDown(int button);
-
-        // Получить положение курсора в экранных координатах
         static void GetMousePosition(int32_t& outX, int32_t& outY);
-
-        // Установить положение курсора
         static void SetMousePosition(int32_t x, int32_t y);
+
+        static bool GetKey(KeyCode key);
+        static bool GetKeyDown(KeyCode key);
+        static bool GetKeyUp(KeyCode key);
+        static bool GetMouseButton(MouseButton button);
+        static bool GetMouseButtonDown(MouseButton button);
+        static bool GetMouseButtonUp(MouseButton button);
     };
 
 } // namespace NK

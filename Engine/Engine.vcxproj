@@ -192,6 +192,8 @@
     <ClInclude Include="Include\glad\gl.h" />
     <ClInclude Include="Include\glad\khrplatform.h" />
     <ClInclude Include="Include\Input\Input.h" />
+    <ClInclude Include="Include\Input\InputSystem.h" />
+    <ClInclude Include="Include\Input\KeyCode\KeyCodes.h" />
     <ClInclude Include="Include\Lua\LuaBindings.h" />
     <ClInclude Include="Include\Lua\LuaManager.h" />
     <ClInclude Include="Include\Renderer\Camera.h" />
@@ -263,6 +265,7 @@
     <ClCompile Include="Source\Core\Log.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
+    <ClCompile Include="Source\Input\InputSystem.cpp" />
     <ClCompile Include="Source\Lua\LuaBindings.cpp" />
     <ClCompile Include="Source\Lua\LuaManager.cpp" />
     <ClCompile Include="Source\Renderer\Camera.cpp" />
