@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include <Input/KeyCode/KeyCodes.h>
 
 namespace NK {
 
@@ -31,9 +32,9 @@ namespace NK {
     public:
         EventDispatcher(Event& event) : m_Event(event) {}
 
-        // 1. Стандартный метод для функций, возвращающих bool (управление флагом Handled)
+        // 1. Перегрузка ТОЛЬКО для функций, возвращающих строго bool
         template<typename T, typename F>
-        typename std::enable_if_t<std::is_invocable_r_v<bool, F, T&>, EventDispatcher&>
+        typename std::enable_if_t<std::is_same_v<bool, std::invoke_result_t<F, T&>>, EventDispatcher&>
             Dispatch(const F& func) {
             if (!m_Event.Handled && m_Event.GetEventType() == T::GetStaticType()) {
                 m_Event.Handled |= func(static_cast<T&>(m_Event));
@@ -41,9 +42,9 @@ namespace NK {
             return *this;
         }
 
-        // 2. Перегрузка для функций, возвращающих void (автоматически НЕ поглощают событие)
+        // 2. Перегрузка ТОЛЬКО для функций, возвращающих void
         template<typename T, typename F>
-        typename std::enable_if_t<std::is_invocable_r_v<void, F, T&>, EventDispatcher&>
+        typename std::enable_if_t<std::is_same_v<void, std::invoke_result_t<F, T&>>, EventDispatcher&>
             Dispatch(const F& func) {
             if (!m_Event.Handled && m_Event.GetEventType() == T::GetStaticType()) {
                 func(static_cast<T&>(m_Event));
@@ -101,8 +102,6 @@ namespace NK {
 // Нажатие клавиши (срабатывает при WM_KEYDOWN)
     class KeyPressedEvent : public Event {
     public:
-        virtual EventType GetEventType() const override { return EventType::KeyPressed; }
-
         KeyPressedEvent(int keycode, bool repeat = false)
             : KeyCode(keycode), Repeat(repeat) {
         }
@@ -116,8 +115,6 @@ namespace NK {
     // Отпускание клавиши (WM_KEYUP)
     class KeyReleasedEvent : public Event {
     public:
-        virtual EventType GetEventType() const override { return EventType::KeyReleased; }
-
         KeyReleasedEvent(int keycode)
             : KeyCode(keycode) {
         }
@@ -129,8 +126,6 @@ namespace NK {
     // Движение мыши (WM_MOUSEMOVE)
     class MouseMovedEvent : public Event {
     public:
-        virtual EventType GetEventType() const override { return EventType::MouseMoved; }
-
         MouseMovedEvent(float x, float y)
             : MouseX(x), MouseY(y) {
         }
@@ -142,8 +137,6 @@ namespace NK {
     // Прокрутка колёсика (WM_MOUSEWHEEL)
     class MouseScrolledEvent : public Event {
     public:
-        virtual EventType GetEventType() const override { return EventType::MouseScrolled; }
-
         MouseScrolledEvent(float xOffset, float yOffset)
             : XOffset(xOffset), YOffset(yOffset) {
         }
@@ -154,19 +147,15 @@ namespace NK {
 
     class MouseButtonPressedEvent : public Event {
     public:
-        virtual EventType GetEventType() const override { return EventType::MouseButtonPressed; }
-
-        MouseButtonPressedEvent(MouseButton button) : Button(button) {}
-        MouseButton Button;
+        MouseButtonPressedEvent(MouseButton button) : m_Button(button) {}
+        MouseButton m_Button;
         EVENT_CLASS_TYPE(MouseButtonPressed)
     };
 
     class MouseButtonReleasedEvent : public Event {
     public:
-        virtual EventType GetEventType() const override { return EventType::MouseButtonReleased; }
-
-        MouseButtonReleasedEvent(MouseButton button) : Button(button) {}
-        MouseButton Button;
+        MouseButtonReleasedEvent(MouseButton button) : m_Button(button) {}
+        MouseButton m_Button;
         EVENT_CLASS_TYPE(MouseButtonReleased)
     };
 

@@ -33,10 +33,10 @@ namespace NK {
             m_MousePosition = glm::vec2(mouseMove.MouseX, mouseMove.MouseY);
                 })
             .Dispatch<MouseButtonPressedEvent>([this](auto& mouseBtn) {
-            m_MouseJustPressed[mouseBtn.Button] = true;
+            m_MouseJustPressed[mouseBtn.m_Button] = true;
                 })
             .Dispatch<MouseButtonReleasedEvent>([this](auto& mouseBtnUp) {
-            m_MouseJustReleased[mouseBtnUp.Button] = true;
+            m_MouseJustReleased[mouseBtnUp.m_Button] = true;
                 });
     }
 
