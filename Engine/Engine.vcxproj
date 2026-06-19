@@ -195,6 +195,7 @@
     <ClInclude Include="Include\Input\InputSystem.h" />
     <ClInclude Include="Include\Input\KeyCode\KeyCodes.h" />
     <ClInclude Include="Include\Lua\LuaBindings.h" />
+    <ClInclude Include="Include\Lua\LuaInputBindings.h" />
     <ClInclude Include="Include\Lua\LuaManager.h" />
     <ClInclude Include="Include\Renderer\Camera.h" />
     <ClInclude Include="Include\Renderer\Font.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Input\InputSystem.cpp" />
     <ClCompile Include="Source\Lua\LuaBindings.cpp" />
+    <ClCompile Include="Source\Lua\LuaInputBindings.cpp" />
     <ClCompile Include="Source\Lua\LuaManager.cpp" />
     <ClCompile Include="Source\Renderer\Camera.cpp" />
     <ClCompile Include="Source\Renderer\Font.cpp" />

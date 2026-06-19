@@ -288,6 +288,9 @@
     <ClInclude Include="Include\Input\InputSystem.h">
       <Filter>Include\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Lua\LuaInputBindings.h">
+      <Filter>Include\Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -475,6 +478,9 @@
     </ClCompile>
     <ClCompile Include="Source\Input\InputSystem.cpp">
       <Filter>Source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lua\LuaInputBindings.cpp">
+      <Filter>Source\LuaManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
