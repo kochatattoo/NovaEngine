@@ -1,7 +1,7 @@
 #include "Renderer/SpriteRenderer.h"
-#include "Core/Transform.h"
-#include "Core/GameObject.h" // для доступа к Transform
-#include "Core/ResourceManager.h"
+#include "Scene/Transform.h"
+#include "Scene/GameObject.h" // для доступа к Transform
+#include "Resource/ResourceManager.h"
 #include "Core/Engine.h" // синглтон
 
 namespace NK {

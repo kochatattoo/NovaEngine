@@ -1,20 +1,16 @@
 ﻿#include "Core/Engine.h"
 #include "Core/Application.h"
 #include "Core/Timer.h"
-#include "Core/Transform.h"
-#include "Core/ScriptComponent.h"
+#include "Scene/Transform.h"
+#include "Scene/ScriptComponent.h"
 #include "Renderer/SpriteRenderer.h"
 #include "Window/Window.h"
+#include "Input/InputSystem.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/GraphicsContext.h"
-#include "Renderer/Font.h"
-#include "Input/Input.h"          // для опроса клавиш в Lua
-#include "Core/LuaManager.h"
-#include <sol/sol.hpp>
+#include "Lua/LuaManager.h"
 #include <Renderer/TextRenderer.h>
-#include <UI/Button.h>
-#include <UI/Anchor.h>
-#include <Game/Match3Board.h>
+#include <Lua/LuaBindings.h>
 
 namespace NK {
 	Engine* Engine::s_Instance = nullptr;
@@ -95,13 +91,7 @@ namespace NK {
 			}
 
 			// Извлекаем все накопившиеся события и отправляем в приложение
-			{
-				auto event = m_Window->PollEvent();
-				while (event) {
-					m_App->OnEvent(*event);
-					event = m_Window->PollEvent();
-				}
-			}
+			InputSystem::Get().Update();
 
 			// Активируем контекст OpenGL (обычно уже активен, но для надёжности)
 			if (auto* ctx = m_Window->GetGraphicsContext())
@@ -121,208 +111,7 @@ namespace NK {
 	}
 
 	void Engine::SetupLuaBindings() {
-		sol::state& L = m_LuaManager.GetState();
-
-		// Регистрируем Transform
-		L.new_usertype<Transform>("Transform",
-			"SetPosition", [](Transform& t, double x, double y, double z) {
-				t.SetPosition(glm::vec3((float)x, (float)y, (float)z));
-			},
-			"GetPosition", [](Transform& t) -> std::tuple<float, float, float> {
-				auto& p = t.GetPosition();
-				return { p.x, p.y, p.z };
-			},
-			"SetRotation", &Transform::SetRotation,
-			"GetRotationDegrees", &Transform::GetRotationDegrees,
-			"SetScale", [](Transform& t, float x, float y) { t.SetScale(glm::vec2(x, y)); },
-			"GetScale", [](Transform& t) -> std::tuple<float, float> {
-				auto& s = t.GetScale();
-				return { s.x, s.y };
-			},
-			sol::base_classes, sol::bases<Component>()
-		);
-
-		// SpriteRenderer
-		L.new_usertype<SpriteRenderer>("SpriteRenderer",
-			"SetTexture", &SpriteRenderer::SetTexture,
-			"SetShader", &SpriteRenderer::SetShader,
-			"SetAlignment", [](SpriteRenderer& sr, double h, double v) { sr.SetAlignment((float)h, (float)v); },
-			"SetIsUI", &SpriteRenderer::SetIsUI,
-			"SetColor", [](SpriteRenderer& sr, double r, double g, double b, double a) {
-				sr.SetColor((float)r, (float)g, (float)b, (float)a);
-			},
-			"SetUseColor", & SpriteRenderer::SetUseColor,
-			sol::base_classes, sol::bases<Component>()
-		);
-
-		// GameObject
-		L.new_usertype<GameObject>("GameObject",
-			"AddComponent_Transform", [](GameObject& obj) -> Transform* {
-				auto* t = obj.GetComponent<Transform>();
-				if (t) return t;                              // возвращаем существующий
-				return obj.AddComponent<Transform>();          // если нет – создаём
-			},
-			"AddComponent_SpriteRenderer", [](GameObject& obj) { return obj.AddComponent<SpriteRenderer>();},
-			"AddComponent_TextRenderer", [](GameObject& obj) { return obj.AddComponent<TextRenderer>(); },
-			"AddComponent_Button", [](GameObject& obj) { return obj.AddComponent<Button>(); },
-			"AddComponent_Script", [](GameObject& obj, const std::string& path) { return obj.AddComponent<ScriptComponent>(path); },
-			"AddComponent_Anchor", [](GameObject& obj) { return obj.AddComponent<Anchor>(); },
-			"GetTransform", [](GameObject& obj) { return obj.GetComponent<Transform>(); },
-			"GetSpriteRenderer", [](GameObject& obj) { return obj.GetComponent<SpriteRenderer>(); },
-			"GetTextRenderer", [](GameObject& obj) { return obj.GetComponent<TextRenderer>(); },
-			"GetButton", [](GameObject& obj) { return obj.GetComponent<Button>(); },
-			"SetZOrder", & GameObject::SetZOrder,
-			"GetZOrder", & GameObject::GetZOrder,
-			"GetName", &GameObject::GetName,
-			"OnStart", &GameObject::OnStart,
-			"OnUpdate", &GameObject::OnUpdate
-		);
-
-		// Scene
-		L.new_usertype<Scene>("Scene",
-			"CreateGameObject", &Scene::CreateGameObject,
-			"CreateUIObject", &Scene::CreateUIObject,
-			"OnStart", &Scene::OnStart,
-			"OnUpdate", &Scene::OnUpdate,
-			"OnRender", &Scene::OnRender,
-			"GetGameCamera", &Scene::GetGameCamera,   // <-- добавить
-			"GetUICamera", &Scene::GetUICamera        // <-- добавить (на будущее)
-		);
-
-		L.new_usertype<OrthographicCamera>("OrthographicCamera",
-			"GetLeft", &OrthographicCamera::GetLeft,
-			"GetRight", &OrthographicCamera::GetRight,
-			"GetBottom", &OrthographicCamera::GetBottom,
-			"GetTop", &OrthographicCamera::GetTop,
-			"ScreenToWorldPoint", &OrthographicCamera::ScreenToWorldPoint
-		);
-
-		// Font
-		L.new_usertype<Font>("Font",
-			"CreateTextTexture", &Font::CreateTextTexture
-		);
-
-		// TextRenderer
-		L.new_usertype<TextRenderer>("TextRenderer",
-			"SetFont", &TextRenderer::SetFont,
-			"SetText", &TextRenderer::SetText,
-			"SetFontSize", [](TextRenderer& tr, double size) { tr.SetFontSize((float)size); },
-			"SetAlignment", [](TextRenderer& tr, double h, double v) { tr.SetAlignment((float)h, (float)v); },
-			"SetColor", [](TextRenderer& tr, int r, int g, int b, int a) {
-				tr.SetColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
-			},
-			sol::base_classes, sol::bases<Component>()
-		);
-
-		// Button
-		L.new_usertype<Button>("Button",
-			"SetCallback", &Button::SetCallback,
-			"SetOnClick", &Button::SetOnClick,
-			"SetOnPointerDown", &Button::SetOnPointerDown,
-			"SetOnPointerUp", &Button::SetOnPointerDown,
-			"SetOnPointerExit", &Button::SetOnPointerExit,
-			"SetOnPointerUp", &Button::SetOnPointerUp,
-			"SetSize", [](Button& btn, double x, double y) {
-				btn.SetSize((float)x, (float)y);
-			},
-			sol::base_classes, sol::bases<Component>()
-		);
-
-		// Anchor
-		L.new_usertype<Anchor>("Anchor",
-			"SetPreset", [](Anchor& a, int preset) { a.SetPreset(static_cast<AnchorPreset>(preset)); },
-			"SetScreenAnchor", [](Anchor& a, double sx, double sy) { a.SetScreenAnchor((float)sx, (float)sy); },
-			"SetObjectAnchor", [](Anchor& a, double ox, double oy) { a.SetObjectAnchor((float)ox, (float)oy); },
-			"SetSize", [](Anchor& a, double w, double h) { a.SetSize(glm::vec2((float)w, (float)h)); },
-			sol::base_classes, sol::bases<Component>()
-		);
-
-		L.new_usertype<Match3Board>("Match3Board",
-			sol::constructors<Match3Board(int, int, double, double)>(),
-			"FillRandom", &Match3Board::FillRandom,
-			"GetTile", &Match3Board::GetTile,
-			"SetTile", &Match3Board::SetTile,
-			"IsValidCell", &Match3Board::IsValidCell,
-			"HasPossibleMoves", &Match3Board::HasPossibleMoves,
-			"Swap", &Match3Board::Swap,
-			"FindMatches", &Match3Board::FindMatches,
-			"RemoveTiles", &Match3Board::RemoveTiles,
-			"ApplyGravity", &Match3Board::ApplyGravity,
-			"FillEmpty", &Match3Board::FillEmpty,
-			"Mix", &Match3Board::Mix,
-			"GetCellPosition", [](Match3Board& board, int r, int c) -> std::tuple<float, float> {
-				auto pos = board.GetCellPosition(r, c);
-				return { pos.x, pos.y };
-			},
-			"GetRows", & Match3Board::GetRows,
-			"GetCols", & Match3Board::GetCols,
-			"OnTileChanged", & Match3Board::OnTileChanged
-		);
-
-		L.new_usertype<glm::vec2>("vec2",
-			sol::constructors<glm::vec2(), glm::vec2(float, float)>(),
-			"x", &glm::vec2::x,
-			"y", &glm::vec2::y
-		);
-
-		// Регистрируем функцию логирования
-		L.set_function("Log", [](const std::string& msg) {
-			NK_INFO("%s", msg.c_str());
-			});
-
-		// Регистрируем опрос клавиш (через старый Input)
-		L.set_function("IsKeyDown", [](int key) -> bool {
-			return Input::IsKeyDown(key);
-			});
-
-		// Установка цвета очистки фона
-		L.set_function("SetClearColor", [](float r, float g, float b, float a) {
-			Renderer::SetClearColor(r, g, b, a);
-			});
-
-		// Регистрируем получение Engine
-		L.set_function("GetEngine", [this]() -> Engine& {
-			return *this;
-			});
-
-		// Предоставим доступ к сцене из Lua
-		L.set_function("GetScene", [this]() -> Scene& { return m_Scene; });
-
-		L.set_function("GetTexture", [](const std::string& path) {
-			return Engine::Get().GetResourceManager().GetTexture(path);
-			});
-
-		L.set_function("GetShader", [](const std::string& name, const std::string& vSrc, const std::string& fSrc) {
-			return Engine::Get().GetResourceManager().GetShader(name, vSrc, fSrc);
-			});
-
-		L.set_function("LoadFont", [](const std::string& path) -> std::shared_ptr<Font> {
-			try {
-				auto font = std::make_shared<Font>(path);
-				return font;
-			}
-			catch (...) {
-				return nullptr;
-			}
-			});
-
-		L.set_function("GetMousePosition", [this]() -> std::tuple<int, int> {
-			int x, y;
-			Engine::Get().GetWindow()->GetMouseClientPosition(x, y);
-			return { x, y };
-			});
-
-		L.set_function("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
-
-		L.set_function("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
-
-		L.set_function("IsMouseButtonDown", [](int button) -> bool {
-			return Input::IsMouseButtonDown(button);
-			});
-
-		L.set_function("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
-			return Texture2D::CreateSolidColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
-			});
+		LuaBindings::RegisterAll(m_LuaManager);
 	}
 
 	void Engine::Shutdown() {

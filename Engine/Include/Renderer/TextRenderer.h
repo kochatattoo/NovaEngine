@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Component.h"
+#include "Scene/Component.h"
 #include "Renderer/Texture2D.h"
 #include "Renderer/Shader.h"
 #include <memory>

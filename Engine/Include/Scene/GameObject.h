@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <type_traits>
-#include "Core/Component.h"
+#include "Scene/Component.h"
 
 namespace NK {
 

@@ -39,3 +39,4 @@
   - `Sandbox/assets/scripts/` — Lua-скрипты (копируются в выходную папку при сборке).
   - `Sandbox/assets/textures/` — текстуры.
   - `Sandbox/assets/fonts/` — шрифты.
+

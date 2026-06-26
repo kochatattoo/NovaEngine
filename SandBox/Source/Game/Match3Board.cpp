@@ -1,4 +1,4 @@
-﻿#include "Game/Match3Board.h"
+﻿#include "Match3Board.h"
 #include <algorithm>
 #include <random>
 

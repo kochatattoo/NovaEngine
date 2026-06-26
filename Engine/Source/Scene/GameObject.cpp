@@ -1,5 +1,5 @@
-#include "Core/GameObject.h"
-#include "Core/Transform.h"
+#include "Scene/GameObject.h"
+#include "Scene/Transform.h"
 #include <Core/Log.h>
 
 namespace NK {

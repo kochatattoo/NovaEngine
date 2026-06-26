@@ -3,9 +3,9 @@
 #include <memory>   // для std::unique_ptr (Scope)
 #include "Core/Log.h"
 #include "Core/Application.h"
-#include "Core/ResourceManager.h"
-#include "Core/LuaManager.h"
-#include "Core/Scene.h"
+#include "Resource/ResourceManager.h"
+#include "Lua/LuaManager.h"
+#include "Scene/Scene.h"
 
 namespace NK {
 

@@ -23,6 +23,14 @@ namespace NK {
 		return glm::vec2(worldX, worldY);
 	}
 
+	glm::vec2 OrthographicCamera::ScreenToUIPoint(int screenX, int screenY, uint32_t windowWidth, uint32_t windowHeight) const {
+		float ndcX = (float)screenX / windowWidth;
+		float ndcY = 1.0f - (float)screenY / windowHeight;   // Y вниз для UI
+		float worldX = m_Left + (m_Right - m_Left) * ndcX;
+		float worldY = m_Bottom + (m_Top - m_Bottom) * ndcY;
+		return glm::vec2(worldX, worldY);
+	}
+
 	void OrthographicCamera::RecalculateView() {
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) *
 			glm::rotate(glm::mat4(1.0f), m_Rotation, glm::vec3(0, 0, 1));

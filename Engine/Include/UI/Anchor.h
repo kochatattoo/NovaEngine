@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Component.h"
+#include "Scene/Component.h"
 #include <glm/glm.hpp>
 #include <vector>
 

@@ -1,8 +1,8 @@
 #include "UI/Anchor.h"
-#include "Core/GameObject.h"
-#include "Core/Transform.h"
+#include "Scene/GameObject.h"
+#include "Scene/Transform.h"
 #include <Core/Engine.h>
-#include "Core/Scene.h"
+#include "Scene/Scene.h"
 #include "Window/Window.h"
 
 namespace NK {

@@ -3,6 +3,7 @@
 #include <memory>
 #include <sol/sol.hpp>
 #include "Core/Log.h"
+#include <initializer_list>
 
 namespace NK {
 
@@ -35,14 +36,24 @@ namespace NK {
 
 		// Экспортировать C++-класс или функцию в Lua
 		template<typename T, typename... Args>
-		void RegisterClass(const std::string& name) {
-			m_State.new_usertype<T>(name, Args()...);
+		void BindClass(const std::string& name, Args&&... args) {
+			// std::forward правильно прокинет все пары "Имя", &Метод внутрь sol2
+			m_State.new_usertype<T>(name, std::forward<Args>(args)...);
 		}
 
 		// Простейшая регистрация функции
 		template<typename Func>
 		void RegisterFunction(const std::string& name, Func&& func) {
 			m_State.set_function(name, std::forward<Func>(func));
+		}
+
+		template<typename Enum>
+		void RegisterEnum(const std::string& name, std::initializer_list<std::pair<const char*, Enum>> values) {
+			auto table = m_State.create_table();
+			for (auto& p : values) {
+				table[p.first] = p.second;
+			}
+			m_State[name] = table;
 		}
 
 	private:
