@@ -291,6 +291,18 @@
     <ClInclude Include="Include\Lua\LuaInputBindings.h">
       <Filter>Include\Lua</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Lua\LuaFuncBindings.h">
+      <Filter>Include\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lua\LuaComponentBindings.h">
+      <Filter>Include\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lua\LuaClassBindings.h">
+      <Filter>Include\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lua\LuaCameraBindings.h">
+      <Filter>Include\Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -480,6 +492,9 @@
       <Filter>Source\Input</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lua\LuaInputBindings.cpp">
+      <Filter>Source\LuaManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lua\LuaFuncBindings.cpp">
       <Filter>Source\LuaManager</Filter>
     </ClCompile>
   </ItemGroup>

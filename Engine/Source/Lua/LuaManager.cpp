@@ -1,6 +1,5 @@
 #include "Lua/LuaManager.h"
 #include "Core/Log.h"
-#include <cstdio>
 #include <sol/sol.hpp>
 
 namespace NK {

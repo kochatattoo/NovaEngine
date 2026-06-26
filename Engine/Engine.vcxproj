@@ -195,6 +195,10 @@
     <ClInclude Include="Include\Input\InputSystem.h" />
     <ClInclude Include="Include\Input\KeyCode\KeyCodes.h" />
     <ClInclude Include="Include\Lua\LuaBindings.h" />
+    <ClInclude Include="Include\Lua\LuaCameraBindings.h" />
+    <ClInclude Include="Include\Lua\LuaClassBindings.h" />
+    <ClInclude Include="Include\Lua\LuaComponentBindings.h" />
+    <ClInclude Include="Include\Lua\LuaFuncBindings.h" />
     <ClInclude Include="Include\Lua\LuaInputBindings.h" />
     <ClInclude Include="Include\Lua\LuaManager.h" />
     <ClInclude Include="Include\Renderer\Camera.h" />
@@ -268,6 +272,10 @@
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Input\InputSystem.cpp" />
     <ClCompile Include="Source\Lua\LuaBindings.cpp" />
+    <ClCompile Include="Source\Lua\LuaCameraBindings.cpp" />
+    <ClCompile Include="Source\Lua\LuaClassBindings.cpp" />
+    <ClCompile Include="Source\Lua\LuaComponentBindings.cpp" />
+    <ClCompile Include="Source\Lua\LuaFuncBindings.cpp" />
     <ClCompile Include="Source\Lua\LuaInputBindings.cpp" />
     <ClCompile Include="Source\Lua\LuaManager.cpp" />
     <ClCompile Include="Source\Renderer\Camera.cpp" />
