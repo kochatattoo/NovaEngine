@@ -49,7 +49,16 @@ local gameCamera
 local BOARD_OFFSET_X, BOARD_OFFSET_Y
 local score = 0
 
-function OnStart()
+-- v0.2: оборачиваем OnStart в pcall, чтобы ошибка (например, в OnTileChanged setter)
+-- не валила весь скрипт и не ломала OnUpdate.
+function SafeOnStart()
+    local ok, err = pcall(OnStartInner)
+    if not ok then
+        Log("Match3: OnStart FAILED: " .. tostring(err))
+    end
+end
+
+function OnStartInner()
     Log("Match3: OnStart begin (v0.2 — ECS-backed Match3System)")
     local scene = GetScene()
 
