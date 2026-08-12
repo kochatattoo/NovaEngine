@@ -80,6 +80,12 @@ namespace NK {
             auto pos = InputSystem::Get().GetMousePosition();
             return { static_cast<int>(pos.x), static_cast<int>(pos.y) };
             });
+
+        // v0.1.3: не регистрируем GetMousePosition здесь — в LuaFuncBindings.cpp
+        // уже зарегистрирована правильная версия (через Window::GetMouseClientPosition,
+        // возвращает КЛИЕНТСКИЕ координаты). Старая регистрация в этом файле использовала
+        // Input::GetMousePosition (через GetCursorPos, ЭКРАННЫЕ координаты) — что ломало
+        // ScreenToWorldPoint в Match3. См. отчёт Reports/2026-08-12.md.
     }
 
 } // namespace NK

@@ -2,6 +2,32 @@
 
 Все заметные изменения в документации.
 
+
+## [v0.1.3] — 2026-08-12
+
+### Спринт "Починить игровой функционал Match3" — ЗАВЕРШЁН
+
+**Проблема:** после v0.1.1/v0.1.2 Match3 показывал доску, но клики не работали — пользователь не мог играть.
+
+**Корневая причина:** в `LuaInputBindings.cpp` (идёт ПОСЛЕ `LuaFuncBindings.cpp` в `LuaBindings::RegisterAll`) была регистрация `GetMousePosition`, использующая `Input::GetMousePosition` → `GetCursorPos` — **ЭКРАННЫЕ** координаты. А `ScreenToWorldPoint` в `OrthographicCamera` ожидает **КЛИЕНТСКИЕ**. В результате `worldPos` всегда был неверным, `row, col` не попадал в `IsValidCell`, и клики «не работали».
+
+**Код:**
+- 🟢 `Engine/Source/Lua/LuaInputBindings.cpp` — убрана дублирующая регистрация `GetMousePosition` (использовала экранные координаты). Осталась только правильная версия в `LuaFuncBindings.cpp` (через `Window::GetMouseClientPosition`).
+- 🟢 `SandBox/assets/scripts/game_match3.lua` — переход на новый API:
+  - `GetMousePosition()` → `GetMousePos()` (тоже клиентские координаты, через `InputSystem`).
+  - `IsMouseButtonDown(1)` → `GetMouseButton(MouseButton.Left)` (новый API, надёжнее чем legacy).
+  - Добавлены логи для отладки (board offset, generation phases).
+  - Убраны избыточные `Log` statements (только ключевые).
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/07_Ввод.md` — добавлен раздел "✅ Сделано в v0.1.3 (фикс Match3)" с описанием бага и решения.
+- 🟢 `04_Sandbox_и_Match3/02_Игра_Match3.md` — обновлены примеры кода (новый API).
+
+**См. также:** отчёт `Reports/2026-08-12.md`.
+
+**Что НЕ затронуто:**
+- v0.2 план остаётся прежним (ECS-миграция).
+- Backlog остаётся прежним.
 ## [v0.1.1] — 2026-07-15
 
 ### Спринт "Чистка мусора и TODO" — ЗАВЕРШЁН

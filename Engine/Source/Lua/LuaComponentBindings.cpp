@@ -10,7 +10,7 @@
 namespace NK{
 
 	void LuaComponentBindings::RegisterAll(LuaManager& lua) {
-        // --- ���������� ���������� ---
+        // --- ���������� ���������� ---
          lua.BindClass<Transform>("Transform",
             "SetPosition", [](Transform& t, double x, double y, double z) {
                 t.SetPosition(glm::vec3((float)x, (float)y, (float)z));
@@ -39,6 +39,14 @@ namespace NK{
                 sr.SetColor((float)r, (float)g, (float)b, (float)a);
             },
             "SetUseColor", &SpriteRenderer::SetUseColor,
+            "SetCustomSize", [](SpriteRenderer& sr, double w, double h) {
+                // v0.1.3: используем explicit glm::vec2 — иначе linker-ошибка
+                // из-за двух overloads (vec2 и float, float) в inline-заголовке
+                sr.SetCustomSize(glm::vec2(static_cast<float>(w), static_cast<float>(h)));
+            },
+            "SetPixelsPerUnit", [](SpriteRenderer& sr, double ppu) {
+                sr.SetPixelsPerUnit(static_cast<float>(ppu));
+            },
             sol::base_classes, sol::bases<Component>()
         );
 
