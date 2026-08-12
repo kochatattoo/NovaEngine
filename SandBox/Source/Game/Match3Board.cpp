@@ -1,6 +1,7 @@
 ﻿#include "Match3Board.h"
 #include <algorithm>
 #include <random>
+#include "Core/Log.h"   // NK_WARN в Mix()
 
 namespace NK {
 
@@ -188,19 +189,52 @@ namespace NK {
 	void Match3Board::FillEmpty() {
 		static std::mt19937 rng(std::random_device{}());
 		std::uniform_int_distribution<int> dist(0, 5);
-		for (int r = 0; r < m_Rows; ++r)
+
+		for (int r = 0; r < m_Rows; ++r) {
 			for (int c = 0; c < m_Cols; ++c) {
-				if (m_Grid[r][c] == -1) {
-					m_Grid[r][c] = dist(rng);
-					if (OnTileChanged) OnTileChanged(r, c, m_Grid[r][c]);
-				}
+				if (m_Grid[r][c] != -1) continue;
+
+				// Перебираем типы, пока не найдём тот, который не создаёт начальный матч
+				// (то же поведение, что в FillRandom, но для одной клетки)
+				TileType type;
+				int attempts = 0;
+				const int maxAttempts = 16;   // 6 типов, шанс 1/6 попасть в матч каждый раз
+				do {
+					type = dist(rng);
+					bool wouldMatch = false;
+
+					// Горизонтально: проверяем 2 соседа слева
+					if (c >= 2 && m_Grid[r][c - 1] == type && m_Grid[r][c - 2] == type)
+						wouldMatch = true;
+					// Вертикально: проверяем 2 соседа сверху
+					if (!wouldMatch && r >= 2 && m_Grid[r - 1][c] == type && m_Grid[r - 2][c] == type)
+						wouldMatch = true;
+
+					if (!wouldMatch) break;
+					++attempts;
+				} while (attempts < maxAttempts);
+				// Если не нашли за maxAttempts — принимаем любой (лучше матч, чем пустота)
+
+				m_Grid[r][c] = type;
+				if (OnTileChanged) OnTileChanged(r, c, m_Grid[r][c]);
 			}
+		}
 	}
 
 	void Match3Board::Mix() {
+		// Safety limit: при очень неудачной последовательности FillRandom/HasPossibleMoves
+		// могут зациклиться (особенно на почти полностью заполненном поле).
+		// Ограничиваем 50 попытками — если за 50 итераций не получилось — выдаём warning
+		// и оставляем как есть.
+		const int maxAttempts = 50;
+		int attempts = 0;
 		do {
-			// Заполняем заново, избегая начальных троек
-			FillRandom();   // используйте вариант с проверкой троек (см. ниже)
-		} while (!HasPossibleMoves());
+			FillRandom();
+			++attempts;
+		} while (!HasPossibleMoves() && attempts < maxAttempts);
+
+		if (!HasPossibleMoves()) {
+			NK_WARN("Match3Board::Mix: failed to find a state with possible moves after %d attempts", maxAttempts);
+		}
 	}
 }

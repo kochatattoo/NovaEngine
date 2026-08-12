@@ -1,27 +1,34 @@
 #pragma once
 #include <memory>
 #include <string>
-#include "Game/Match3Board.h"
+#include "Game/ECS/Match3System.h"
+#include "ECS/World.h"
 #include "Lua/LuaManager.h"
-#include "Scene/Scene.h"
 #include "Core/Engine.h"
 
 namespace NK {
 
+    // v0.2: Match3Game С‚РµРїРµСЂСЊ owns ECS World + Match3System.
+    // Match3Board (POD-Р»РѕРіРёРєР°) Р·Р°РјРµРЅС‘РЅ РЅР° Match3System (Р»РѕРіРёРєР° + ECS-entities).
     class Match3Game {
     public:
         Match3Game();
         ~Match3Game() = default;
 
-        void Start();                   // вызывается при старте приложения
-        void Update(float deltaTime);   // вызывается каждый кадр
+        void Start();                   // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        void Update(float deltaTime);   // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
     private:
-        void SetupLuaBindings();        // регистрирует биндинги для Match3
+        void SetupLuaBindings();        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ Match3
 
-        std::unique_ptr<Match3Board> m_Board;
-        Scene* m_Scene;                 // ссылка на сцену движка (удобно)
-        LuaManager& m_Lua;              // ссылка на Lua-менеджер движка
+        // v0.2: World owned Match3Game'пїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Engine).
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ вЂ” пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ World пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+        std::unique_ptr<NK::ECS::World> m_World;
+
+        // v0.2: Match3System (пїЅпїЅпїЅпїЅпїЅпїЅ Match3Board) вЂ” owns grid + ECS-entities.
+        std::unique_ptr<NK::Game::ECS::Match3System> m_System;
+
+        LuaManager& m_Lua;              // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Lua-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         std::string m_ScriptPath = "assets/scripts/game_match3.lua";
     };
 

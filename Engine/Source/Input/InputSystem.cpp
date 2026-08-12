@@ -1,6 +1,5 @@
 #include "Input/InputSystem.h"
 #include "Event/Event.h"
-#include "Input/Input.h"
 
 namespace NK {
 
@@ -24,24 +23,35 @@ namespace NK {
     void InputSystem::ProcessEvent(Event& e) {
         EventDispatcher(e)
             .Dispatch<KeyPressedEvent>([this](auto& key) {
-            m_KeyJustPressed[static_cast<KeyCode>(key.KeyCode)] = true;
-                })
+                KeyCode k = static_cast<KeyCode>(key.KeyCode);
+                m_KeysHeld[k] = true;
+                m_KeyJustPressed[k] = true;
+            })
             .Dispatch<KeyReleasedEvent>([this](auto& keyUp) {
-            m_KeyJustReleased[static_cast<KeyCode>(keyUp.KeyCode)] = true;
-                })
+                KeyCode k = static_cast<KeyCode>(keyUp.KeyCode);
+                m_KeysHeld[k] = false;
+                m_KeyJustReleased[k] = true;
+            })
             .Dispatch<MouseMovedEvent>([this](auto& mouseMove) {
-            m_MousePosition = glm::vec2(mouseMove.MouseX, mouseMove.MouseY);
-                })
+                m_MousePosition = glm::vec2(mouseMove.MouseX, mouseMove.MouseY);
+            })
             .Dispatch<MouseButtonPressedEvent>([this](auto& mouseBtn) {
-            m_MouseJustPressed[mouseBtn.m_Button] = true;
-                })
+                m_MouseButtonsHeld[mouseBtn.m_Button] = true;
+                m_MouseJustPressed[mouseBtn.m_Button] = true;
+            })
             .Dispatch<MouseButtonReleasedEvent>([this](auto& mouseBtnUp) {
-            m_MouseJustReleased[mouseBtnUp.m_Button] = true;
-                });
+                m_MouseButtonsHeld[mouseBtnUp.m_Button] = false;
+                m_MouseJustReleased[mouseBtnUp.m_Button] = true;
+            })
+            .Dispatch<MouseScrolledEvent>([this](auto& scroll) {
+                // Суммируем, так как за кадр может прилететь несколько событий
+                m_MouseScroll += glm::vec2(scroll.XOffset, scroll.YOffset);
+            });
     }
 
     bool InputSystem::GetKey(KeyCode key) const {
-        return Input::GetKey(key);
+        auto it = m_KeysHeld.find(key);
+        return it != m_KeysHeld.end() && it->second;
     }
     bool InputSystem::GetKeyDown(KeyCode key) const {
         auto it = m_KeyJustPressed.find(key);
@@ -52,7 +62,8 @@ namespace NK {
         return it != m_KeyJustReleased.end() && it->second;
     }
     bool InputSystem::GetMouseButton(MouseButton button) const {
-        return Input::GetMouseButton(button);
+        auto it = m_MouseButtonsHeld.find(button);
+        return it != m_MouseButtonsHeld.end() && it->second;
     }
     bool InputSystem::GetMouseButtonDown(MouseButton button) const {
         auto it = m_MouseJustPressed.find(button);
@@ -65,12 +76,16 @@ namespace NK {
     glm::vec2 InputSystem::GetMousePosition() const {
         return m_MousePosition;
     }
+    glm::vec2 InputSystem::GetMouseScroll() const {
+        return m_MouseScroll;
+    }
 
     void InputSystem::ResetOneShotStates() {
         m_KeyJustPressed.clear();
         m_KeyJustReleased.clear();
         m_MouseJustPressed.clear();
         m_MouseJustReleased.clear();
+        m_MouseScroll = glm::vec2(0.0f);
     }
 
 } // namespace NK

@@ -1,5 +1,5 @@
 -- game_match3.lua
-Log("Script loaded: game_match3.lua")
+Log("Script loaded: game_match3.lua (v0.1.3 вЂ” fixed input)")
 
 local vertexSrc = [=[
 #version 330 core
@@ -29,17 +29,17 @@ local COLS = 10
 local CELL_SIZE = 64
 local PPU = 100
 
--- Массив цветных текстур (по одной на каждый тип)
+-- РўРµРєСЃС‚СѓСЂС‹ РїР»РёС‚РѕРє (РїРѕ РѕРґРЅРѕР№ РЅР° С†РІРµС‚)
 local tileTextures = {
-    CreateSolidColorTexture(255, 0, 0, 255),   -- 0 красный
-    CreateSolidColorTexture(0, 255, 0, 255),   -- 1 зелёный
-    CreateSolidColorTexture(0, 0, 255, 255),   -- 2 синий
-    CreateSolidColorTexture(255, 255, 0, 255), -- 3 жёлтый
-    CreateSolidColorTexture(255, 0, 255, 255), -- 4 фиолетовый
-    CreateSolidColorTexture(0, 255, 255, 255)  -- 5 циан
+    CreateSolidColorTexture(255, 0, 0, 255),   -- 0 РєСЂР°СЃРЅС‹Р№
+    CreateSolidColorTexture(0, 255, 0, 255),   -- 1 Р·РµР»РµРЅС‹Р№
+    CreateSolidColorTexture(0, 0, 255, 255),   -- 2 СЃРёРЅРёР№
+    CreateSolidColorTexture(255, 255, 0, 255), -- 3 Р¶РµР»С‚С‹Р№
+    CreateSolidColorTexture(255, 0, 255, 255), -- 4 РїСѓСЂРїСѓСЂРЅС‹Р№
+    CreateSolidColorTexture(0, 255, 255, 255)  -- 5 РіРѕР»СѓР±РѕР№
 }
 
--- Полностью прозрачная текстура для удалённых плиток
+-- РџСЂРѕР·СЂР°С‡РЅР°СЏ С‚РµРєСЃС‚СѓСЂР° РґР»СЏ СѓРґР°Р»РµРЅРЅС‹С… РїР»РёС‚РѕРє
 local transparentTexture = CreateSolidColorTexture(0, 0, 0, 0)
 
 local board
@@ -47,10 +47,24 @@ local tileObjects = {}
 local pressedObj, pressedRow, pressedCol
 local gameCamera
 local BOARD_OFFSET_X, BOARD_OFFSET_Y
+local score = 0
 
-function OnStart()
+-- v0.2: РѕР±РѕСЂР°С‡РёРІР°РµРј OnStart РІ pcall, С‡С‚РѕР±С‹ РѕС€РёР±РєР° (РЅР°РїСЂРёРјРµСЂ, РІ OnTileChanged setter)
+-- РЅРµ РІР°Р»РёР»Р° РІРµСЃСЊ СЃРєСЂРёРїС‚ Рё РЅРµ Р»РѕРјР°Р»Р° OnUpdate.
+function SafeOnStart()
+    local ok, err = pcall(OnStartInner)
+    if not ok then
+        Log("Match3: OnStart FAILED: " .. tostring(err))
+    end
+end
+
+function OnStartInner()
+    Log("Match3: OnStart begin (v0.2 вЂ” ECS-backed Match3System)")
     local scene = GetScene()
-    board = Match3Board.new(ROWS, COLS, CELL_SIZE, PPU)
+
+    -- v0.2: Match3System СЃРѕР·РґР°С‘С‚СЃСЏ РІ C++ (Match3Game::Start), Р·РґРµСЃСЊ РїРѕР»СѓС‡Р°РµРј СѓРєР°Р·Р°С‚РµР»СЊ.
+    -- Р’РЅСѓС‚СЂРё C++ РѕРЅ Р·Р°Р±РёРЅРґРµРЅ РїРѕРґ РёРјРµРЅРµРј Match3Board РґР»СЏ РѕР±СЂР°С‚РЅРѕР№ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё API.
+    board = GetBoard()
 
     gameCamera = scene:GetGameCamera()
     local camLeft = gameCamera:GetLeft()
@@ -62,11 +76,14 @@ function OnStart()
     BOARD_OFFSET_X = (camLeft + camRight - boardWidthWorld) * 0.5
     BOARD_OFFSET_Y = (camBottom + camTop - boardHeightWorld) * 0.5
 
-    -- Коллбек, вызываемый при изменении клетки
+    Log(string.format("Match3: camera=(%f..%f, %f..%f), boardOffset=(%f, %f)",
+        camLeft, camRight, camBottom, camTop, BOARD_OFFSET_X, BOARD_OFFSET_Y))
+
+    -- Callback: РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РёР·РјРµРЅРµРЅРёРё РїР»РёС‚РєРё
     board.OnTileChanged = function(row, col, newType)
         local key = row .. "," .. col
         if newType == -1 then
-            -- Плитка удалена: ставим прозрачную текстуру
+            -- РџСѓСЃС‚Р°СЏ РєР»РµС‚РєР°: СЃС‚Р°РІРёРј РїСЂРѕР·СЂР°С‡РЅСѓСЋ С‚РµРєСЃС‚СѓСЂСѓ
             if tileObjects[key] then
                 local sr = tileObjects[key]:GetSpriteRenderer()
                 if sr then
@@ -76,122 +93,111 @@ function OnStart()
         else
             local obj
             if not tileObjects[key] then
-                -- Создаём новый объект, если его нет
+                -- РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ РѕР±СЉРµРєС‚, РµСЃР»Рё РµРіРѕ РµС‰Рµ РЅРµС‚
                 obj = scene:CreateGameObject("Tile_" .. key)
                 local t = obj:AddComponent_Transform()
                 local sr = obj:AddComponent_SpriteRenderer()
                 sr:SetShader(GetShader("SpriteShader_final", vertexSrc, fragmentSrc))
                 sr:SetIsUI(false)
+                -- v0.1.3: Р·Р°РґР°РµРј СЂР°Р·РјРµСЂ РїР»РёС‚РєРё. Р‘РµР· СЌС‚РѕРіРѕ renderW = texW/ppu = 1/100 = 0.01
+                -- РјРёСЂРѕРІС‹С… РµРґРёРЅРёС† = 1 РїРёРєСЃРµР»СЊ вЂ” РїР»РёС‚РєР° РЅРµ РІРёРґРЅР°.
+                sr:SetCustomSize(CELL_SIZE / PPU, CELL_SIZE / PPU)
+                sr:SetPixelsPerUnit(PPU)
                 tileObjects[key] = obj
             else
                 obj = tileObjects[key]
             end
 
-            -- Обновляем позицию (важно для Swap и гравитации)
+            -- Р’С‹С‡РёСЃР»СЏРµРј РїРѕР·РёС†РёСЋ (РІРёР·СѓР°Р»СЊРЅРѕ: row=0 РІРЅРёР·Сѓ, row=ROWS-1 РІРІРµСЂС…Сѓ)
             local visualRow = (ROWS - 1) - row
             local x, y = board:GetCellPosition(visualRow, col)
 
             obj:GetTransform():SetPosition(x + BOARD_OFFSET_X, y + BOARD_OFFSET_Y, 0)
 
-            -- Назначаем правильную цветную текстуру по типу
             local sr = obj:GetSpriteRenderer()
             local tex = tileTextures[newType+1]
-            Log("newType = " .. newType)
             if tex then
                 sr:SetTexture(tex)
-                Log("[Callback] Cells ["..key.."] -> C++ type: "..newType.." | texture set #"..(newType+1))
-
-                local actualType = board:GetTile(row, col)
-                Log("[FINAL] Actual type from board: " ..actualType)
-            else
-                Log("[Warning] No texture for type "..newType)
             end
         end
     end
 
-    -- Заполняем доску
-    Log("--- START BOARD GENERATION ---")
+    -- Р—Р°РїРѕР»РЅСЏРµРј РїРѕР»Рµ
+    Log("Match3: START BOARD GENERATION")
     board:FillRandom()
-        if not board:HasPossibleMoves() then
-        Log("No possible moves at start, mixing...")
+    if not board:HasPossibleMoves() then
+        Log("Match3: No possible moves at start, mixing...")
         board:Mix()
-        Log("Board mixed")
-        end
-    Log("--- END BOARD GENERATION ---")
+    end
+    Log("Match3: END BOARD GENERATION")
 end
 
 function OnUpdate(dt)
     if not board then return end
 
-    local mx, my = GetMousePosition()
+    -- v0.1.3: РёСЃРїРѕР»СЊР·СѓРµРј GetMousePos (РєР»РёРµРЅС‚СЃРєРёРµ РєРѕРѕСЂРґРёРЅР°С‚С‹) Рё GetMouseButton (РЅРѕРІС‹Р№ API)
+    local mx, my = GetMousePos()
     local ww, wh = GetWindowWidth(), GetWindowHeight()
     local worldPos = gameCamera:ScreenToWorldPoint(mx, my, ww, wh)
     local cellSizeWorld = CELL_SIZE / PPU
     local col = math.floor((worldPos.x - BOARD_OFFSET_X) / cellSizeWorld)
     local row = math.floor((worldPos.y - BOARD_OFFSET_Y) / cellSizeWorld)
 
-    if IsMouseButtonDown(1) then
-        -- Кнопка нажата
+    if GetMouseButton(MouseButton.Left) then
+        -- РљРЅРѕРїРєР° РЅР°Р¶Р°С‚Р°
         if not pressedObj and board:IsValidCell(row, col) then
             pressedRow, pressedCol = row, col
-            local tileType = board:GetTile(row, col)
-            Log("Pressed tile at "..row..","..col.." type="..tileType)
             local key = row .. "," .. col
             local obj = tileObjects[key]
             if obj then
                 pressedObj = obj
-                pressedObj:GetTransform():SetScale(1.2, 1.2)  -- выделение
+                pressedObj:GetTransform():SetScale(1.2, 1.2)  -- РІРёР·СѓР°Р»СЊРЅС‹Р№ feedback
             end
         end
     else
-        -- Кнопка отпущена
+        -- РљРЅРѕРїРєР° РѕС‚РїСѓС‰РµРЅР°
         if pressedObj then
-            -- Снимаем выделение с начальной ячейки
+            -- РЈР±РёСЂР°РµРј РІС‹РґРµР»РµРЅРёРµ Рё РїСЂРѕРІРµСЂСЏРµРј swap
             pressedObj:GetTransform():SetScale(1.0, 1.0)
 
-            -- Проверяем, куда пришлось отпускание
+            -- РџСЂРѕРІРµСЂСЏРµРј, РєСѓРґР° РѕС‚РїСѓСЃС‚РёР»Рё
             if board:IsValidCell(row, col) then
                 local dr = math.abs(pressedRow - row)
                 local dc = math.abs(pressedCol - col)
-                -- Обмен, только если соседняя ячейка
+                -- Swap, С‚РѕР»СЊРєРѕ РµСЃР»Рё СЌС‚Рѕ СЃРѕСЃРµРґРЅСЏСЏ РєР»РµС‚РєР°
                 if (dr == 1 and dc == 0) or (dr == 0 and dc == 1) then
                     board:Swap(pressedRow, pressedCol, row, col)
-                    Log("Swapped "..pressedRow..","..pressedCol.." with "..row..","..col)
 
                     local matches = board:FindMatches()
-                    Log("Matches found: " .. #matches)
                     if #matches == 0 then
-                        -- Неудачный обмен — возвращаем обратно
+                        -- РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ вЂ” РѕС‚РєР°С‚С‹РІР°РµРј swap
                         board:Swap(pressedRow, pressedCol, row, col)
                     else
-                        -- Подсчёт очков
+                        -- РќР°С€Р»Рё РјР°С‚С‡
                         score = score + #matches
-                        Log(string.format("Found %d tiles to remove. Score: %d", #matches, score))
 
-                        -- Удаляем совпадения, применяем гравитацию и заполняем пустоты
+                        -- РЈРґР°Р»СЏРµРј СЃРѕРІРїР°РґРµРЅРёСЏ, РїСЂРёРјРµРЅСЏРµРј РіСЂР°РІРёС‚Р°С†РёСЋ Рё Р·Р°РїРѕР»РЅСЏРµРј РїСѓСЃС‚РѕС‚С‹
                         board:RemoveTiles(matches)
                         board:ApplyGravity()
                         board:FillEmpty()
 
-                        -- Цепная реакция
+                        -- РљР°СЃРєР°Рґ РїР°РґРµРЅРёСЏ
                         local newMatches = board:FindMatches()
                         while #newMatches > 0 do
                             score = score + #newMatches
-                            Log(string.format("Cascade! Removed %d more tiles. Score: %d", #newMatches, score))
                             board:RemoveTiles(newMatches)
                             board:ApplyGravity()
                             board:FillEmpty()
                             newMatches = board:FindMatches()
                         end
                         if not board:HasPossibleMoves() then
-                             Log("No possible moves, mixing...")
-                             board:Mix()
+                            board:Mix()
                         end
                     end
                 end
             end
 
-            -- Сбрасываем состояние
+            -- РЎР±СЂР°СЃС‹РІР°РµРј РІС‹РґРµР»РµРЅРёРµ
             pressedObj = nil
             pressedRow, pressedCol = nil, nil
         end

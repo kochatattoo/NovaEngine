@@ -1,0 +1,179 @@
+# CHANGELOG
+
+Все заметные изменения в документации.
+
+
+## [v0.2] — 2026-08-12 (часть 2)
+
+### Спринт "ECS-миграция Match3 (логика)" — В ПРОЦЕССЕ
+
+**Цель:** перевести `Match3` с POD-логики (`Match3Board`) на ECS (`Match3System` + 100 tile-entities). Рендер пока остаётся через Scene/GameObject.
+
+**Код:**
+- 🟢 `Engine/Include/ECS/Components/NameComponent.h` (новый) — `struct NameComponent { std::string Name; }`.
+- 🟢 `Engine/Include/ECS/World.h` + `Engine/Source/ECS/World.cpp` — добавлены методы:
+  - `CreateEntity(const std::string& name)` — создать именованную entity
+  - `GetEntityByName(name)`, `RenameEntity(entity, newName)`, `GetEntityName(entity)`, `Clear()`
+- 🟢 `SandBox/Source/Game/ECS/Match3TileComponent.h` (новый) — POD `Row, Col, Type` для плитки.
+- 🟢 `SandBox/Source/Game/ECS/Match3System.h/.cpp` (новый) — owns grid + 100 ECS-entities. API 1:1 как `Match3Board` для обратной совместимости.
+- 🟢 `SandBox/Source/Game/Match3Game.h/.cpp` — рефакторинг: `m_World` + `m_System` вместо `m_Board`. Порядок Start: сначала RunScript+OnStart, потом System::Start (иначе OnTileChanged nullptr).
+- 🟢 `SandBox/assets/scripts/game_match3.lua` — `board = Match3Board.new(...)` → `board = GetBoard()`.
+- 🟢 `Engine/Engine.vcxproj` — добавлен NameComponent.h.
+- 🟢 `SandBox/SandBox.vcxproj` — добавлены Match3System.cpp/.h, Match3TileComponent.h.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — успешно.
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — полностью переписан: World API + name-based lookup, все компоненты, Match3System, раздел "Миграция Match3", план v0.2.x с чекбоксами.
+- 🟢 `Reports/2026-08-12-v0.2.md` (новый) — детальный отчёт спринта.
+
+**Что НЕ сделано (TODO v0.2.6+):**
+- ⏳ `SpriteRenderSystem` — рендер из ECS (плитки в ECS не рисуются, Lua продолжает создавать Scene::GameObject'ы).
+- ⏳ Удалить `Match3Board` (POD).
+- ⏳ Lua-биндинги `World:CreateEntity`, `entity:AddComponent_*`.
+
+
+## [v0.1.3] — 2026-08-12
+
+### Спринт "Починить игровой функционал Match3" — ЗАВЕРШЁН
+
+**Проблема:** после v0.1.1/v0.1.2 Match3 показывал доску, но клики не работали — пользователь не мог играть.
+
+**Корневая причина:** в `LuaInputBindings.cpp` (идёт ПОСЛЕ `LuaFuncBindings.cpp` в `LuaBindings::RegisterAll`) была регистрация `GetMousePosition`, использующая `Input::GetMousePosition` → `GetCursorPos` — **ЭКРАННЫЕ** координаты. А `ScreenToWorldPoint` в `OrthographicCamera` ожидает **КЛИЕНТСКИЕ**. В результате `worldPos` всегда был неверным, `row, col` не попадал в `IsValidCell`, и клики «не работали».
+
+**Код:**
+- 🟢 `Engine/Source/Lua/LuaInputBindings.cpp` — убрана дублирующая регистрация `GetMousePosition` (использовала экранные координаты). Осталась только правильная версия в `LuaFuncBindings.cpp` (через `Window::GetMouseClientPosition`).
+- 🟢 `SandBox/assets/scripts/game_match3.lua` — переход на новый API:
+  - `GetMousePosition()` → `GetMousePos()` (тоже клиентские координаты, через `InputSystem`).
+  - `IsMouseButtonDown(1)` → `GetMouseButton(MouseButton.Left)` (новый API, надёжнее чем legacy).
+  - Добавлены логи для отладки (board offset, generation phases).
+  - Убраны избыточные `Log` statements (только ключевые).
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/07_Ввод.md` — добавлен раздел "✅ Сделано в v0.1.3 (фикс Match3)" с описанием бага и решения.
+- 🟢 `04_Sandbox_и_Match3/02_Игра_Match3.md` — обновлены примеры кода (новый API).
+
+**См. также:** отчёт `Reports/2026-08-12.md`.
+
+**Что НЕ затронуто:**
+- v0.2 план остаётся прежним (ECS-миграция).
+- Backlog остаётся прежним.
+## [v0.1.1] — 2026-07-15
+
+### Спринт "Чистка мусора и TODO" — ЗАВЕРШЁН
+
+**Код:**
+- 🟢 `Game.cpp` (SandboxApp) — удалён мёртвый код: `m_ColorR/G/B`, тестовый ECS-код, `OnEvent` override, лишние `#include`.
+- 🟢 `InputSystem` — добавлены `m_KeysHeld` и `m_MouseButtonsHeld`; убрана зависимость от `Input::IsKeyDown` / `Input::GetMouseButton`. `InputSystem.cpp` больше не `#include "Input/Input.h"`.
+- 🟢 `Application.h` — метод `OnEvent(Event&)` удалён из базового класса (был «мёртвым» — движок его не вызывал).
+- 🟢 `Match3Board::Mix` — добавлен safety limit (50 попыток) + `NK_WARN` при неудаче.
+- 🟢 `Match3Board::FillEmpty` — теперь не создаёт начальный матч (логика как в `FillRandom`, `maxAttempts=16`).
+- 🟢 `Match3Game::SetupLuaBindings` — убрано дублирование (`GetMousePosition`, `GetWindowWidth/Height`, `IsMouseButtonDown`, `GetScene` уже в `LuaFuncBindings`).
+- 🟢 `SandBox.vcxproj` — исправлены опечатки: `Engine\Sources` → `Engine\Source` (4 места), `Engine\Libraries\EnTT` → `Libraries\EnTT` (1 место).
+- 🟢 `Engine.vcxproj` — исправлена опечатка: `Engine\Libraries\EnTT` → `Libraries\EnTT` (1 место в Debug|x64).
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/01_Core_Engine_Application_EntryPoint.md` — `OnEvent` помечен как удалённый, ссылка на план v0.2.
+- 🟢 `02_Подсистемы/07_Ввод.md` — раздел "✅ Сделано в v0.1.1" с описанием нового InputSystem.
+- 🟢 `01_Архитектура/04_Структура_проекта.md` — опечатки vcxproj помечены как исправленные (с исторической справкой).
+- 🟢 `04_Sandbox_и_Match3/01_Архитектура_Sandbox.md` — обновлён код SandboxApp + список "что убрано в v0.1.1".
+- 🟢 `04_Sandbox_и_Match3/02_Игра_Match3.md` — обновлены `FillEmpty` и `Mix` (с пометками v0.1.1), добавлен раздел "Что улучшено в v0.1.1".
+- 🟢 `06_План_разработки/01_Текущее_состояние.md` — статус TODO обновлён (✅ для выполненных, 🟡 для оставшихся).
+- 🟢 `06_План_разработки/02_Краткосрочный_план.md` — все цели спринта v0.1.1 отмечены как ✅.
+
+**См. также:** отчёт `Reports/2026-07-15.md` с детальным описанием.
+
+**Что НЕ сделано (перенесено в v0.2):**
+- [ ] `OnTileChanged` callback — батч при каскаде.
+- [ ] Добавить `IsKeyDown(KeyCode.X)` обёртку и `EngineVersion()` в Lua.
+- [ ] Документацию в `D:\ENGINE\NovaEngine\docs/` (в репо).
+- [ ] Ссылку в `README.md`.
+
+## [v0.1] — 2026-07-13
+
+### Создано
+- **README.md** — главный вход в документацию, оглавление, статус, навигация по ролям.
+- **01_Архитектура/** (4 файла)
+  - `01_Обзор_и_слои.md` — что такое NovaEngine, принципы, слои.
+  - `02_Жизненный_цикл.md` — от `main()` до выхода, последовательность инициализации, главный цикл.
+  - `03_Зависимости_и_библиотеки.md` — glm, Lua, sol2, EnTT, stb, glad, OpenGL 3.3.
+  - `04_Структура_проекта.md` — что лежит в каждой папке, настройки vcxproj.
+- **02_Подсистемы/** (11 файлов)
+  - `01_Core_Engine_Application_EntryPoint.md`
+  - `02_Логирование.md`
+  - `03_Окно_и_графический_контекст.md`
+  - `04_Рендерер_и_камеры.md` — самый большой файл, всё про рендеринг.
+  - `05_Сцена_GameObject_компоненты.md`
+  - `06_ECS_EnTT.md` — статус: в работе, миграция.
+  - `07_Ввод.md` — две параллельные системы (Input + InputSystem).
+  - `08_UI.md` — Anchor, Button.
+  - `09_Ресурсы.md` — ResourceManager, ResourcePool.
+  - `10_Lua_интеграция.md` — LuaManager + все биндинги.
+  - `11_События.md` — Event, EventDispatcher, `Application::OnEvent` не вызывается.
+- **03_Скриптинг_на_Lua/** (2 файла)
+  - `01_Lua_API_справочник.md` — полный API (классы, функции, enum'ы, конвенции).
+  - `02_Lua_примеры.md` — реальные скрипты из Sandbox.
+- **04_Sandbox_и_Match3/** (2 файла)
+  - `01_Архитектура_Sandbox.md` — SandboxApp, Match3Game, как добавить новую игру.
+  - `02_Игра_Match3.md` — механика, логика, визуализация.
+- **05_Сборка_и_запуск/** (2 файла)
+  - `01_Сборка_проекта.md` — Visual Studio, конфигурации, post-build.
+  - `02_Активы_и_ресурсы.md` — где ассеты, как добавить, форматы.
+- **06_План_разработки/** (5 файлов)
+  - `01_Текущее_состояние.md` — метрики, что работает, что нет, тех. долг.
+  - `02_Краткосрочный_план.md` — 1–2 недели (v0.1.1).
+  - `03_Среднесрочный_план.md` — 1–2 месяца (v0.2).
+  - `04_Долгосрочный_план.md` — 3–6 месяцев (v0.3–v0.5).
+  - `05_Backlog_идеи.md` — все "хотелки" вне плана.
+- **CHANGELOG.md** — этот файл.
+
+### Структура
+```
+NovaEngine v0.1 — Системная документация/
+├── README.md
+├── CHANGELOG.md
+├── 01_Архитектура/   (4 файла)
+├── 02_Подсистемы/    (11 файлов)
+├── 03_Скриптинг_на_Lua/ (2 файла)
+├── 04_Sandbox_и_Match3/ (2 файла)
+├── 05_Сборка_и_запуск/  (2 файла)
+└── 06_План_разработки/  (5 файлов)
+```
+
+Итого: **27 файлов**.
+
+## Что планируется в следующих версиях документации
+
+### v0.1.1 (после кодового v0.1.1)
+- Синхронизировать с реальным кодом после чистки TODO.
+- Добавить диаграммы (PlantUML / Mermaid) в `01_Архитектура/02_Жизненный_цикл.md`.
+- Заполнить `Переход на ECS/` (сейчас пусто) — перенести туда `02_Подсистемы/06_ECS_EnTT.md` после миграции.
+
+### v0.2 (после ECS-миграции)
+- Переписать `02_Подсистемы/05_Сцена_GameObject_компоненты.md` как "Legacy API".
+- Создать `02_Подсистемы/06_ECS_EnTT.md` v2 (с реальным использованием в Match3).
+- Добавить `02_Подсистемы/12_Sprite_Batching.md` (новый).
+- Обновить `02_Подсистемы/04_Рендерер_и_камеры.md` (batcher + atlases).
+
+### v0.3
+- Добавить `02_Подсистемы/13_Звук.md`.
+- Добавить `02_Подсистемы/14_Сцены_и_сериализация.md`.
+- Обновить `05_Сборка_и_запуск/01_Сборка_проекта.md` (CMake, CI).
+
+### v0.5
+- Добавить `02_Подсистемы/15_Кроссплатформенность.md`.
+- Раздел по каждой платформе: Windows / Linux / macOS.
+
+## Соглашения
+
+- **Формат файлов:** Markdown (CommonMark + GFM).
+- **Кодировка:** UTF-8.
+- **Имена файлов:** `NN_Название.md`, `NN` — двузначный номер, `Название` — кириллица или латиница, через `_`.
+- **Заголовок документа:** начинается с `# N — Title`, потом блок `> **Статус:** 🟢/🟡/🔴/⚪` и `> **Дата:** YYYY-MM-DD` (если важно).
+- **Эмодзи-статусы:** 🟢 стабильно, 🟡 в работе, 🔴 сломано, ⚪ зарезервировано.
+- **TODO:** используется формат `- [ ]` (checkbox), чтобы можно было отслеживать прогресс.
+
+## См. также
+
+- [README.md](README.md) — главный вход.
+- [06_План_разработки/](06_План_разработки/) — планы на будущее.

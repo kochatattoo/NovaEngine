@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources;$(ProjectDir)Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Source;$(ProjectDir)Source</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
@@ -86,7 +86,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /e /r /i "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -97,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources;$(ProjectDir)Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Source;$(ProjectDir)Source</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
@@ -107,7 +107,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /e /r /i "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources;$(ProjectDir)Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Libraries\EnTT;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Source;$(ProjectDir)Source</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
@@ -126,7 +126,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /e /r /i "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Sources;$(ProjectDir)Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries;$(SolutionDir)Engine\Include;$(SolutionDir)Libraries\lua\src;$(SolutionDir)Engine\Source;$(ProjectDir)Source</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
@@ -147,7 +147,7 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>cmd /c xcopy /y /d "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
+      <Command>cmd /c xcopy /y /e /r /i "$(ProjectDir)assets" "$(OutDir)assets\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -159,10 +159,14 @@
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\Game\Match3Board.cpp" />
     <ClCompile Include="Source\Game\Match3Game.cpp" />
+    <ClCompile Include="Source\Game\ECS\Match3System.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Game\Match3Board.h" />
     <ClInclude Include="Source\Game\Match3Game.h" />
+    <ClInclude Include="Source\Game\ECS\Match3BoardProxy.h" />
+    <ClInclude Include="Source\Game\ECS\Match3TileComponent.h" />
+    <ClInclude Include="Source\Game\ECS\Match3System.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

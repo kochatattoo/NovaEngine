@@ -12,9 +12,13 @@
 namespace NK{
 
 	void LuaFuncBindings::RegisterAll(LuaManager& lua) {
-        // --- ���������� ������� ---
+        // --- ���������� ������� ---
         lua.RegisterFunction("Log", [](const std::string& msg) {
             NK_INFO("%s", msg.c_str());
+            });
+        // v0.1.2: версия движка для отладки и условной логики в Lua
+        lua.RegisterFunction("EngineVersion", []() -> std::string {
+            return "0.1.2";
             });
         lua.RegisterFunction("IsKeyDown", [](int key) -> bool {
             return Input::IsKeyDown(key);
