@@ -8,7 +8,7 @@
 namespace NK {
 
     void LuaInputBindings::RegisterAll(LuaManager& lua) {
-        // Регистрация перечислений
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         lua.RegisterEnum<KeyCode>("KeyCode", {
         {"A", KeyCode::A}, {"B", KeyCode::B}, {"C", KeyCode::C}, {"D", KeyCode::D},
         {"E", KeyCode::E}, {"F", KeyCode::F}, {"G", KeyCode::G}, {"H", KeyCode::H},
@@ -40,7 +40,7 @@ namespace NK {
         {"Middle", MouseButton::Middle}
             });
 
-        // Глобальные функции ввода (совместимые со старым кодом и новым)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ)
         lua.RegisterFunction("IsKeyDown", [](int key) -> bool {
             return Input::IsKeyDown(key);
             });
@@ -53,8 +53,12 @@ namespace NK {
             return { x, y };
             });
 
-        // Новые функции (используют InputSystem)
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ InputSystem)
         lua.RegisterFunction("GetKey", [](KeyCode k) -> bool {
+            return InputSystem::Get().GetKey(k);
+            });
+        lua.RegisterFunction("IsKeyDown", [](KeyCode k) -> bool {
+            // РђР»РёР°СЃ РґР»СЏ GetKey вЂ” Р±РѕР»РµРµ РїСЂРёРІС‹С‡РЅРѕРµ РёРјСЏ (Unity-style)
             return InputSystem::Get().GetKey(k);
             });
         lua.RegisterFunction("GetKeyDown", [](KeyCode k) -> bool {

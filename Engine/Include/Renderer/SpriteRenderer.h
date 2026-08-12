@@ -1,8 +1,6 @@
 #pragma once
 #include "Scene/Component.h"
 #include <memory>
-#include <string>
-#include <glad/gl.h>
 #include "Renderer/Texture2D.h"
 #include "Renderer/Shader.h"
 

@@ -1,15 +1,12 @@
 ﻿#include "Core/Engine.h"
 #include "Core/Application.h"
 #include "Core/Timer.h"
-#include "Scene/Transform.h"
-#include "Scene/ScriptComponent.h"
 #include "Renderer/SpriteRenderer.h"
 #include "Window/Window.h"
 #include "Input/InputSystem.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/GraphicsContext.h"
 #include "Lua/LuaManager.h"
-#include <Renderer/TextRenderer.h>
 #include <Lua/LuaBindings.h>
 
 namespace NK {
@@ -51,6 +48,7 @@ namespace NK {
 						layout(location = 1) in vec2 a_TexCoord;
 						uniform mat4 u_ViewProjection;
 						uniform mat4 u_Model;
+						uniform vec4 u_Color;
 						out vec2 v_TexCoord;
 				void main() {
 					gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 0.0, 1.0);
@@ -61,8 +59,11 @@ namespace NK {
 						in vec2 v_TexCoord;
 						out vec4 FragColor;
 						uniform sampler2D u_Texture;
+						uniform vec4 u_Color;
 				void main() {
-					FragColor = texture(u_Texture, v_TexCoord);
+					vec4 texColor = texture(u_Texture, v_TexCoord);
+					// u_Color умножается на тексель — белый (1,1,1,1) = без изменений.
+					FragColor = texColor * u_Color;
 				}
 			)";
 

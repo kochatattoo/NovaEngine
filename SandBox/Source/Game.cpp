@@ -1,8 +1,8 @@
 #include <Core/EntryPoint.h>
 #include <Core/Log.h>
-#include <Input/Input.h>        // старый ввод
+#include <Input/InputSystem.h>
 #include <Renderer/Renderer.h>
-#include <Event/Event.h>
+
 #include "Game/Match3Game.h"
 
 class SandboxApp : public NK::Application {
@@ -15,38 +15,19 @@ public:
     }
 
     void OnUpdate(float deltaTime) override {
-		// 1. Обновляем логику всех объектов (включая Lua-скрипты)
-		NK::Engine::Get().GetScene().OnUpdate(deltaTime);
+        // 1. РћР±РЅРѕРІРёС‚СЊ РІСЃРµ РѕР±СЉРµРєС‚С‹ СЃС†РµРЅС‹ (РІС‹Р·С‹РІР°СЋС‚ Lua-СЃРєСЂРёРїС‚С‹ С‡РµСЂРµР· ScriptComponent)
+        NK::Engine::Get().GetScene().OnUpdate(deltaTime);
 
         if (m_Game) m_Game->Update(deltaTime);
 
-		// 2. Начинаем кадр
-		NK::Renderer::BeginFrame();
+        // 2. РќР°С‡Р°Р»Рѕ РєР°РґСЂР°
+        NK::Renderer::BeginFrame();
 
-		// 3. Рисуем все спрайты через компоненты SpriteRenderer
-		NK::Engine::Get().GetScene().OnRender();
+        // 3. Р РёСЃСѓРµРј РІСЃРµ РёРіСЂРѕРІС‹Рµ РѕР±СЉРµРєС‚С‹ С‡РµСЂРµР· SpriteRenderer
+        NK::Engine::Get().GetScene().OnRender();
 
-		// 4. Заканчиваем кадр
-		NK::Renderer::EndFrame();
-    }
-
-    void OnEvent(NK::Event& e) override {
-        NK::EventDispatcher dispatcher(e);
-
-        // Обработка нажатий клавиш (аналог Input.GetKeyDown)
-        dispatcher.Dispatch<NK::KeyPressedEvent>([this](NK::KeyPressedEvent& keyEvent) {
-            if (keyEvent.KeyCode == VK_ESCAPE) {
-                NK::Engine::Get().Shutdown();
-                return true;   // событие обработано
-            }
-            if (keyEvent.KeyCode == VK_SPACE) {
-				m_ColorR = (rand() % 1000) / 1000.0f;
-				m_ColorG = (rand() % 1000) / 1000.0f;
-				m_ColorB = (rand() % 1000) / 1000.0f;
-                return true;
-            }
-            return false;   // не обработано
-            });
+        // 4. Р—Р°РІРµСЂС€Р°СЋС‰РёР№ РєР°РґСЂ
+        NK::Renderer::EndFrame();
     }
 
     void OnShutdown() override {
@@ -54,7 +35,6 @@ public:
     }
 
 private:
-	float m_ColorR = 1.0f, m_ColorG = 1.0f, m_ColorB = 1.0f;
     std::unique_ptr<NK::Match3Game> m_Game;
 };
 

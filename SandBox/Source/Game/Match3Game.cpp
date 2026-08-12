@@ -5,8 +5,6 @@
 #include "Renderer/Shader.h"
 #include "Renderer/OrthographicCamera.h"
 #include "Resource/ResourceManager.h"
-#include "Input/Input.h"
-#include "Window/Window.h"
 #include <sol/sol.hpp>
 
 namespace NK {
@@ -19,8 +17,12 @@ namespace NK {
     }
 
     void Match3Game::SetupLuaBindings() {
+        // v0.1.1: РіР»РѕР±Р°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё РґРІРёР¶РєР° (GetScene, GetMousePosition, GetWindowWidth/Height,
+        // IsMouseButtonDown, GetTexture, GetShader, Log, ...) СѓР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹ РІ
+        // Engine::SetupLuaBindings() -> LuaFuncBindings::RegisterAll().
+        // Р—РґРµСЃСЊ СЂРµРіРёСЃС‚СЂРёСЂСѓРµРј РўРћР›Р¬РљРћ СЃРїРµС†РёС„РёС‡РЅРѕРµ РґР»СЏ Match3.
 
-        // Регистрация Match3Board
+        // РљР»Р°СЃСЃ Match3Board вЂ” РёРіСЂРѕРІР°СЏ Р»РѕРіРёРєР° РїРѕР»СЏ
         m_Lua.BindClass<Match3Board>("Match3Board",
             sol::constructors<Match3Board(int, int, double, double)>(),
             "FillRandom", &Match3Board::FillRandom,
@@ -43,24 +45,10 @@ namespace NK {
             "OnTileChanged", &Match3Board::OnTileChanged
         );
 
-        // Глобальные функции, нужные для игры
+        // РЎРѕР·РґР°РЅРёРµ С†РІРµС‚РЅРѕР№ 1x1 С‚РµРєСЃС‚СѓСЂС‹ РґР»СЏ РїР»РёС‚РѕРє (СЃРїРµС†РёС„РёС‡РЅРѕ РґР»СЏ Match3)
         m_Lua.RegisterFunction("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
             return Texture2D::CreateSolidColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
-            });
-        m_Lua.RegisterFunction("GetMousePosition", []() -> std::tuple<int, int> {
-            int x, y;
-            Engine::Get().GetWindow()->GetMouseClientPosition(x, y);
-            return { x, y };
-            });
-        m_Lua.RegisterFunction("GetWindowWidth", []() { return Engine::Get().GetWindow()->GetWidth(); });
-        m_Lua.RegisterFunction("GetWindowHeight", []() { return Engine::Get().GetWindow()->GetHeight(); });
-        m_Lua.RegisterFunction("IsMouseButtonDown", [](int button) -> bool {
-            return Input::IsMouseButtonDown(button);
-            });
-
-        // Добавляем доступ к сцене и камере
-        m_Lua.RegisterFunction("GetScene", [this]() -> Scene& { return *m_Scene; });
-        // Остальные общие функции (GetTexture, GetShader, Log и т.д.) уже зарегистрированы в Engine
+        });
     }
 
     void Match3Game::Start() {
