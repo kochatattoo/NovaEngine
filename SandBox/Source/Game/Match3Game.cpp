@@ -1,62 +1,69 @@
 #include "Game/Match3Game.h"
 #include "Core/Log.h"
 #include "Renderer/Texture2D.h"
-#include "Renderer/SpriteRenderer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/OrthographicCamera.h"
-#include "Resource/ResourceManager.h"
 #include <sol/sol.hpp>
 
 namespace NK {
 
     Match3Game::Match3Game()
-        : m_Scene(&Engine::Get().GetScene()),
-        m_Lua(Engine::Get().GetLuaManager())
+        : m_Lua(Engine::Get().GetLuaManager())
     {
+        // v0.2: создаём локальный World + Match3System.
+        // Match3System owns 100 tile-entities (см. Start()).
+        m_World  = std::make_unique<NK::ECS::World>();
+        m_System = std::make_unique<NK::Game::ECS::Match3System>(*m_World, 10, 10, 64.0f, 100.0f);
+
         SetupLuaBindings();
     }
 
     void Match3Game::SetupLuaBindings() {
-        // v0.1.1: глобальные функции движка (GetScene, GetMousePosition, GetWindowWidth/Height,
-        // IsMouseButtonDown, GetTexture, GetShader, Log, ...) уже зарегистрированы в
-        // Engine::SetupLuaBindings() -> LuaFuncBindings::RegisterAll().
-        // Здесь регистрируем ТОЛЬКО специфичное для Match3.
+        // v0.2: биндим Match3System (раньше Match3Board). API сохранён 1:1 — Lua не заметит.
+        m_Lua.BindClass<NK::Game::ECS::Match3System>("Match3Board",
+            // Конструктор НЕ биндим (Match3System создаётся в C++). Lua получает указатель через реестр.
+            sol::no_constructor,
 
-        // Класс Match3Board — игровая логика поля
-        m_Lua.BindClass<Match3Board>("Match3Board",
-            sol::constructors<Match3Board(int, int, double, double)>(),
-            "FillRandom", &Match3Board::FillRandom,
-            "GetTile", &Match3Board::GetTile,
-            "SetTile", &Match3Board::SetTile,
-            "IsValidCell", &Match3Board::IsValidCell,
-            "Swap", &Match3Board::Swap,
-            "FindMatches", &Match3Board::FindMatches,
-            "RemoveTiles", &Match3Board::RemoveTiles,
-            "ApplyGravity", &Match3Board::ApplyGravity,
-            "FillEmpty", &Match3Board::FillEmpty,
-            "HasPossibleMoves", &Match3Board::HasPossibleMoves,
-            "Mix", &Match3Board::Mix,
-            "GetCellPosition", [](Match3Board& board, int r, int c) -> std::tuple<float, float> {
-                auto pos = board.GetCellPosition(r, c);
+            "FillRandom",         &NK::Game::ECS::Match3System::FillRandom,
+            "GetTile",            &NK::Game::ECS::Match3System::GetTile,
+            "SetTile",            &NK::Game::ECS::Match3System::SetTile,
+            "IsValidCell",        &NK::Game::ECS::Match3System::IsValidCell,
+            "Swap",               &NK::Game::ECS::Match3System::Swap,
+            "FindMatches",        &NK::Game::ECS::Match3System::FindMatches,
+            "RemoveTiles",        &NK::Game::ECS::Match3System::RemoveTiles,
+            "ApplyGravity",       &NK::Game::ECS::Match3System::ApplyGravity,
+            "FillEmpty",          &NK::Game::ECS::Match3System::FillEmpty,
+            "HasPossibleMoves",   &NK::Game::ECS::Match3System::HasPossibleMoves,
+            "Mix",                &NK::Game::ECS::Match3System::Mix,
+            "GetCellPosition", [](NK::Game::ECS::Match3System& sys, int r, int c) -> std::tuple<float, float> {
+                auto pos = sys.GetCellPosition(r, c);
                 return { pos.x, pos.y };
             },
-            "GetRows", &Match3Board::GetRows,
-            "GetCols", &Match3Board::GetCols,
-            "OnTileChanged", &Match3Board::OnTileChanged
+            "GetRows",            &NK::Game::ECS::Match3System::GetRows,
+            "GetCols",            &NK::Game::ECS::Match3System::GetCols,
+            "OnTileChanged",      &NK::Game::ECS::Match3System::OnTileChanged
         );
 
-        // Создание цветной 1x1 текстуры для плиток (специфично для Match3)
+        // Глобальная функция: получить указатель на board (Match3System) для Lua.
+        // Lua-скрипт пишет: local board = GetBoard()
+        m_Lua.RegisterFunction("GetBoard", [this]() -> NK::Game::ECS::Match3System* {
+            return m_System.get();
+        });
+
+        // Создание цветной 1x1 текстуры (специфично для Match3) — оставлено как было.
         m_Lua.RegisterFunction("CreateSolidColorTexture", [](int r, int g, int b, int a) -> std::shared_ptr<Texture2D> {
             return Texture2D::CreateSolidColor((uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a);
         });
     }
 
     void Match3Game::Start() {
+        // v0.2: сначала грузим скрипт + ставим OnTileChanged callback,
+        // ПОТОМ спавним entities. Иначе 100 событий FillRandom потеряются.
         m_Lua.RunScript(m_ScriptPath);
         m_Lua.CallFunction("OnStart");
+        m_System->Start();
     }
 
     void Match3Game::Update(float deltaTime) {
+        m_System->Update(deltaTime);
         m_Lua.CallFunction("OnUpdate", deltaTime);
     }
 

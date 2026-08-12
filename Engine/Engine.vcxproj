@@ -188,6 +188,7 @@
     <ClInclude Include="Include\Core\EntryPoint.h" />
     <ClInclude Include="Include\Core\Log.h" />
     <ClInclude Include="Include\Core\Timer.h" />
+    <ClInclude Include="Include\ECS\Components\NameComponent.h" />
     <ClInclude Include="Include\ECS\Components\Sprite.h" />
     <ClInclude Include="Include\ECS\Components\Transform.h" />
     <ClInclude Include="Include\ECS\World.h" />

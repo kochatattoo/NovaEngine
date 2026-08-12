@@ -159,10 +159,13 @@
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\Game\Match3Board.cpp" />
     <ClCompile Include="Source\Game\Match3Game.cpp" />
+    <ClCompile Include="Source\Game\ECS\Match3System.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Game\Match3Board.h" />
     <ClInclude Include="Source\Game\Match3Game.h" />
+    <ClInclude Include="Source\Game\ECS\Match3TileComponent.h" />
+    <ClInclude Include="Source\Game\ECS\Match3System.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

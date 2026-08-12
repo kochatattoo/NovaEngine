@@ -50,9 +50,12 @@ local BOARD_OFFSET_X, BOARD_OFFSET_Y
 local score = 0
 
 function OnStart()
-    Log("Match3: OnStart begin")
+    Log("Match3: OnStart begin (v0.2 — ECS-backed Match3System)")
     local scene = GetScene()
-    board = Match3Board.new(ROWS, COLS, CELL_SIZE, PPU)
+
+    -- v0.2: Match3System создаётся в C++ (Match3Game::Start), здесь получаем указатель.
+    -- Внутри C++ он забинден под именем Match3Board для обратной совместимости API.
+    board = GetBoard()
 
     gameCamera = scene:GetGameCamera()
     local camLeft = gameCamera:GetLeft()

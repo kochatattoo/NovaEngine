@@ -2,6 +2,8 @@
 #include <EnTT/entt/entt.hpp>
 #include <memory>
 #include <functional>
+#include <string>
+#include <unordered_map>
 
 namespace NK::ECS {
 
@@ -10,55 +12,72 @@ namespace NK::ECS {
         World() = default;
         ~World() = default;
 
-        // Создать сущность (пустую)
+        // РЎРѕР·РґР°С‚СЊ РїСѓСЃС‚СѓСЋ entity
         entt::entity CreateEntity();
+        // РЎРѕР·РґР°С‚СЊ entity СЃ РёРјРµРЅРµРј (РґР»СЏ lookup РёР· Lua / editor)
+        entt::entity CreateEntity(const std::string& name);
 
-        // Уничтожить сущность
+        // РЈРґР°Р»РёС‚СЊ entity
         void DestroyEntity(entt::entity entity);
 
-        // Добавить компонент к сущности (если его ещё нет)
+        // РџРѕР»СѓС‡РёС‚СЊ РєРѕРјРїРѕРЅРµРЅС‚ РІ entity (РµСЃР»Рё РµРіРѕ РЅРµС‚ вЂ” СЃРѕР·РґР°С‚СЊ)
         template<typename T, typename... Args>
         T& AddComponent(entt::entity entity, Args&&... args) {
             return m_Registry.emplace<T>(entity, std::forward<Args>(args)...);
         }
 
-        // Получить компонент (только чтение)
+        // РџРѕР»СѓС‡РёС‚СЊ РєРѕРјРїРѕРЅРµРЅС‚ (С‚РѕР»СЊРєРѕ С‡С‚РµРЅРёРµ)
         template<typename T>
         const T& GetComponent(entt::entity entity) const {
             return m_Registry.get<T>(entity);
         }
 
-        // Получить компонент (для изменения)
+        // РџРѕР»СѓС‡РёС‚СЊ РєРѕРјРїРѕРЅРµРЅС‚ (РјСѓС‚Р°Р±РµР»СЊРЅС‹Р№)
         template<typename T>
         T& GetComponent(entt::entity entity) {
             return m_Registry.get<T>(entity);
         }
 
-        // Проверить, есть ли компонент
+        // РџСЂРѕРІРµСЂРёС‚СЊ, РµСЃС‚СЊ Р»Рё РєРѕРјРїРѕРЅРµРЅС‚
         template<typename T>
         bool HasComponent(entt::entity entity) const {
             return m_Registry.all_of<T>(entity);
         }
 
-        // Удалить компонент
+        // РЈР±СЂР°С‚СЊ РєРѕРјРїРѕРЅРµРЅС‚
         template<typename T>
         void RemoveComponent(entt::entity entity) {
             m_Registry.remove<T>(entity);
         }
 
-        // Выполнить функцию для всех сущностей, обладающих указанными компонентами
+        // РС‚РµСЂР°С†РёСЏ РґР»СЏ РІСЃРµС… entities СЃ Р·Р°РґР°РЅРЅС‹Рј РЅР°Р±РѕСЂРѕРј РєРѕРјРїРѕРЅРµРЅС‚РѕРІ
         template<typename... Components, typename Func>
         void ForEach(Func&& func) {
             auto view = m_Registry.view<Components...>();
             view.each(std::forward<Func>(func));
         }
 
-        // Получить сырой registry (для продвинутых операций)
+        // РџСЂСЏРјРѕР№ РґРѕСЃС‚СѓРї Рє registry (РґР»СЏ РїСЂРѕРґРІРёРЅСѓС‚С‹С… СЃС†РµРЅР°СЂРёРµРІ)
         entt::registry& GetRegistry() { return m_Registry; }
         const entt::registry& GetRegistry() const { return m_Registry; }
 
+        // === РРјРµРЅРѕРІР°РЅРЅС‹Рµ entities (v0.2) ===
+
+        // РќР°Р№С‚Рё entity РїРѕ РёРјРµРЅРё. Р’РѕР·РІСЂР°С‰Р°РµС‚ entt::null РµСЃР»Рё РЅРµ РЅР°Р№РґРµРЅРѕ.
+        entt::entity GetEntityByName(const std::string& name) const;
+
+        // РџРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ entity. Р•СЃР»Рё РёРјСЏ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ вЂ” РїРµСЂРµР·Р°РїРёСЃС‹РІР°РµС‚.
+        void RenameEntity(entt::entity entity, const std::string& newName);
+
+        // РџРѕР»СѓС‡РёС‚СЊ РёРјСЏ entity. Р’РѕР·РІСЂР°С‰Р°РµС‚ "" РµСЃР»Рё entity РЅРµ РёРјРµРµС‚ РєРѕРјРїРѕРЅРµРЅС‚Р° NameComponent.
+        std::string GetEntityName(entt::entity entity) const;
+
+        // РЈРґР°Р»РёС‚СЊ РІСЃРµ entities
+        void Clear();
+
     private:
         entt::registry m_Registry;
+        std::unordered_map<std::string, entt::entity> m_NamedEntities;
     };
 
 } // namespace NK::ECS

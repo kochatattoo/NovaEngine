@@ -3,6 +3,36 @@
 Все заметные изменения в документации.
 
 
+## [v0.2] — 2026-08-12 (часть 2)
+
+### Спринт "ECS-миграция Match3 (логика)" — В ПРОЦЕССЕ
+
+**Цель:** перевести `Match3` с POD-логики (`Match3Board`) на ECS (`Match3System` + 100 tile-entities). Рендер пока остаётся через Scene/GameObject.
+
+**Код:**
+- 🟢 `Engine/Include/ECS/Components/NameComponent.h` (новый) — `struct NameComponent { std::string Name; }`.
+- 🟢 `Engine/Include/ECS/World.h` + `Engine/Source/ECS/World.cpp` — добавлены методы:
+  - `CreateEntity(const std::string& name)` — создать именованную entity
+  - `GetEntityByName(name)`, `RenameEntity(entity, newName)`, `GetEntityName(entity)`, `Clear()`
+- 🟢 `SandBox/Source/Game/ECS/Match3TileComponent.h` (новый) — POD `Row, Col, Type` для плитки.
+- 🟢 `SandBox/Source/Game/ECS/Match3System.h/.cpp` (новый) — owns grid + 100 ECS-entities. API 1:1 как `Match3Board` для обратной совместимости.
+- 🟢 `SandBox/Source/Game/Match3Game.h/.cpp` — рефакторинг: `m_World` + `m_System` вместо `m_Board`. Порядок Start: сначала RunScript+OnStart, потом System::Start (иначе OnTileChanged nullptr).
+- 🟢 `SandBox/assets/scripts/game_match3.lua` — `board = Match3Board.new(...)` → `board = GetBoard()`.
+- 🟢 `Engine/Engine.vcxproj` — добавлен NameComponent.h.
+- 🟢 `SandBox/SandBox.vcxproj` — добавлены Match3System.cpp/.h, Match3TileComponent.h.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — успешно.
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — полностью переписан: World API + name-based lookup, все компоненты, Match3System, раздел "Миграция Match3", план v0.2.x с чекбоксами.
+- 🟢 `Reports/2026-08-12-v0.2.md` (новый) — детальный отчёт спринта.
+
+**Что НЕ сделано (TODO v0.2.6+):**
+- ⏳ `SpriteRenderSystem` — рендер из ECS (плитки в ECS не рисуются, Lua продолжает создавать Scene::GameObject'ы).
+- ⏳ Удалить `Match3Board` (POD).
+- ⏳ Lua-биндинги `World:CreateEntity`, `entity:AddComponent_*`.
+
+
 ## [v0.1.3] — 2026-08-12
 
 ### Спринт "Починить игровой функционал Match3" — ЗАВЕРШЁН
