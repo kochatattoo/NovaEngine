@@ -1,14 +1,17 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
+
 #include "Renderer/Texture2D.h"
 
 namespace NK::ECS {
 
-    struct SpriteComponent {
-        std::shared_ptr<Texture2D> Texture;
+    // v0.2: POD-РєРѕРјРїРѕРЅРµРЅС‚ РІРёР·СѓР°Р»СЊРЅРѕРіРѕ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ entity.
+    // Texture РѕРїС†РёРѕРЅР°Р»СЊРЅР° вЂ” РµСЃР»Рё nullptr, СЂРµРЅРґРµСЂРёС‚СЃСЏ С‚РѕР»СЊРєРѕ С†РІРµС‚РЅРѕР№ quad.
+    struct SpriteComponent
+    {
+        std::shared_ptr<NK::Texture2D> Texture;
         glm::vec4 Color = glm::vec4(1.0f);
-        // Дополнительные параметры рендеринга можно добавить позже
     };
 
-}
+} // namespace NK::ECS

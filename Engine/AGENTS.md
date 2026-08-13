@@ -24,8 +24,9 @@
 | `Input/` | `Input` (legacy), `InputSystem`, `KeyCodes` | Ввод |
 | `Renderer/` | `Renderer`, `Shader`, `Texture2D`, `Font`, `SpriteRenderer`, `TextRenderer`, `Camera`, `OrthographicCamera`, `VertexArray/Buffer/IndexBuffer` | 2D-рендеринг |
 | `Scene/` | `Scene`, `GameObject`, `Component`, `Transform`, `ScriptComponent` | Классическая иерархия объектов |
-| `ECS/` | `World`, `TransformComponent`, `SpriteComponent`, `NameComponent` | **ECS-каркас (v0.2.6: рендер из ECS, v0.2.8: Lua биндинги)** |
-| `ECS/Systems/` | `SpriteRenderSystem` | **v0.2.6: рендер entities через OpenGL** |
+| `ECS/` | `World`, `TransformComponent`, `SpriteComponent`, `NameComponent` | **ECS-каркас (v0.2.6: рендер из ECS, v0.2.8: Lua биндинги, v0.3.1: UI на ECS)** |
+| `ECS/Components/UI/` | `UIElementComponent`, `UITextComponent`, `UIButtonComponent` | **v0.3: UI компоненты** |
+| `ECS/Systems/` | `SpriteRenderSystem`, `UIAnchorSystem`, `UIButtonSystem`, `UIRenderSystem` | **v0.2.6+: рендер entities, v0.3.1: UI системы** |
 | `UI/` | `Button`, `Anchor` | UI-компоненты |
 | `Resource/` | `ResourceManager`, `ResourcePool` | Кэш текстур/шейдеров |
 | `Lua/` | `LuaManager`, `LuaBindings`, `LuaClass/Component/Camera/ECS/Func/InputBindings` | Скриптинг |

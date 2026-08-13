@@ -2,6 +2,7 @@
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/Sprite.h"
 #include "Core/Log.h"
+
 #include <glad/gl.h>
 
 namespace NK::ECS {
@@ -12,18 +13,22 @@ namespace NK::ECS {
     static uint32_t s_QuadIBO = 0;
     static bool s_Initialized = false;
 
-    static void InitQuad() {
-        if (s_Initialized) return;
+    static void InitQuad()
+    {
+        if (s_Initialized)
+        {
+            return;
+        }
 
         // Quad: 2D вершины (-0.5..+0.5) + UV
-        float vertices[] = {
+        constexpr float vertices[] = {
             // x, y,    u, v
             -0.5f, -0.5f, 0.0f, 0.0f,  // bottom-left
              0.5f, -0.5f, 1.0f, 0.0f,  // bottom-right
              0.5f,  0.5f, 1.0f, 1.0f,  // top-right
             -0.5f,  0.5f, 0.0f, 1.0f   // top-left
         };
-        uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
+        constexpr uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
 
         glGenVertexArrays(1, &s_QuadVAO);
         glBindVertexArray(s_QuadVAO);
@@ -48,11 +53,13 @@ namespace NK::ECS {
     }
 
     void SpriteRenderSystem::Render(
-        const World& world,
+        World& world,
         const NK::OrthographicCamera& camera,
         std::shared_ptr<NK::Shader> shader
-    ) {
-        if (!shader) {
+    )
+    {
+        if (!shader)
+        {
             NK_CORE_WARN("SpriteRenderSystem::Render: shader is null, skipping");
             return;
         }
@@ -60,27 +67,30 @@ namespace NK::ECS {
         InitQuad();
 
         const glm::mat4& viewProjection = camera.GetViewProjectionMatrix();
-        // EnTT view на const registry — для каждого entity с (Transform, Sprite) итерируем.
-        // ВАЖНО: EnTT ожидает что view хранит non-const ссылки на компоненты.
-        entt::registry& registry = const_cast<entt::registry&>(world.GetRegistry());
+        entt::registry& registry = world.GetRegistry();
         auto view = registry.view<TransformComponent, SpriteComponent>();
 
-        for (auto entity : view) {
+        for (auto entity : view)
+        {
             TransformComponent& transform = view.get<TransformComponent>(entity);
             SpriteComponent& sprite = view.get<SpriteComponent>(entity);
 
-            float renderW = 0.5f * transform.Scale.x;
-            float renderH = 0.5f * transform.Scale.y;
+            // Размер: 0.5x0.5 base quad * Scale
+            const float renderW = 0.5f * transform.Scale.x;
+            const float renderH = 0.5f * transform.Scale.y;
 
             glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.Position);
             model = glm::scale(model, glm::vec3(renderW, renderH, 1.0f));
 
             shader->Bind();
 
-            if (sprite.Texture) {
+            if (sprite.Texture)
+            {
                 sprite.Texture->Bind(0);
                 shader->SetUniform1i("u_Texture", 0);
-            } else {
+            }
+            else
+            {
                 glBindTexture(GL_TEXTURE_2D, 0);
             }
 

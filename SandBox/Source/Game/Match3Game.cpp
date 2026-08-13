@@ -5,8 +5,14 @@
 #include "Renderer/Shader.h"
 #include "Renderer/OrthographicCamera.h"
 #include "Core/Engine.h"
+#include "Window/Window.h"
 #include "Scene/Scene.h"
+#include "Input/InputSystem.h"
+#include "Input/KeyCode/KeyCodes.h"
 #include "ECS/Systems/SpriteRenderSystem.h"
+#include "ECS/Systems/UIAnchorSystem.h"
+#include "ECS/Systems/UIButtonSystem.h"
+#include "ECS/Systems/UIRenderSystem.h"
 #include <sol/sol.hpp>
 
 namespace NK {
@@ -102,17 +108,34 @@ void main() {
     void Match3Game::Update(float deltaTime) {
         m_System->Update(deltaTime);
         m_Lua.CallFunction("OnUpdate", deltaTime);
+
+        // v0.3: UI-системы.
+        // 1) UIAnchorSystem: обновляет Position в TransformComponent на основе ScreenAnchor/ObjectAnchor.
+        // 2) UIButtonSystem: обновляет Hovered/Pressed.
+        if (m_World) {
+            auto* window = Engine::Get().GetWindow();
+            uint32_t w = window->GetWidth();
+            uint32_t h = window->GetHeight();
+            NK::ECS::UIAnchorSystem::Update(*m_World, w, h);
+
+            // Mouse pos (клиентские координаты)
+            int mouseX, mouseY;
+            window->GetMouseClientPosition(mouseX, mouseY);
+            NK::ECS::UIButtonSystem::Update(*m_World, mouseX, mouseY, w, h);
+        }
     }
 
     void Match3Game::Render() {
-        // v0.2.6: рендер всех плиток из ECS через SpriteRenderSystem.
-        // Render вызывается из Game.cpp::OnRender (после Scene::OnRender game objects).
         if (!m_World || !m_SpriteShader) return;
 
         Scene& scene = Engine::Get().GetScene();
-        const auto& camera = scene.GetGameCamera();
 
-        NK::ECS::SpriteRenderSystem::Render(*m_World, camera, m_SpriteShader);
+        // 1) Game world: SpriteRenderSystem через game camera.
+        NK::ECS::SpriteRenderSystem::Render(*m_World, scene.GetGameCamera(), m_SpriteShader);
+
+        // 2) UI: UIRenderSystem через UI camera (ortho 0..W, 0..H).
+        // v0.3.1: только background, текст — в v0.3.2.
+        NK::ECS::UIRenderSystem::Render(*m_World, scene.GetUICamera(), m_SpriteShader);
     }
 
 }

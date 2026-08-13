@@ -15,22 +15,16 @@ public:
     }
 
     void OnUpdate(float deltaTime) override {
-        // 1. Обновить все объекты сцены (вызывают Lua-скрипты через ScriptComponent)
-        NK::Engine::Get().GetScene().OnUpdate(deltaTime);
-
         if (m_Game) m_Game->Update(deltaTime);
 
         // 2. Начало кадра
         NK::Renderer::BeginFrame();
 
-        // 3. v0.2.6: Рисуем ECS-entities (плитки Match3) ДО Scene::OnRender,
-        // чтобы UI (который рисуется в Scene::OnRender) был поверх.
+        // 3. v0.3.2: Match3Game::Render рисует ВСЁ — game world (SpriteRenderSystem)
+        // и UI (UIRenderSystem). Scene::OnRender удалён.
         if (m_Game) m_Game->Render();
 
-        // 4. Рисуем game objects (старые, через SpriteRenderer) + UI
-        NK::Engine::Get().GetScene().OnRender();
-
-        // 5. Завершающий кадр
+        // 4. Завершающий кадр
         NK::Renderer::EndFrame();
     }
 

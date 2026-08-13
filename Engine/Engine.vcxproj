@@ -191,7 +191,13 @@
     <ClInclude Include="Include\ECS\Components\NameComponent.h" />
     <ClInclude Include="Include\ECS\Components\Sprite.h" />
     <ClInclude Include="Include\ECS\Components\Transform.h" />
+    <ClInclude Include="Include\ECS\Components\UI\UIButtonComponent.h" />
+    <ClInclude Include="Include\ECS\Components\UI\UIElementComponent.h" />
+    <ClInclude Include="Include\ECS\Components\UI\UITextComponent.h" />
     <ClInclude Include="Include\ECS\Systems\SpriteRenderSystem.h" />
+    <ClInclude Include="Include\ECS\Systems\UIAnchorSystem.h" />
+    <ClInclude Include="Include\ECS\Systems\UIButtonSystem.h" />
+    <ClInclude Include="Include\ECS\Systems\UIRenderSystem.h" />
     <ClInclude Include="Include\ECS\World.h" />
     <ClInclude Include="Include\Event\Event.h" />
     <ClInclude Include="Include\glad\gl.h" />
@@ -214,19 +220,12 @@
     <ClInclude Include="Include\Renderer\OrthographicCamera.h" />
     <ClInclude Include="Include\Renderer\Renderer.h" />
     <ClInclude Include="Include\Renderer\Shader.h" />
-    <ClInclude Include="Include\Renderer\SpriteRenderer.h" />
-    <ClInclude Include="Include\Renderer\TextRenderer.h" />
     <ClInclude Include="Include\Renderer\Texture2D.h" />
     <ClInclude Include="Include\Renderer\VertexArray.h" />
     <ClInclude Include="Include\Renderer\VertexBuffer.h" />
     <ClInclude Include="Include\Resource\ResourceManager.h" />
     <ClInclude Include="Include\Resource\ResourcePool.h" />
-    <ClInclude Include="Include\Scene\Component.h" />
-    <ClInclude Include="Include\Scene\GameObject.h" />
     <ClInclude Include="Include\Scene\Scene.h" />
-    <ClInclude Include="Include\Scene\Transform.h" />
-    <ClInclude Include="Include\UI\Anchor.h" />
-    <ClInclude Include="Include\UI\Button.h" />
     <ClInclude Include="Include\Window\Window.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Source\stb\stb_image.h" />
@@ -274,6 +273,9 @@
     </ClCompile>
     <ClCompile Include="Source\Core\Log.cpp" />
     <ClCompile Include="Source\ECS\Systems\SpriteRenderSystem.cpp" />
+    <ClCompile Include="Source\ECS\Systems\UIAnchorSystem.cpp" />
+    <ClCompile Include="Source\ECS\Systems\UIButtonSystem.cpp" />
+    <ClCompile Include="Source\ECS\Systems\UIRenderSystem.cpp" />
     <ClCompile Include="Source\ECS\World.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />
@@ -293,19 +295,13 @@
     <ClCompile Include="Source\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Renderer\Shader.cpp" />
-    <ClCompile Include="Source\Renderer\SpriteRenderer.cpp" />
-    <ClCompile Include="Source\Renderer\TextRenderer.cpp" />
     <ClCompile Include="Source\Renderer\Texture2D.cpp" />
     <ClCompile Include="Source\Renderer\VertexArray.cpp" />
     <ClCompile Include="Source\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Source\Resource\ResourceManager.cpp" />
-    <ClCompile Include="Source\Scene\GameObject.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
-    <ClCompile Include="Source\Scene\Transform.cpp" />
     <ClCompile Include="Source\stb\stb_image.cpp" />
     <ClCompile Include="Source\stb\stb_truetype.cpp" />
-    <ClCompile Include="Source\UI\Anchor.cpp" />
-    <ClCompile Include="Source\UI\Button.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

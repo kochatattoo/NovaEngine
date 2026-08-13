@@ -1,47 +1,44 @@
 #pragma once
 #include "ECS/World.h"
 #include "Game/ECS/Match3TileComponent.h"
-#include <vector>
-#include <utility>
-#include <string>
+
 #include <functional>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include <glm/glm.hpp>
 
-// Forward-declaration полного типа из Engine.
 namespace NK { class Texture2D; }
 
 namespace NK::Game::ECS {
 
     // v0.2: ECS-система Match3.
-    // Owns grid-логику + спавнит/обновляет tile-entities в World.
+    // Owns grid-логику (раньше Match3Board) + спавнит/обновляет entities в World.
     //
-    // ⚠️ Это МИГРАЦИЯ ЛОГИКИ, не рендера:
-    // - Сетка остаётся в std::vector<std::vector<int>> (как у Match3Board)
-    // - Каждая клетка — отдельная ECS-entity с компонентами:
-    //     NameComponent ("tile_<r>_<c>")
-    //     TransformComponent (Position = cellPos)
-    //     SpriteComponent (Color по типу, Texture = nullptr — рендер добавим позже)
-    //     Match3TileComponent (Row, Col, Type)
-    // - Lua API (board:Swap и т.д.) сохранён для обратной совместимости.
-    // - Визуально пока ничего не рисуется — это OK, рендер будет в v0.2.6.
-    class Match3System {
+    // На этом этапе миграция архитектуры, не оптимизация:
+    // - сетка всё ещё std::vector<std::vector<int>> (как у Match3Board)
+    // - при изменении плитки обновляется ECS-entity (Type + Color)
+    // - OnTileChanged остаётся для совместимости с Lua
+    class Match3System
+    {
     public:
         using TileType = int;
-
-        // Callback для совместимости с Lua OnTileChanged(row, col, newType).
         using TileChangedCallback = std::function<void(int row, int col, TileType newType)>;
 
-        Match3System(NK::ECS::World& world,
-                     int rows = 10,
-                     int cols = 10,
-                     float cellSize = 64.0f,
-                     float pixelsPerUnit = 100.0f);
+        Match3System(
+            NK::ECS::World& world,
+            int rows = 10,
+            int cols = 10,
+            float cellSize = 64.0f,
+            float pixelsPerUnit = 100.0f
+        );
         ~Match3System() = default;
 
         // === Жизненный цикл ===
-        void Start();                // спавнит все tile-entities
-        void Update(float deltaTime); // per-frame (пока пусто)
+        void Start();                                  // спавнит все tile-entities
+        void Update(float deltaTime);                 // per-frame (пока пусто)
 
         // === API для Lua (раньше Match3Board::X) ===
         void FillRandom();
@@ -64,6 +61,7 @@ namespace NK::Game::ECS {
         glm::vec2 GetCellPosition(int row, int col) const;
 
         // Callback, дёргается при изменении плитки.
+        // Публичное поле — для Lua биндинга через sol::property.
         TileChangedCallback OnTileChanged;
 
         // v0.2.6: установить общую 1x1 текстуру для всех плиток.

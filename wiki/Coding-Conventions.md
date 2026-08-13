@@ -1,6 +1,7 @@
 # Coding Conventions
 
-> 🚧 **TODO:** страница-заготовка. Полные правила — в [`AGENTS.md`](../AGENTS.md).
+> 📖 **Полные правила** — в [`CODE_STYLE.md`](../CODE_STYLE.md) в корне проекта (SOLID, DRY, KISS, naming, formatting, antipatterns).
+> Эта страница — **короткая выжимка** для контрибьюторов на GitHub.
 
 ## Нейминг
 

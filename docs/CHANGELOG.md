@@ -3,6 +3,63 @@
 Все заметные изменения в документации.
 
 
+## [v0.3.2 + CODE_STYLE] — 2026-08-13 (часть 4)
+
+### Спринт "CODE_STYLE + Legacy cleanup" — ЗАВЕРШЁН
+
+**Цель:** глобальный CODE_STYLE.md + удаление legacy `GameObject/Component/UI`.
+
+**Код:**
+- 🟢 `CODE_STYLE.md` (новый, 20 KB) — глобальные правила: SOLID, DRY, KISS, naming, formatting, antipatterns.
+- 🟢 `AGENTS.md` — добавлена ссылка "## 0. Связанные документы" в начало.
+- 🟢 `wiki/Coding-Conventions.md` — обновлён: короткая выжимка + ссылка на полный.
+- 🟢 Актуализированы файлы по CODE_STYLE: `World.h/cpp`, `Components/*.h`, `SpriteRenderSystem.h/cpp`, `UI*.h/cpp`, `Match3System.h/cpp`, `Match3TileComponent.h`.
+- 🔴 `Scene.h/cpp` упрощены до обёртки над камерами (m_GameCamera, m_UICamera, m_Started).
+- 🔴 Удалено (в trash, 13 файлов): `GameObject.h/cpp`, `Component.h`, `Transform.h/cpp`, `Anchor.h/cpp`, `Button.h/cpp`, `TextRenderer.h/cpp`, `SpriteRenderer.h/cpp` (старый).
+- 🟡 `Engine.cpp` — убраны `RecalculateAnchors`, `OnUpdate`, `#include "Renderer/SpriteRenderer.h"`.
+- 🟡 `Game.cpp` — `m_Game->Render()` единственный рендер.
+- 🟡 `LuaClassBindings.cpp` — удалена регистрация `GameObject/Button/Anchor`. Scene с `sol::no_constructor`.
+- 🟡 `LuaComponentBindings.cpp` — оставлен только stub.
+- 🟡 `Engine.vcxproj` — удалены 13 файлов.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок. **SandBox.exe 9.0 MB → 6.2 MB (-31%)**.
+
+**Документация:**
+- 🟢 `02_Подсистемы/05_Сцена_GameObject_компоненты.md` — обновится в v0.3.3 (будет удалён или переписан).
+- 🟢 `Reports/2026-08-13-v0.3.2.md` (новый).
+
+**Итог:** проект полностью на ECS. Никаких `GameObject/Component/SpriteRenderer(legacy)/Button/Anchor/TextRenderer/Transform(Scene)` не осталось. `Scene` — обёртка над камерами, используется только для `GetGameCamera()` / `GetUICamera()` из `Match3Game::Render`.
+
+
+## [v0.3.1] — 2026-08-13 (часть 3)
+
+### Спринт "UI на ECS" — В ПРОЦЕССЕ (v0.3.1: компоненты + системы, v0.3.2: удаление legacy)
+
+**Цель:** UI как ECS компоненты и системы. Убрать зависимость UI от `GameObject/Component`.
+
+**Код:**
+- 🟢 `Engine/Include/ECS/Components/UI/UIElementComponent.h` (новый) — ScreenAnchor, ObjectAnchor, Size, Background, ZOrder.
+- 🟢 `Engine/Include/ECS/Components/UI/UITextComponent.h` (новый) — Text, Font, FontSize, Color, Pivot.
+- 🟢 `Engine/Include/ECS/Components/UI/UIButtonComponent.h` (новый) — OnClick, цвета по state + `UIButtonStateComponent` (Hovered, Pressed).
+- 🟢 `Engine/Source/ECS/Systems/UIAnchorSystem.h/.cpp` (новые) — вычисляет Position по якорям.
+- 🟢 `Engine/Source/ECS/Systems/UIButtonSystem.h/.cpp` (новые) — обновляет Hovered/Pressed, дёргает OnClick.
+- 🟢 `Engine/Source/ECS/Systems/UIRenderSystem.h/.cpp` (новые) — рендерит background quads через UI camera.
+- 🟢 `SandBox/Source/Game/Match3Game.cpp` — вызовы UI systems в Update + Render.
+- 🟢 `Engine/Engine.vcxproj` — добавлены 3 .h + 3 .cpp.
+- 🟢 `AGENTS.md` — новый §6.4e (UI на ECS) + §6.4f (legacy что осталось).
+- 🟢 `Engine/AGENTS.md` — обновлены таблицы.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок.
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — обновится в v0.3.2.
+- 🟢 `Reports/2026-08-13-v0.3.1.md` (новый).
+
+**Что осталось (v0.3.2):**
+- ⏳ Рендер текста через ECS (UITextComponent → TextRenderSystem).
+- ⏳ Удалить legacy: `Button`, `Anchor`, `TextRenderer`, старый `SpriteRenderer`, `GameObject`, `Component`, `Transform` (Scene), `Scene`.
+
+
 ## [v0.2.8 + v0.5.1] — 2026-08-13 (часть 2)
 
 ### Спринт "Lua ECS bindings + Scene cleanup" — ЗАВЕРШЁН
