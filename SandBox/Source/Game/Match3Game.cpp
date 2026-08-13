@@ -84,6 +84,11 @@ void main() {
         m_Lua.RegisterFunction("GetBoard", [this]() -> NK::Game::ECS::Match3BoardProxy {
             return NK::Game::ECS::Match3BoardProxy{ m_System.get() };
         });
+
+        // v0.2.8: глобальная функция — получить World* для прямого доступа к ECS из Lua.
+        m_Lua.RegisterFunction("GetECSWorld", [this]() -> NK::ECS::World* {
+            return m_World.get();
+        });
     }
 
     void Match3Game::Start() {

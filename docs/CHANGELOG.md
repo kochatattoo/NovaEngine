@@ -3,6 +3,34 @@
 Все заметные изменения в документации.
 
 
+## [v0.2.8 + v0.5.1] — 2026-08-13 (часть 2)
+
+### Спринт "Lua ECS bindings + Scene cleanup" — ЗАВЕРШЁН
+
+**Цель:** дать Lua-скриптам прямой доступ к ECS (создавать entities, компоненты), убрать legacy ScriptComponent.
+
+**Код:**
+- 🟢 `Engine/Include/Lua/LuaECSBindings.h` + `Engine/Source/Lua/LuaECSBindings.cpp` (новые) — класс `ECSWorld` с методами `CreateEntity`, `GetEntityByName`, `AddTransform`, `AddSprite`, `SetPosition`, `SetSpriteColor`, `SetScale`, `HasComponent`, `RemoveComponent`, `DestroyEntity`, `IsValid`.
+- 🟢 `Engine/Source/Lua/LuaBindings.cpp` — `LuaECSBindings::RegisterAll` в `RegisterAll`.
+- 🟢 `SandBox/Source/Game/Match3Game.cpp` — глобальная функция `GetECSWorld()` возвращает `m_World.get()`.
+- 🟢 `Engine/Source/Scene/Scene.cpp::OnRender` — убран цикл по `m_Objects` (game objects рендерятся через SpriteRenderSystem, не Scene).
+- 🔴 `Engine/Include/Scene/ScriptComponent.h` + `Engine/Source/Scene/ScriptComponent.cpp` — **УДАЛЕНЫ** (legacy, не используется в Match3).
+- 🟡 `Engine/Source/Lua/LuaClassBindings.cpp` — убрана регистрация `AddComponent_Script`.
+- 🟡 `Engine/Engine.vcxproj` — добавлены LuaECSBindings.h/.cpp, удалены ScriptComponent.h/.cpp.
+- 🟢 `AGENTS.md` / `Engine/AGENTS.md` / `SandBox/AGENTS.md` — обновлены.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок.
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — добавлен раздел "ECS Lua bindings" + обновлены планы.
+- 🟢 `Reports/2026-08-13-v0.2.8-v0.5.1.md` (новый) — детальный отчёт.
+
+**Что осталось как legacy:**
+- `GameObject`, `Component`, `Transform` (Scene), `SpriteRenderer` (старый), `TextRenderer`, `Anchor`, `Button` — **не удалял** пока, потому что UI на них завязан. Удаление требует переписать UI на ECS (v0.3).
+
+**Следующий шаг:** v0.3 — UI на ECS (Button/Anchor/TextRenderer как POD-компоненты). Тогда можно удалить GameObject/Component/SpriteRenderer (старый).
+
+
 ## [v0.2.6+v0.2.7] — 2026-08-13
 
 ### Спринт "ECS-миграция Match3 (рендер)" — ЗАВЕРШЁН

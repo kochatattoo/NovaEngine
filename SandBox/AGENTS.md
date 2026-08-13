@@ -87,15 +87,26 @@ sr:SetPixelsPerUnit(PPU)
 
 `Match3Board::Mix` имеет safety limit 50 попыток + warning. `FillEmpty` не создаёт начальный матч (v0.1.1).
 
-### 5.6 Match3 v0.2 — Match3System вместо Match3Board
+### 5.6 Match3 v0.2.6+ — рендер из ECS, двойное хранение убрано
 
-**v0.2:** `Match3System` (ECS) полностью заменил `Match3Board` (POD) в runtime. `Match3Board` оставлен в коде для reference, **будет удалён в v0.2.7**.
+**v0.2.6:** `SpriteRenderSystem` рендерит плитки **напрямую из ECS** (без `Scene::GameObject`).
+**v0.2.7:** `Match3Board` (POD) **удалён** — `Match3System` полностью заменил.
 
-**Изменения в Lua:** `board = Match3Board.new(...)` → `board = GetBoard()`. Всё остальное (`board:Swap`, `board:FindMatches`) работает как раньше (Match3System забиндан под именем `Match3Board` для обратной совместимости).
+**Структура `Match3Game`:**
+- `m_World` (`NK::ECS::World`) — owns 100 tile-entities.
+- `m_System` (`NK::Game::ECS::Match3System`) — owns grid + spawns/updates entities.
+- `m_SpriteShader` + `m_WhiteTexture` — общая 1x1 белая текстура для всех плиток, цвет в `SpriteComponent::Color`.
+- `Match3Game::Render()` — вызывает `SpriteRenderSystem::Render(*m_World, camera, shader)`.
 
-**Двойное хранение:** в v0.2 Match3System спавнит 100 ECS-entities (с Name/Transform/Sprite/Match3Tile), но НЕ рендерит их. Lua в `OnTileChanged` callback по-прежнему создаёт Scene::GameObject'ы для визуализации. Это будет исправлено в v0.2.6 (SpriteRenderSystem).
+**Lua API (v0.2.8):**
+- `GetBoard()` → `Match3BoardProxy` (Match3System под именем `Match3Board`).
+- `GetECSWorld()` → `World*` для прямого доступа к ECS.
+- `world:CreateEntity(name)`, `world:AddTransform(e, x, y, z)`, `world:AddSprite(e, r, g, b, a)`, `world:SetPosition`, `world:DestroyEntity`.
+- Lua отвечает только за ввод (`OnUpdate`). Рендер идёт из C++.
 
-**Порядок Start():** `Match3Game::Start()` сначала `RunScript + OnStart` (Lua ставит OnTileChanged), потом `m_System->Start()` (спавнит entities + FillRandom). Если поменять местами — 100 событий потеряются (OnTileChanged будет nullptr в момент FillRandom).
+**Порядок Start():** `RunScript` → `SafeOnStart` (Lua ставит OnTileChanged) → `m_System->Start()` (спавнит + FillRandom). Если поменять — 100 событий потеряются (OnTileChanged nullptr в момент FillRandom).
+
+**В `game_match3.lua` больше НЕТ `OnTileChanged` callback** — рендер через SpriteRenderSystem. Только ввод.
 
 ## 6. Что нельзя трогать
 

@@ -24,10 +24,11 @@
 | `Input/` | `Input` (legacy), `InputSystem`, `KeyCodes` | Ввод |
 | `Renderer/` | `Renderer`, `Shader`, `Texture2D`, `Font`, `SpriteRenderer`, `TextRenderer`, `Camera`, `OrthographicCamera`, `VertexArray/Buffer/IndexBuffer` | 2D-рендеринг |
 | `Scene/` | `Scene`, `GameObject`, `Component`, `Transform`, `ScriptComponent` | Классическая иерархия объектов |
-| `ECS/` | `World`, `TransformComponent`, `SpriteComponent`, `NameComponent` | **ECS-каркас (v0.2: name-based lookup, Match3System интегрирован)** |
+| `ECS/` | `World`, `TransformComponent`, `SpriteComponent`, `NameComponent` | **ECS-каркас (v0.2.6: рендер из ECS, v0.2.8: Lua биндинги)** |
+| `ECS/Systems/` | `SpriteRenderSystem` | **v0.2.6: рендер entities через OpenGL** |
 | `UI/` | `Button`, `Anchor` | UI-компоненты |
 | `Resource/` | `ResourceManager`, `ResourcePool` | Кэш текстур/шейдеров |
-| `Lua/` | `LuaManager`, `LuaBindings`, `LuaClass/Component/Camera/Func/InputBindings` | Скриптинг |
+| `Lua/` | `LuaManager`, `LuaBindings`, `LuaClass/Component/Camera/ECS/Func/InputBindings` | Скриптинг |
 | `Event/` | `Event`, `EventDispatcher` | События |
 | `glad/` | `gl.h`, `khrplatform.h` | Сгенерированные GL-объявления |
 
@@ -66,7 +67,7 @@
 
 ### 3.5 Lua
 
-- **Биндинги** разделены по файлам: `LuaClass/Component/Camera/Func/InputBindings`. Не смешивать.
+- **Биндинги** разделены по файлам: `LuaClass/Component/Camera/ECS/Func/InputBindings`. Не смешивать.
 - **Порядок регистрации** в `LuaBindings::RegisterAll` важен: последняя `RegisterFunction("name")` перезаписывает. Дубликаты — баг.
 - **`Input::GetMousePosition`** (legacy) даёт экранные координаты. **НЕ использовать в Lua** — `LuaInputBindings::GetMousePosition` уже удалён, остались только клиентские варианты (`GetMousePos`, `Window::GetMouseClientPosition`).
 

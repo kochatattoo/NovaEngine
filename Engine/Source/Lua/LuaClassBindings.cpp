@@ -7,7 +7,6 @@
 #include "Renderer/TextRenderer.h"
 #include "Scene/GameObject.h"
 #include "Scene/Scene.h"
-#include "Scene/ScriptComponent.h"
 #include "Scene/Transform.h"
 #include "UI/Anchor.h"
 #include "UI/Button.h"
@@ -16,7 +15,7 @@ namespace NK
 {
     void LuaClassBindings::RegisterAll(LuaManager& lua)
     {
-        // GameObject
+        // GameObject (legacy — будет удалён в v0.5+ когда UI переедет на ECS)
         lua.BindClass<GameObject>("GameObject",
             "AddComponent_Transform", [](GameObject& obj) -> Transform* {
                 auto* t = obj.GetComponent<Transform>();
@@ -26,7 +25,6 @@ namespace NK
             "AddComponent_SpriteRenderer", [](GameObject& obj) { return obj.AddComponent<SpriteRenderer>(); },
             "AddComponent_TextRenderer", [](GameObject& obj) { return obj.AddComponent<TextRenderer>(); },
             "AddComponent_Button", [](GameObject& obj) { return obj.AddComponent<Button>(); },
-            "AddComponent_Script", [](GameObject& obj, const std::string& path) { return obj.AddComponent<ScriptComponent>(path); },
             "AddComponent_Anchor", [](GameObject& obj) { return obj.AddComponent<Anchor>(); },
             "GetTransform", [](GameObject& obj) { return obj.GetComponent<Transform>(); },
             "GetSpriteRenderer", [](GameObject& obj) { return obj.GetComponent<SpriteRenderer>(); },

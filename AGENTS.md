@@ -176,6 +176,45 @@ Include path в vcxproj = `Libraries/EnTT/`. Поэтому:
 - ❌ `#include <EnTT/entt/entt.hpp>` (лишний `EnTT/`)
 - Namespace `entt` — top-level, не `NK::ECS::entt`. Используй `entt::entity`.
 
+### 6.4c ECS Lua bindings (v0.2.8)
+
+`LuaECSBindings.cpp` (Engine/Source/Lua/) регистрирует класс `ECSWorld` (без конструктора, передаётся через `GetECSWorld()`). Lua-скрипты могут:
+
+```lua
+local world = GetECSWorld()
+local e = world:CreateEntity("player")
+world:AddTransform(e, 0, 0, 0)
+world:AddSprite(e, 1, 0, 0, 1)        -- r,g,b,a
+world:SetPosition(e, 1.5, 0, 0)
+world:SetScale(e, 2, 2)
+world:SetSpriteColor(e, 0, 1, 0, 1)
+world:HasComponent(e, "Transform")     -- true/false
+world:DestroyEntity(e)
+```
+
+**Главное:**
+- `entt::entity` (uint32) передаётся как Lua number.
+- `World*` — указатель на C++ World, **не сохраняй между кадрами** (World может пересоздаваться).
+- `SpriteRenderSystem` рендерит все entities с `TransformComponent` + `SpriteComponent` автоматически (см. `Match3Game::Render`).
+
+**TODO v0.2.9:** добавить камеру как entity (`CameraComponent`), сцену-как-World.
+
+### 6.4d SpriteRenderSystem — ECS-рендер (v0.2.6)
+
+`Engine/Source/ECS/Systems/SpriteRenderSystem.cpp` — рендер entities с `(Transform, Sprite)` через OpenGL, без `GameObject`/`Component`/`SpriteRenderer`. Статический quad VAO/VBO.
+
+```cpp
+#include "ECS/Systems/SpriteRenderSystem.h"
+NK::ECS::SpriteRenderSystem::Render(*world, camera, shader);
+```
+
+**Ограничения:**
+- ❌ Нет батчинга (каждый entity = 1 draw call).
+- ❌ Нет Z-sort (порядок по `view`).
+- ✅ `Transform::Scale` уважается (в отличие от старого `SpriteRenderer::Render` для игрового мира).
+
+**TODO v0.3:** sprite batching, Z-sort, камера-как-entity.
+
 ### 6.5 Double `Scene::OnUpdate`
 
 `Engine::Run` вызывает `m_Scene.OnUpdate(dt)` И `m_App->OnUpdate(dt)`. В `Game.cpp::OnUpdate` снова вызывается `m_Scene.OnUpdate(dt)`. **Двойной вызов за кадр.** Безвредно (идемпотентно), TODO v0.2+ — убрать один.
