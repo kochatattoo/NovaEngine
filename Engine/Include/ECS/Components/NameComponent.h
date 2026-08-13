@@ -3,8 +3,10 @@
 
 namespace NK::ECS {
 
-    // Простой компонент-имя для entity. Используется World для lookup по имени.
-    struct NameComponent {
+    // v0.2.1: Простой компонент-имя для entity. Используется World для lookup по имени.
+    // Хранится в unordered_map<string, entity> в World.
+    struct NameComponent
+    {
         std::string Name;
     };
 

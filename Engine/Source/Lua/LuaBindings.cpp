@@ -4,6 +4,7 @@
 #include "Lua/LuaComponentBindings.h"
 #include "Lua/LuaInputBindings.h"
 #include "Lua/LuaFuncBindings.h"
+#include "Lua/LuaECSBindings.h"
 
 namespace NK {
 
@@ -13,6 +14,7 @@ namespace NK {
         LuaCameraBindings::RegisterAll(lua);
         LuaFuncBindings::RegisterAll(lua);
         LuaInputBindings::RegisterAll(lua);
+        LuaECSBindings::RegisterAll(lua);
     }
 
 } // namespace NK

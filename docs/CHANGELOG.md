@@ -3,37 +3,125 @@
 Все заметные изменения в документации.
 
 
-## [v0.2] — 2026-08-12 (часть 2)
+## [v0.3.2 + CODE_STYLE] — 2026-08-13 (часть 4)
 
-### Спринт "ECS-миграция Match3 (логика)" — В ПРОЦЕССЕ
+### Спринт "CODE_STYLE + Legacy cleanup" — ЗАВЕРШЁН
 
-**Цель:** перевести `Match3` с POD-логики (`Match3Board`) на ECS (`Match3System` + 100 tile-entities). Рендер пока остаётся через Scene/GameObject.
+**Цель:** глобальный CODE_STYLE.md + удаление legacy `GameObject/Component/UI`.
 
 **Код:**
-- 🟢 `Engine/Include/ECS/Components/NameComponent.h` (новый) — `struct NameComponent { std::string Name; }`.
-- 🟢 `Engine/Include/ECS/World.h` + `Engine/Source/ECS/World.cpp` — добавлены методы:
-  - `CreateEntity(const std::string& name)` — создать именованную entity
-  - `GetEntityByName(name)`, `RenameEntity(entity, newName)`, `GetEntityName(entity)`, `Clear()`
-- 🟢 `SandBox/Source/Game/ECS/Match3TileComponent.h` (новый) — POD `Row, Col, Type` для плитки.
-- 🟢 `SandBox/Source/Game/ECS/Match3System.h/.cpp` (новый) — owns grid + 100 ECS-entities. API 1:1 как `Match3Board` для обратной совместимости.
-- 🟢 `SandBox/Source/Game/Match3Game.h/.cpp` — рефакторинг: `m_World` + `m_System` вместо `m_Board`. Порядок Start: сначала RunScript+OnStart, потом System::Start (иначе OnTileChanged nullptr).
-- 🟢 `SandBox/assets/scripts/game_match3.lua` — `board = Match3Board.new(...)` → `board = GetBoard()`.
-- 🟢 `Engine/Engine.vcxproj` — добавлен NameComponent.h.
-- 🟢 `SandBox/SandBox.vcxproj` — добавлены Match3System.cpp/.h, Match3TileComponent.h.
+- 🟢 `CODE_STYLE.md` (новый, 20 KB) — глобальные правила: SOLID, DRY, KISS, naming, formatting, antipatterns.
+- 🟢 `AGENTS.md` — добавлена ссылка "## 0. Связанные документы" в начало.
+- 🟢 `wiki/Coding-Conventions.md` — обновлён: короткая выжимка + ссылка на полный.
+- 🟢 Актуализированы файлы по CODE_STYLE: `World.h/cpp`, `Components/*.h`, `SpriteRenderSystem.h/cpp`, `UI*.h/cpp`, `Match3System.h/cpp`, `Match3TileComponent.h`.
+- 🔴 `Scene.h/cpp` упрощены до обёртки над камерами (m_GameCamera, m_UICamera, m_Started).
+- 🔴 Удалено (в trash, 13 файлов): `GameObject.h/cpp`, `Component.h`, `Transform.h/cpp`, `Anchor.h/cpp`, `Button.h/cpp`, `TextRenderer.h/cpp`, `SpriteRenderer.h/cpp` (старый).
+- 🟡 `Engine.cpp` — убраны `RecalculateAnchors`, `OnUpdate`, `#include "Renderer/SpriteRenderer.h"`.
+- 🟡 `Game.cpp` — `m_Game->Render()` единственный рендер.
+- 🟡 `LuaClassBindings.cpp` — удалена регистрация `GameObject/Button/Anchor`. Scene с `sol::no_constructor`.
+- 🟡 `LuaComponentBindings.cpp` — оставлен только stub.
+- 🟡 `Engine.vcxproj` — удалены 13 файлов.
 
-**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — успешно.
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок. **SandBox.exe 9.0 MB → 6.2 MB (-31%)**.
+
+**Документация:**
+- 🟢 `02_Подсистемы/05_Сцена_GameObject_компоненты.md` — обновится в v0.3.3 (будет удалён или переписан).
+- 🟢 `Reports/2026-08-13-v0.3.2.md` (новый).
+
+**Итог:** проект полностью на ECS. Никаких `GameObject/Component/SpriteRenderer(legacy)/Button/Anchor/TextRenderer/Transform(Scene)` не осталось. `Scene` — обёртка над камерами, используется только для `GetGameCamera()` / `GetUICamera()` из `Match3Game::Render`.
+
+
+## [v0.3.1] — 2026-08-13 (часть 3)
+
+### Спринт "UI на ECS" — В ПРОЦЕССЕ (v0.3.1: компоненты + системы, v0.3.2: удаление legacy)
+
+**Цель:** UI как ECS компоненты и системы. Убрать зависимость UI от `GameObject/Component`.
+
+**Код:**
+- 🟢 `Engine/Include/ECS/Components/UI/UIElementComponent.h` (новый) — ScreenAnchor, ObjectAnchor, Size, Background, ZOrder.
+- 🟢 `Engine/Include/ECS/Components/UI/UITextComponent.h` (новый) — Text, Font, FontSize, Color, Pivot.
+- 🟢 `Engine/Include/ECS/Components/UI/UIButtonComponent.h` (новый) — OnClick, цвета по state + `UIButtonStateComponent` (Hovered, Pressed).
+- 🟢 `Engine/Source/ECS/Systems/UIAnchorSystem.h/.cpp` (новые) — вычисляет Position по якорям.
+- 🟢 `Engine/Source/ECS/Systems/UIButtonSystem.h/.cpp` (новые) — обновляет Hovered/Pressed, дёргает OnClick.
+- 🟢 `Engine/Source/ECS/Systems/UIRenderSystem.h/.cpp` (новые) — рендерит background quads через UI camera.
+- 🟢 `SandBox/Source/Game/Match3Game.cpp` — вызовы UI systems в Update + Render.
+- 🟢 `Engine/Engine.vcxproj` — добавлены 3 .h + 3 .cpp.
+- 🟢 `AGENTS.md` — новый §6.4e (UI на ECS) + §6.4f (legacy что осталось).
+- 🟢 `Engine/AGENTS.md` — обновлены таблицы.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок.
 
 **Документация (синхронизирована):**
-- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — полностью переписан: World API + name-based lookup, все компоненты, Match3System, раздел "Миграция Match3", план v0.2.x с чекбоксами.
-- 🟢 `Reports/2026-08-12-v0.2.md` (новый) — детальный отчёт спринта.
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — обновится в v0.3.2.
+- 🟢 `Reports/2026-08-13-v0.3.1.md` (новый).
 
-**Что НЕ сделано (TODO v0.2.6+):**
-- ⏳ `SpriteRenderSystem` — рендер из ECS (плитки в ECS не рисуются, Lua продолжает создавать Scene::GameObject'ы).
-- ⏳ Удалить `Match3Board` (POD).
-- ⏳ Lua-биндинги `World:CreateEntity`, `entity:AddComponent_*`.
+**Что осталось (v0.3.2):**
+- ⏳ Рендер текста через ECS (UITextComponent → TextRenderSystem).
+- ⏳ Удалить legacy: `Button`, `Anchor`, `TextRenderer`, старый `SpriteRenderer`, `GameObject`, `Component`, `Transform` (Scene), `Scene`.
 
 
-## [v0.1.3] — 2026-08-12
+## [v0.2.8 + v0.5.1] — 2026-08-13 (часть 2)
+
+### Спринт "Lua ECS bindings + Scene cleanup" — ЗАВЕРШЁН
+
+**Цель:** дать Lua-скриптам прямой доступ к ECS (создавать entities, компоненты), убрать legacy ScriptComponent.
+
+**Код:**
+- 🟢 `Engine/Include/Lua/LuaECSBindings.h` + `Engine/Source/Lua/LuaECSBindings.cpp` (новые) — класс `ECSWorld` с методами `CreateEntity`, `GetEntityByName`, `AddTransform`, `AddSprite`, `SetPosition`, `SetSpriteColor`, `SetScale`, `HasComponent`, `RemoveComponent`, `DestroyEntity`, `IsValid`.
+- 🟢 `Engine/Source/Lua/LuaBindings.cpp` — `LuaECSBindings::RegisterAll` в `RegisterAll`.
+- 🟢 `SandBox/Source/Game/Match3Game.cpp` — глобальная функция `GetECSWorld()` возвращает `m_World.get()`.
+- 🟢 `Engine/Source/Scene/Scene.cpp::OnRender` — убран цикл по `m_Objects` (game objects рендерятся через SpriteRenderSystem, не Scene).
+- 🔴 `Engine/Include/Scene/ScriptComponent.h` + `Engine/Source/Scene/ScriptComponent.cpp` — **УДАЛЕНЫ** (legacy, не используется в Match3).
+- 🟡 `Engine/Source/Lua/LuaClassBindings.cpp` — убрана регистрация `AddComponent_Script`.
+- 🟡 `Engine/Engine.vcxproj` — добавлены LuaECSBindings.h/.cpp, удалены ScriptComponent.h/.cpp.
+- 🟢 `AGENTS.md` / `Engine/AGENTS.md` / `SandBox/AGENTS.md` — обновлены.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок.
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — добавлен раздел "ECS Lua bindings" + обновлены планы.
+- 🟢 `Reports/2026-08-13-v0.2.8-v0.5.1.md` (новый) — детальный отчёт.
+
+**Что осталось как legacy:**
+- `GameObject`, `Component`, `Transform` (Scene), `SpriteRenderer` (старый), `TextRenderer`, `Anchor`, `Button` — **не удалял** пока, потому что UI на них завязан. Удаление требует переписать UI на ECS (v0.3).
+
+**Следующий шаг:** v0.3 — UI на ECS (Button/Anchor/TextRenderer как POD-компоненты). Тогда можно удалить GameObject/Component/SpriteRenderer (старый).
+
+
+## [v0.2.6+v0.2.7] — 2026-08-13
+
+### Спринт "ECS-миграция Match3 (рендер)" — ЗАВЕРШЁН
+
+**Цель:** убрать двойное хранение (100 ECS-entities + 100 Scene::GameObject'ы). Рендерить плитки напрямую из ECS.
+
+**Код:**
+- 🟢 `Engine/Include/ECS/Systems/SpriteRenderSystem.h` (новый) + `Source/.../SpriteRenderSystem.cpp` — рендер entities с `(TransformComponent, SpriteComponent)` через OpenGL, без `GameObject`/`Component`/`SpriteRenderer`. Статический quad VAO/VBO.
+- 🟢 `SandBox/Source/Game/ECS/Match3System.h/.cpp` — добавлен `SetSpriteTexture()` (общая 1x1 текстура). Все 100 плиток шарят одну текстуру, цвет — в `SpriteComponent::Color`.
+- 🟢 `SandBox/Source/Game/Match3Game.h/.cpp`:
+  - Создаёт sprite shader (vertex/fragment src в C++) + 1x1 white texture.
+  - Передаёт текстуру в `Match3System` ДО `Start()`.
+  - Новый `Match3Game::Render()` — вызывает `SpriteRenderSystem::Render(*m_World, camera, shader)`.
+- 🟢 `SandBox/Source/Game.cpp` — `m_Game->Render()` ПЕРЕД `Scene::OnRender()` (UI поверх плиток).
+- 🟢 `SandBox/assets/scripts/game_match3.lua` — удалён `OnTileChanged` callback. Lua только для ввода. Регистрация `CreateSolidColorTexture` убрана (не нужна).
+- 🟡 `Engine/Engine.vcxproj` — добавлены SpriteRenderSystem.h/.cpp.
+- 🟡 `SandBox/SandBox.vcxproj` — удалены `Match3Board.h/.cpp`.
+- 🔴 `SandBox/Source/Game/Match3Board.h/.cpp` — **УДАЛЕНЫ** (в trash). `Match3System` полностью заменил.
+
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок.
+
+**Документация (синхронизирована):**
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — добавлен раздел "SpriteRenderSystem" с описанием.
+- 🟢 `04_Sandbox_и_Match3/02_Игра_Match3.md` — обновлён: рендер из ECS, упрощённый Lua-скрипт.
+- 🟢 `Reports/2026-08-13-v0.2.6.md` (новый) — детальный отчёт спринта.
+
+**Что осталось (TODO v0.3+):**
+- ⏳ Sprite batching (сейчас 100 плиток = 100 draw calls).
+- ⏳ Z-sort для 2D-игр.
+- ⏳ UI на ECS (Anchor, Button как компоненты).
+- ⏳ `Transform::SetScale` — уважать в `SpriteRenderer::Render` для игрового мира (унификация с SpriteRenderSystem).
+
+
+## [v0.2] — 2026-08-12 (часть 2)
 
 ### Спринт "Починить игровой функционал Match3" — ЗАВЕРШЁН
 

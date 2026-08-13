@@ -1,46 +1,32 @@
-﻿#pragma once
-#include <vector>
-#include <memory>
-#include "Scene/GameObject.h"
+#pragma once
 #include <Renderer/OrthographicCamera.h>
-#include <UI/Anchor.h>
 
 namespace NK {
 
-	class Scene {
-	public:
-		Scene() = default;
+    // v0.3.2: Scene упрощена до обёртки вокруг двух камер (game + UI).
+    // v0.5.1: game objects больше не рендерятся здесь (SpriteRenderSystem).
+    // v0.5.2: m_UIObjects, GameObject, Component, Transform, ScriptComponent удалены.
+    //
+    // Scene также owns `m_Started` флаг для Engine::OnStart.
+    class Scene
+    {
+    public:
+        Scene() = default;
 
-		GameObject* CreateGameObject(const std::string& name = "GameObject");
-		// UI-объекты (рисуются в экранных координатах)
-		GameObject* CreateUIObject(const std::string& name = "UIObject");
-		void AddUIObject(GameObject* obj); // если объект создан вне сцены
+        void OnStart();
+        void OnWindowResized(uint32_t width, uint32_t height);
 
-		void OnRender();
-		void OnStart();
-		void OnUpdate(float deltaTime);
+        OrthographicCamera& GetGameCamera() { return m_GameCamera; }
+        OrthographicCamera& GetUICamera() { return m_UICamera; }
 
-		OrthographicCamera& GetGameCamera() { return m_GameCamera; }
-		OrthographicCamera& GetUICamera() { return m_UICamera; }
+    private:
+        // Игровой мир (ortho, нормализованные координаты)
+        OrthographicCamera m_GameCamera{ -5.0f, 5.0f, -5.0f, 5.0f };
 
-		void RegisterAnchor(Anchor* anchor);
-		void RecalculateAnchors(uint32_t width, uint32_t height);
+        // UI (ortho, screen coords 0..W × 0..H, Y вверх)
+        OrthographicCamera m_UICamera{ 0.0f, 1280.0f, 0.0f, 720.0f };
 
-		const std::vector<std::unique_ptr<GameObject>>& GetObjects() const { return m_Objects; }
-		const std::vector<std::unique_ptr<GameObject>>& GetUIObjects() const { return m_UIObjects; }
-
-	private:
-		// Игровой мир
-		std::vector<std::unique_ptr<GameObject>> m_Objects;
-		OrthographicCamera m_GameCamera{ -5.0f, 5.0f, -5.0f, 5.0f };
-
-		// UI
-		std::vector<std::unique_ptr<GameObject>> m_UIObjects;
-		OrthographicCamera m_UICamera{ 0.0f, 1280.0f, 720.0f, 0.0f }; // top = 720, bottom = 0 → Y вниз
-
-		std::vector<Anchor*> m_Anchors;
-
-		bool m_Started = false;
-	};
+        bool m_Started = false;
+    };
 
 } // namespace NK

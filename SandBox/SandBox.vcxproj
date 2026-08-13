@@ -157,12 +157,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Game.cpp" />
-    <ClCompile Include="Source\Game\Match3Board.cpp" />
     <ClCompile Include="Source\Game\Match3Game.cpp" />
     <ClCompile Include="Source\Game\ECS\Match3System.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Game\Match3Board.h" />
     <ClInclude Include="Source\Game\Match3Game.h" />
     <ClInclude Include="Source\Game\ECS\Match3BoardProxy.h" />
     <ClInclude Include="Source\Game\ECS\Match3TileComponent.h" />

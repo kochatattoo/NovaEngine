@@ -1,7 +1,6 @@
 ﻿#include "Core/Engine.h"
 #include "Core/Application.h"
 #include "Core/Timer.h"
-#include "Renderer/SpriteRenderer.h"
 #include "Window/Window.h"
 #include "Input/InputSystem.h"
 #include "Renderer/Renderer.h"
@@ -35,7 +34,6 @@ namespace NK {
 			m_Scene.GetUICamera().SetProjection(0.0f, (float)w, (float)h, 0.0f);
 			// Также обновим viewport OpenGL
 			glViewport(0, 0, w, h);
-			m_Scene.RecalculateAnchors(w, h);
 			};
 		// Инициализируем рендерер (после того, как контекст уже создан внутри Window)
 		Renderer::Init();
@@ -99,8 +97,8 @@ namespace NK {
 				ctx->MakeCurrent();
 			Renderer::BeginFrame();                 // очистка
 
-			m_Scene.OnUpdate(dt);
-			m_App->OnUpdate(dt);                    // игровая логика
+			// m_Scene.OnUpdate(dt);  // v0.3.2: удалено — нет game objects
+			m_App->OnUpdate(dt);                    // игровая логика (Match3Game::Update + render)
 
 			Renderer::EndFrame();
 			if (auto* ctx = m_Window->GetGraphicsContext())

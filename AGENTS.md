@@ -5,6 +5,10 @@
 
 Корневой файл инструкций. Читается агентом при работе с любым файлом проекта.
 
+## 0. Связанные документы
+
+- **[`CODE_STYLE.md`](CODE_STYLE.md)** — глобальные правила кода (SOLID, DRY, KISS, naming, formatting, antipatterns). **Читай первым при работе с C++ кодом.**
+
 ---
 
 ## 1. Проект
@@ -175,6 +179,79 @@ Include path в vcxproj = `Libraries/EnTT/`. Поэтому:
 - ✅ `#include <entt/entt.hpp>` (путь = `Libraries/EnTT/entt/entt.hpp`)
 - ❌ `#include <EnTT/entt/entt.hpp>` (лишний `EnTT/`)
 - Namespace `entt` — top-level, не `NK::ECS::entt`. Используй `entt::entity`.
+
+### 6.4c ECS Lua bindings (v0.2.8)
+
+`LuaECSBindings.cpp` (Engine/Source/Lua/) регистрирует класс `ECSWorld` (без конструктора, передаётся через `GetECSWorld()`). Lua-скрипты могут:
+
+```lua
+local world = GetECSWorld()
+local e = world:CreateEntity("player")
+world:AddTransform(e, 0, 0, 0)
+world:AddSprite(e, 1, 0, 0, 1)        -- r,g,b,a
+world:SetPosition(e, 1.5, 0, 0)
+world:SetScale(e, 2, 2)
+world:SetSpriteColor(e, 0, 1, 0, 1)
+world:HasComponent(e, "Transform")     -- true/false
+world:DestroyEntity(e)
+```
+
+**Главное:**
+- `entt::entity` (uint32) передаётся как Lua number.
+- `World*` — указатель на C++ World, **не сохраняй между кадрами** (World может пересоздаваться).
+- `SpriteRenderSystem` рендерит все entities с `TransformComponent` + `SpriteComponent` автоматически (см. `Match3Game::Render`).
+
+**TODO v0.2.9:** добавить камеру как entity (`CameraComponent`), сцену-как-World.
+
+### 6.4d SpriteRenderSystem — ECS-рендер (v0.2.6)
+
+`Engine/Source/ECS/Systems/SpriteRenderSystem.cpp` — рендер entities с `(Transform, Sprite)` через OpenGL, без `GameObject`/`Component`/`SpriteRenderer`. Статический quad VAO/VBO.
+
+```cpp
+#include "ECS/Systems/SpriteRenderSystem.h"
+NK::ECS::SpriteRenderSystem::Render(*world, camera, shader);
+```
+
+**Ограничения:**
+- ❌ Нет батчинга (каждый entity = 1 draw call).
+- ❌ Нет Z-sort (порядок по `view`).
+- ✅ `Transform::Scale` уважается (в отличие от старого `SpriteRenderer::Render` для игрового мира).
+
+### 6.4e UI на ECS (v0.3.1)
+
+**UI-компоненты** (`Engine/Include/ECS/Components/UI/`):
+- `UIElementComponent` — `ScreenAnchor`, `ObjectAnchor`, `Size`, `Background`, `ZOrder`.
+- `UITextComponent` — `Text`, `Font`, `FontSize`, `Color`, `Pivot`.
+- `UIButtonComponent` — `OnClick` (std::function), `ColorNormal/Hovered/Pressed`.
+- `UIButtonStateComponent` — runtime `Hovered`, `Pressed`.
+
+**UI-системы** (`Engine/Source/ECS/Systems/`):
+- `UIAnchorSystem::Update(world, w, h)` — вычисляет Position на основе ScreenAnchor/ObjectAnchor.
+- `UIButtonSystem::Update(world, mouseX, mouseY, w, h)` — обновляет Hovered/Pressed, дёргает OnClick.
+- `UIRenderSystem::Render(world, uiCamera, shader)` — рисует background quads через UI camera.
+
+**Использование в Match3Game:**
+```cpp
+// Update
+UIAnchorSystem::Update(*m_World, windowW, windowH);
+UIButtonSystem::Update(*m_World, mouseX, mouseY, windowW, windowH);
+
+// Render (после SpriteRenderSystem)
+UIRenderSystem::Render(*m_World, scene.GetUICamera(), m_SpriteShader);
+```
+
+**TODO v0.3.2:** рендер UITextComponent (нужен TextRenderer/font в ECS-контексте).
+
+### 6.4f Что ещё legacy (v0.3.2)
+
+- `Engine/Source/UI/Button.cpp/.h` — наследник `Component`, завязан на GameObject.
+- `Engine/Source/UI/Anchor.cpp/.h` — то же.
+- `Engine/Include/Renderer/TextRenderer.h/.cpp` — то же.
+- `Engine/Include/Renderer/SpriteRenderer.h/.cpp` (старый) — то же.
+- `Engine/Include/Scene/GameObject.h/.cpp` + `Component.h` + `Transform.h` — фундамент legacy.
+- `Engine/Include/Scene/Scene.h/.cpp` — owns GameObject.
+
+Все эти файлы можно **удалить** после того, как UI полностью переедет на ECS (v0.3.2+). Пока они используются для legacy кода (например, `Scene::m_UIObjects` для UI).
 
 ### 6.5 Double `Scene::OnUpdate`
 
