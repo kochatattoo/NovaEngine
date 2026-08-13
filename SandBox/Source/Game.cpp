@@ -23,10 +23,14 @@ public:
         // 2. Начало кадра
         NK::Renderer::BeginFrame();
 
-        // 3. Рисуем все игровые объекты через SpriteRenderer
+        // 3. v0.2.6: Рисуем ECS-entities (плитки Match3) ДО Scene::OnRender,
+        // чтобы UI (который рисуется в Scene::OnRender) был поверх.
+        if (m_Game) m_Game->Render();
+
+        // 4. Рисуем game objects (старые, через SpriteRenderer) + UI
         NK::Engine::Get().GetScene().OnRender();
 
-        // 4. Завершающий кадр
+        // 5. Завершающий кадр
         NK::Renderer::EndFrame();
     }
 

@@ -3,37 +3,40 @@
 Все заметные изменения в документации.
 
 
-## [v0.2] — 2026-08-12 (часть 2)
+## [v0.2.6+v0.2.7] — 2026-08-13
 
-### Спринт "ECS-миграция Match3 (логика)" — В ПРОЦЕССЕ
+### Спринт "ECS-миграция Match3 (рендер)" — ЗАВЕРШЁН
 
-**Цель:** перевести `Match3` с POD-логики (`Match3Board`) на ECS (`Match3System` + 100 tile-entities). Рендер пока остаётся через Scene/GameObject.
+**Цель:** убрать двойное хранение (100 ECS-entities + 100 Scene::GameObject'ы). Рендерить плитки напрямую из ECS.
 
 **Код:**
-- 🟢 `Engine/Include/ECS/Components/NameComponent.h` (новый) — `struct NameComponent { std::string Name; }`.
-- 🟢 `Engine/Include/ECS/World.h` + `Engine/Source/ECS/World.cpp` — добавлены методы:
-  - `CreateEntity(const std::string& name)` — создать именованную entity
-  - `GetEntityByName(name)`, `RenameEntity(entity, newName)`, `GetEntityName(entity)`, `Clear()`
-- 🟢 `SandBox/Source/Game/ECS/Match3TileComponent.h` (новый) — POD `Row, Col, Type` для плитки.
-- 🟢 `SandBox/Source/Game/ECS/Match3System.h/.cpp` (новый) — owns grid + 100 ECS-entities. API 1:1 как `Match3Board` для обратной совместимости.
-- 🟢 `SandBox/Source/Game/Match3Game.h/.cpp` — рефакторинг: `m_World` + `m_System` вместо `m_Board`. Порядок Start: сначала RunScript+OnStart, потом System::Start (иначе OnTileChanged nullptr).
-- 🟢 `SandBox/assets/scripts/game_match3.lua` — `board = Match3Board.new(...)` → `board = GetBoard()`.
-- 🟢 `Engine/Engine.vcxproj` — добавлен NameComponent.h.
-- 🟢 `SandBox/SandBox.vcxproj` — добавлены Match3System.cpp/.h, Match3TileComponent.h.
+- 🟢 `Engine/Include/ECS/Systems/SpriteRenderSystem.h` (новый) + `Source/.../SpriteRenderSystem.cpp` — рендер entities с `(TransformComponent, SpriteComponent)` через OpenGL, без `GameObject`/`Component`/`SpriteRenderer`. Статический quad VAO/VBO.
+- 🟢 `SandBox/Source/Game/ECS/Match3System.h/.cpp` — добавлен `SetSpriteTexture()` (общая 1x1 текстура). Все 100 плиток шарят одну текстуру, цвет — в `SpriteComponent::Color`.
+- 🟢 `SandBox/Source/Game/Match3Game.h/.cpp`:
+  - Создаёт sprite shader (vertex/fragment src в C++) + 1x1 white texture.
+  - Передаёт текстуру в `Match3System` ДО `Start()`.
+  - Новый `Match3Game::Render()` — вызывает `SpriteRenderSystem::Render(*m_World, camera, shader)`.
+- 🟢 `SandBox/Source/Game.cpp` — `m_Game->Render()` ПЕРЕД `Scene::OnRender()` (UI поверх плиток).
+- 🟢 `SandBox/assets/scripts/game_match3.lua` — удалён `OnTileChanged` callback. Lua только для ввода. Регистрация `CreateSolidColorTexture` убрана (не нужна).
+- 🟡 `Engine/Engine.vcxproj` — добавлены SpriteRenderSystem.h/.cpp.
+- 🟡 `SandBox/SandBox.vcxproj` — удалены `Match3Board.h/.cpp`.
+- 🔴 `SandBox/Source/Game/Match3Board.h/.cpp` — **УДАЛЕНЫ** (в trash). `Match3System` полностью заменил.
 
-**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — успешно.
+**Сборка:** ✅ `MSBuild NovaEngine.sln /p:Configuration=Debug /p:Platform=x64` — 0 ошибок.
 
 **Документация (синхронизирована):**
-- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — полностью переписан: World API + name-based lookup, все компоненты, Match3System, раздел "Миграция Match3", план v0.2.x с чекбоксами.
-- 🟢 `Reports/2026-08-12-v0.2.md` (новый) — детальный отчёт спринта.
+- 🟢 `02_Подсистемы/06_ECS_EnTT.md` — добавлен раздел "SpriteRenderSystem" с описанием.
+- 🟢 `04_Sandbox_и_Match3/02_Игра_Match3.md` — обновлён: рендер из ECS, упрощённый Lua-скрипт.
+- 🟢 `Reports/2026-08-13-v0.2.6.md` (новый) — детальный отчёт спринта.
 
-**Что НЕ сделано (TODO v0.2.6+):**
-- ⏳ `SpriteRenderSystem` — рендер из ECS (плитки в ECS не рисуются, Lua продолжает создавать Scene::GameObject'ы).
-- ⏳ Удалить `Match3Board` (POD).
-- ⏳ Lua-биндинги `World:CreateEntity`, `entity:AddComponent_*`.
+**Что осталось (TODO v0.3+):**
+- ⏳ Sprite batching (сейчас 100 плиток = 100 draw calls).
+- ⏳ Z-sort для 2D-игр.
+- ⏳ UI на ECS (Anchor, Button как компоненты).
+- ⏳ `Transform::SetScale` — уважать в `SpriteRenderer::Render` для игрового мира (унификация с SpriteRenderSystem).
 
 
-## [v0.1.3] — 2026-08-12
+## [v0.2] — 2026-08-12 (часть 2)
 
 ### Спринт "Починить игровой функционал Match3" — ЗАВЕРШЁН
 

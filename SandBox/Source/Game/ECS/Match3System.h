@@ -5,7 +5,11 @@
 #include <utility>
 #include <string>
 #include <functional>
+#include <memory>
 #include <glm/glm.hpp>
+
+// Forward-declaration полного типа из Engine.
+namespace NK { class Texture2D; }
 
 namespace NK::Game::ECS {
 
@@ -62,6 +66,10 @@ namespace NK::Game::ECS {
         // Callback, дёргается при изменении плитки.
         TileChangedCallback OnTileChanged;
 
+        // v0.2.6: установить общую 1x1 текстуру для всех плиток.
+        // Match3Game должен вызвать ДО Start(), чтобы entities создались с этой текстурой.
+        void SetSpriteTexture(std::shared_ptr<NK::Texture2D> tex) { m_SpriteTexture = tex; }
+
     private:
         // Спавн/апдейт/удаление entity для одной клетки
         entt::entity CreateTileEntity(int row, int col);
@@ -81,6 +89,11 @@ namespace NK::Game::ECS {
         float m_PixelsPerUnit;
 
         std::vector<std::vector<TileType>> m_Grid;
+
+        // v0.2.6: общая 1x1 текстура (белая) для всех плиток.
+        // Цвет задаётся через SpriteComponent::Color.
+        // Если nullptr — SpriteRenderSystem пропустит текстуру (только цвет).
+        std::shared_ptr<NK::Texture2D> m_SpriteTexture;
     };
 
 } // namespace NK::Game::ECS

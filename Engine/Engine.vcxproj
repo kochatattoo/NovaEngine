@@ -191,6 +191,7 @@
     <ClInclude Include="Include\ECS\Components\NameComponent.h" />
     <ClInclude Include="Include\ECS\Components\Sprite.h" />
     <ClInclude Include="Include\ECS\Components\Transform.h" />
+    <ClInclude Include="Include\ECS\Systems\SpriteRenderSystem.h" />
     <ClInclude Include="Include\ECS\World.h" />
     <ClInclude Include="Include\Event\Event.h" />
     <ClInclude Include="Include\glad\gl.h" />
@@ -272,6 +273,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Core\Log.cpp" />
+    <ClCompile Include="Source\ECS\Systems\SpriteRenderSystem.cpp" />
     <ClCompile Include="Source\ECS\World.cpp" />
     <ClCompile Include="Source\glad\gl.c" />
     <ClCompile Include="Source\Input\Input.cpp" />

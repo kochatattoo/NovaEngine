@@ -201,7 +201,7 @@ board:FillRandom()
 
 1. **Системы (Systems).**
    - ✅ `Match3System` — игровая логика (v0.2).
-   - ⏳ `SpriteRenderSystem` — итерация по `(Transform, Sprite)`, батч + draw (v0.2.6).
+   - ✅ `SpriteRenderSystem` — итерация по `(Transform, Sprite)`, draw через OpenGL (v0.2.6).
    - ⏳ `TextRenderSystem` — для UI-текста.
    - ⏳ `LifetimeSystem` — удаление просроченных entity.
 
@@ -226,8 +226,8 @@ board:FillRandom()
 | v0.2.3 | Match3System — owns grid + 100 ECS-entities | ✅ |
 | v0.2.4 | Match3Game owns World + System (вместо Match3Board) | ✅ |
 | v0.2.5 | Lua bindings: Match3System под именем Match3Board, GetBoard() | ✅ |
-| v0.2.6 | SpriteRenderSystem (рендер из ECS) | ⏳ |
-| v0.2.7 | Удалить Scene::CreateGameObject для плиток, оставить только ECS | ⏳ |
+| v0.2.6 | SpriteRenderSystem (рендер из ECS) | ✅ |
+| v0.2.7 | Удалить Match3Board (POD) и Scene::CreateGameObject для плиток | ✅ |
 | v0.3   | UI на ECS (Anchor, Button как компоненты) | ⏳ |
 | v0.4   | Сериализация World | ⏳ |
 | v0.5   | Удалить Scene/GameObject/Component (legacy) | ⏳ |
@@ -247,9 +247,9 @@ board:FillRandom()
 - [x] Match3System (v0.2.3)
 - [x] Match3Game → World + System (v0.2.4)
 - [x] Lua bindings через GetBoard() (v0.2.5)
-- [ ] SpriteRenderSystem (v0.2.6)
-- [ ] Lua: world:CreateEntity(name) (v0.2.6)
-- [ ] Удалить Match3Board (v0.2.7)
+- [x] SpriteRenderSystem (v0.2.6) — рендер entities напрямую, без GameObject
+- [x] Удалить Match3Board (v0.2.7) — Match3System полностью заменил
+- [ ] Lua: world:CreateEntity(name) (v0.2.8)
 - [ ] Camera как entity (v0.3)
 
 См. также: [05_Сцена_GameObject_компоненты](05_Сцена_GameObject_компоненты.md) — что заменяем.

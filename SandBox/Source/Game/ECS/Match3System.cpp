@@ -81,9 +81,9 @@ namespace NK::Game::ECS {
         transform.Position = glm::vec3(pos.x, pos.y, 0.0f);
         transform.Scale = glm::vec3(m_CellSize / m_PixelsPerUnit, m_CellSize / m_PixelsPerUnit, 1.0f);
 
-        // Sprite: цвет по типу (пока Type=-1, чёрный/прозрачный; FillRandom обновит)
+        // Sprite: общая 1x1 текстура + цвет по типу (Type=-1, прозрачный; FillRandom обновит)
         auto& sprite = m_World.AddComponent<NK::ECS::SpriteComponent>(e);
-        sprite.Texture = nullptr;
+        sprite.Texture = m_SpriteTexture;
         sprite.Color = GetColorForType(-1);
 
         // Tile: позиция в сетке + тип
